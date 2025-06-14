@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🗨️ Commentator - Universal Web Comments</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .url-input-section {
+            margin-bottom: 40px;
+        }
+        
+        .url-input-section h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        .url-form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .url-input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+        
+        .url-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .load-btn {
+            padding: 12px 24px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+        
+        .load-btn:hover {
+            background: #5a6fd8;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .feature-card {
+            padding: 20px;
+            border: 2px solid #f0f0f0;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .feature-card h3 {
+            margin-bottom: 10px;
+            color: #667eea;
+        }
+        
+        .comments-section {
+            margin-top: 40px;
+            padding-top: 40px;
+            border-top: 2px solid #f0f0f0;
+        }
+        
+        .comment-form {
+            margin-bottom: 30px;
+        }
+        
+        .comment-textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            resize: vertical;
+            min-height: 100px;
+            font-family: inherit;
+        }
+        
+        .submit-btn {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .submit-btn:hover {
+            background: #218838;
+        }
+        
+        .comment {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .comment-meta {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+        
+        .status {
+            text-align: center;
+            padding: 20px;
+            background: #e3f2fd;
+            border-radius: 6px;
+            margin: 20px 0;
+            color: #1976d2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>🗨️ Commentator</h1>
+            <p>Universal Web Comments - Share feedback on any website</p>
+        </header>
+        
+        <main class="main-content">
+            <section class="url-input-section">
+                <h2>Enter Website URL to View/Add Comments</h2>
+                <form class="url-form" id="urlForm">
+                    <input 
+                        type="url" 
+                        class="url-input" 
+                        id="websiteUrl" 
+                        placeholder="https://example.com" 
+                        required
+                    >
+                    <button type="submit" class="load-btn">Load Comments</button>
+                </form>
+                <div id="currentUrl" class="status" style="display: none;"></div>
+            </section>
+            
+            <section class="features">
+                <div class="feature-card">
+                    <h3>✅ Universal Commenting</h3>
+                    <p>Share feedback on any webpage, regardless of whether it supports native comments.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🛡️ Fraud Prevention</h3>
+                    <p>Expose suspicious websites by enabling users to leave honest reviews.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>💬 Open Participation</h3>
+                    <p>Anyone can view or post comments without censorship.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔓 Fully Open-Source</h3>
+                    <p>Transparent and community-driven, licensed under MIT.</p>
+                </div>
+            </section>
+            
+            <section class="comments-section" id="commentsSection" style="display: none;">
+                <h2>Comments</h2>
+                
+                <form class="comment-form" id="commentForm">
+                    <textarea 
+                        class="comment-textarea" 
+                        id="commentText" 
+                        placeholder="Share your thoughts about this website..."
+                        required
+                    ></textarea>
+                    <button type="submit" class="submit-btn">Post Comment</button>
+                </form>
+                
+                <div id="commentsList">
+                    <!-- Comments will be loaded here -->
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <script src="index.js"></script>
+</body>
+</html>

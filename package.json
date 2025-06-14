@@ -1,0 +1,21 @@
+{
+  "name": "commentator",
+  "version": "1.0.0",
+  "description": "An open-source project designed to improve transparency on the web by enabling community-driven feedback",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["commenting", "web", "transparency", "decentralized", "feedback"],
+  "author": "Kamran Khan",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kamrankhan78694/commentator.git"
+  }
+}
