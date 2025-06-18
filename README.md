@@ -41,7 +41,7 @@ This decentralized foundation ensures Commentator is not just a product—but a 
 
 _Coming Soon:_ Official browser extension and embeddable script.
 
-For development purposes:
+### For Development
 
 ```bash
 git clone https://github.com/kamrankhan78694/commentator.git
@@ -49,6 +49,8 @@ cd commentator
 npm install
 npm run dev
 ```
+
+The development server will start on `http://localhost:3000`.
 
 ## 🚀 Getting Started
 

@@ -1,0 +1,33 @@
+{
+  "name": "commentator",
+  "version": "1.0.0",
+  "description": "🗨️ Commentator is an open-source project designed to improve transparency on the web by enabling community-driven feedback.",
+  "main": "index.html",
+  "scripts": {
+    "dev": "python3 -m http.server 3000",
+    "start": "python3 -m http.server 8080",
+    "build": "echo 'Build process not needed for static files. Files are ready for deployment.'",
+    "test": "echo 'Tests not implemented yet'",
+    "lint": "echo 'Linting not configured yet'"
+  },
+  "keywords": [
+    "commenting",
+    "web",
+    "feedback",
+    "transparency",
+    "decentralized",
+    "open-source"
+  ],
+  "author": "Kamran Khan",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kamrankhan78694/Commentator.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kamrankhan78694/Commentator/issues"
+  },
+  "homepage": "https://github.com/kamrankhan78694/Commentator#readme",
+  "devDependencies": {},
+  "dependencies": {}
+}
