@@ -41,10 +41,45 @@ This decentralized foundation ensures Commentator is not just a product—but a 
 
 _Coming Soon:_ Official browser extension and embeddable script.
 
-For development purposes:
+### For Development
 
 ```bash
 git clone https://github.com/kamrankhan78694/commentator.git
 cd commentator
 npm install
 npm run dev
+```
+
+The development server will start on `http://localhost:3000`.
+
+## 🚀 Getting Started
+
+### Quick Start (No Build Required)
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/kamrankhan78694/commentator.git
+   cd commentator
+   ```
+
+2. **Open the project**: Simply open `index.html` in your web browser to see the Commentator interface.
+
+3. **Start contributing**: The project structure is organized as follows:
+   - `index.html` - Main entry point and interface
+   - `css/main.css` - Stylesheet with comprehensive styling
+   - `js/main.js` - JavaScript functionality and interactivity
+   - `assets/` - Directory for images and other static resources
+
+### Development Environment (Coming Soon)
+
+Once the full development environment is set up, you'll be able to use:
+- `npm install` - Install dependencies
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+
+### Contributing
+
+1. **Understanding the Structure**: Start by exploring `index.html` to understand the UI components and layout
+2. **Styling**: CSS is organized in `css/main.css` with clear sections and comments
+3. **Functionality**: JavaScript interactions are in `js/main.js` with modular functions
+4. **Adding Features**: The comment interface in the demo section shows where core functionality will be implemented
