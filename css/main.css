@@ -23,18 +23,18 @@
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     line-height: 1.6;
-    color: #333;
-    background-color: #f8f9fa;
+    color: #2d3748;
+    background-color: #f7fafc;
 }
 
 a {
-    color: #007bff;
+    color: #3182ce;
     text-decoration: none;
     transition: color 0.2s ease;
 }
 
 a:hover {
-    color: #0056b3;
+    color: #2c5282;
     text-decoration: underline;
 }
 
@@ -59,22 +59,22 @@ a:hover {
 }
 
 .btn-primary {
-    background-color: #007bff;
+    background-color: #3182ce;
     color: white;
 }
 
 .btn-primary:hover {
-    background-color: #0056b3;
+    background-color: #2c5282;
 }
 
 .btn-secondary {
     background-color: transparent;
-    color: #007bff;
-    border: 2px solid #007bff;
+    color: #3182ce;
+    border: 2px solid #3182ce;
 }
 
 .btn-secondary:hover {
-    background-color: #007bff;
+    background-color: #3182ce;
     color: white;
 }
 
@@ -82,7 +82,8 @@ a:hover {
     font-size: 2.5em;
     margin-bottom: 30px;
     text-align: center;
-    color: #2c3e50;
+    color: #1a202c;
+    font-weight: 700;
 }
 
 /* ===== HEADER & NAVIGATION ===== */
@@ -104,7 +105,7 @@ a:hover {
 .logo {
     font-size: 1.8em;
     font-weight: bold;
-    color: #2c3e50;
+    color: #1a202c;
 }
 
 .nav {
@@ -114,12 +115,12 @@ a:hover {
 
 .nav a {
     font-weight: 500;
-    color: #555;
+    color: #4a5568;
     transition: color 0.2s ease;
 }
 
 .nav a:hover {
-    color: #007bff;
+    color: #3182ce;
 }
 
 /* ===== MAIN CONTENT SECTIONS ===== */
@@ -131,7 +132,7 @@ a:hover {
 .hero {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    padding: 80px 0;
+    padding: 100px 0;
     text-align: center;
 }
 
@@ -183,25 +184,39 @@ a:hover {
 }
 
 .feature-icon {
-    font-size: 3em;
-    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 20px;
+    background-color: #f7fafc;
+    border-radius: 16px;
+    color: #3182ce;
+}
+
+.feature-icon svg {
+    width: 40px;
+    height: 40px;
+    stroke-width: 1.5;
 }
 
 .feature-card h4 {
     font-size: 1.4em;
     margin-bottom: 15px;
-    color: #2c3e50;
+    color: #1a202c;
+    font-weight: 600;
 }
 
 .feature-card p {
-    color: #666;
+    color: #4a5568;
     line-height: 1.6;
 }
 
 /* How It Works Section */
 .how-it-works {
     padding: 80px 0;
-    background-color: #f8f9fa;
+    background-color: #f7fafc;
 }
 
 .steps {
@@ -225,7 +240,7 @@ a:hover {
 .step-number {
     width: 60px;
     height: 60px;
-    background-color: #007bff;
+    background-color: #3182ce;
     color: white;
     border-radius: 50%;
     display: flex;
@@ -237,7 +252,7 @@ a:hover {
 }
 
 .step p {
-    color: #666;
+    color: #4a5568;
     line-height: 1.6;
 }
 
@@ -251,7 +266,7 @@ a:hover {
     font-size: 1.2em;
     text-align: center;
     margin-bottom: 40px;
-    color: #555;
+    color: #4a5568;
     max-width: 800px;
     margin-left: auto;
     margin-right: auto;
@@ -265,16 +280,47 @@ a:hover {
 }
 
 .objective {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
     padding: 25px;
-    background-color: #f8f9fa;
-    border-radius: 8px;
-    border-left: 4px solid #007bff;
+    background-color: #f7fafc;
+    border-radius: 12px;
+    border-left: 4px solid #3182ce;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.objective:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.objective-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    background-color: #3182ce;
+    border-radius: 12px;
+    color: white;
+    flex-shrink: 0;
+}
+
+.objective-icon svg {
+    width: 24px;
+    height: 24px;
+}
+
+.objective-content {
+    line-height: 1.6;
+    color: #1a202c;
 }
 
 /* Demo Section */
 .demo {
     padding: 80px 0;
-    background-color: #f8f9fa;
+    background-color: #f7fafc;
 }
 
 .comment-interface {
@@ -293,7 +339,7 @@ a:hover {
     display: block;
     margin-bottom: 10px;
     font-weight: 500;
-    color: #2c3e50;
+    color: #1a202c;
 }
 
 .url-input input {
@@ -308,13 +354,13 @@ a:hover {
 
 .url-input input:focus {
     outline: none;
-    border-color: #007bff;
+    border-color: #3182ce;
 }
 
 .comments-section {
     margin: 30px 0;
     padding: 30px;
-    background-color: #f8f9fa;
+    background-color: #f7fafc;
     border-radius: 8px;
     min-height: 200px;
     display: flex;
@@ -323,13 +369,13 @@ a:hover {
 }
 
 .placeholder-text {
-    color: #666;
+    color: #4a5568;
     font-style: italic;
 }
 
 .add-comment h4 {
     margin-bottom: 15px;
-    color: #2c3e50;
+    color: #1a202c;
 }
 
 .add-comment textarea {
@@ -345,12 +391,12 @@ a:hover {
 
 .add-comment textarea:focus {
     outline: none;
-    border-color: #007bff;
+    border-color: #3182ce;
 }
 
 /* ===== FOOTER ===== */
 .footer {
-    background-color: #2c3e50;
+    background-color: #1a202c;
     color: white;
     padding: 50px 0 20px;
 }
@@ -364,7 +410,7 @@ a:hover {
 
 .footer-section h4 {
     margin-bottom: 20px;
-    color: #ecf0f1;
+    color: #e2e8f0;
 }
 
 .footer-section ul {
@@ -376,19 +422,19 @@ a:hover {
 }
 
 .footer-section a {
-    color: #bdc3c7;
+    color: #a0aec0;
     transition: color 0.2s ease;
 }
 
 .footer-section a:hover {
-    color: #ecf0f1;
+    color: #e2e8f0;
 }
 
 .footer-bottom {
     text-align: center;
     padding-top: 30px;
-    border-top: 1px solid #34495e;
-    color: #bdc3c7;
+    border-top: 1px solid #2d3748;
+    color: #a0aec0;
 }
 
 /* ===== RESPONSIVE DESIGN ===== */
@@ -434,5 +480,25 @@ a:hover {
     
     .comment-interface {
         padding: 20px;
+    }
+    
+    .feature-icon {
+        width: 70px;
+        height: 70px;
+    }
+    
+    .feature-icon svg {
+        width: 35px;
+        height: 35px;
+    }
+    
+    .objective-icon {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .objective-icon svg {
+        width: 20px;
+        height: 20px;
     }
 }
