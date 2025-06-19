@@ -464,8 +464,9 @@ function loadCommentsForUrl(url, commentsSection) {
  * Display comments in the comments section
  * @param {Array} comments - Array of comment objects
  * @param {HTMLElement} commentsSection - The element to display comments in
+ * @param {boolean} isNFT - Whether to render as NFT comments
  */
-function displayComments(comments, commentsSection) {
+function displayComments(comments, commentsSection, isNFT = false) {
     if (comments.length === 0) {
         commentsSection.innerHTML = `
             <div class="no-comments">
@@ -475,16 +476,42 @@ function displayComments(comments, commentsSection) {
         return;
     }
     
-    const commentsHtml = comments.map(comment => `
-        <div class="comment">
-            <div class="comment-header">
-                <span class="comment-author">👤 ${comment.author}</span>
-                <span class="comment-timestamp">${comment.timestamp}</span>
-                <span class="comment-votes">👍 ${comment.votes}</span>
-            </div>
-            <div class="comment-text">${comment.text}</div>
-        </div>
-    `).join('');
+    const commentsHtml = comments.map(comment => {
+        if (comment.isNFT || isNFT) {
+            const shortAddress = comment.author.length > 10 
+                ? `${comment.author.slice(0, 6)}...${comment.author.slice(-4)}`
+                : comment.author;
+            
+            return `
+                <div class="comment nft-comment">
+                    <div class="comment-header">
+                        <span class="comment-author">👤 ${shortAddress}</span>
+                        <span class="comment-timestamp">${comment.timestamp}</span>
+                        <span class="comment-votes">👍 ${comment.votes}</span>
+                        <span class="nft-badge">🖼️ NFT #${comment.nftId || comment.id}</span>
+                    </div>
+                    <div class="comment-text">${comment.text}</div>
+                    <div class="nft-info">
+                        <small>
+                            <a href="${comment.ipfsUrl}" target="_blank" rel="noopener">View on IPFS</a>
+                            | Wallet: <span title="${comment.author}">${shortAddress}</span>
+                        </small>
+                    </div>
+                </div>
+            `;
+        } else {
+            return `
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">👤 ${comment.author}</span>
+                        <span class="comment-timestamp">${comment.timestamp}</span>
+                        <span class="comment-votes">👍 ${comment.votes}</span>
+                    </div>
+                    <div class="comment-text">${comment.text}</div>
+                </div>
+            `;
+        }
+    }).join('');
     
     commentsSection.innerHTML = `
         <div class="comments-list">
