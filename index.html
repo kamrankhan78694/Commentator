@@ -3,8 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🗨️ Commentator - Universal Web Comments</title>
+    <title>Commentator - Universal Web Comments</title>
     <meta name="description" content="Commentator is an open-source project designed to improve transparency on the web by enabling community-driven feedback on any website.">
+    
+    <!-- Feather Icons for modern SVG icons -->
+    <script src="https://unpkg.com/feather-icons"></script>
     
     <!-- CSS - Link to external stylesheet for maintainability -->
     <link rel="stylesheet" href="css/main.css">
@@ -18,7 +21,7 @@
         <!-- Header section with project branding and navigation -->
         <header class="header">
             <div class="container">
-                <h1 class="logo">🗨️ Commentator</h1>
+                <h1 class="logo">Commentator</h1>
                 <nav class="nav">
                     <!-- Navigation links for future pages -->
                     <a href="#features">Features</a>
@@ -49,25 +52,33 @@
             <!-- Features section highlighting key capabilities -->
             <section id="features" class="features">
                 <div class="container">
-                    <h3 class="section-title">🚀 Features</h3>
+                    <h3 class="section-title">Features</h3>
                     <div class="features-grid">
                         <div class="feature-card">
-                            <div class="feature-icon">✅</div>
+                            <div class="feature-icon">
+                                <i data-feather="globe"></i>
+                            </div>
                             <h4>Universal Commenting</h4>
                             <p>Share feedback on any webpage, regardless of whether it supports native comments.</p>
                         </div>
                         <div class="feature-card">
-                            <div class="feature-icon">🛡️</div>
+                            <div class="feature-icon">
+                                <i data-feather="shield"></i>
+                            </div>
                             <h4>Fraud Prevention</h4>
                             <p>Expose suspicious websites by enabling users to leave honest reviews.</p>
                         </div>
                         <div class="feature-card">
-                            <div class="feature-icon">💬</div>
+                            <div class="feature-icon">
+                                <i data-feather="users"></i>
+                            </div>
                             <h4>Open Participation</h4>
                             <p>Anyone can view or post comments without censorship.</p>
                         </div>
                         <div class="feature-card">
-                            <div class="feature-icon">🔓</div>
+                            <div class="feature-icon">
+                                <i data-feather="git-branch"></i>
+                            </div>
                             <h4>Fully Open-Source</h4>
                             <p>Transparent and community-driven, licensed under MIT.</p>
                         </div>
@@ -78,7 +89,7 @@
             <!-- How it works section -->
             <section id="how-it-works" class="how-it-works">
                 <div class="container">
-                    <h3 class="section-title">🔧 How It Works</h3>
+                    <h3 class="section-title">How It Works</h3>
                     <div class="steps">
                         <div class="step">
                             <div class="step-number">1</div>
@@ -103,23 +114,43 @@
             <!-- Decentralization vision section -->
             <section id="about" class="about">
                 <div class="container">
-                    <h3 class="section-title">🎯 Project Goal: Decentralization</h3>
+                    <h3 class="section-title">Project Goal: Decentralization</h3>
                     <p class="about-description">
                         Our long-term vision is to make Commentator a <strong>fully decentralized public commenting system</strong> 
                         that cannot be controlled or censored by any single entity.
                     </p>
                     <div class="objectives">
                         <div class="objective">
-                            <strong>🗂 Decentralized Storage:</strong> Store comment data on IPFS or Arweave using tools like web3.storage or Bundlr.
+                            <div class="objective-icon">
+                                <i data-feather="database"></i>
+                            </div>
+                            <div class="objective-content">
+                                <strong>Decentralized Storage:</strong> Store comment data on IPFS or Arweave using tools like web3.storage or Bundlr.
+                            </div>
                         </div>
                         <div class="objective">
-                            <strong>🆔 Decentralized Identity (DID):</strong> Use Ethereum wallets (e.g., MetaMask) or identity protocols like ENS and Ceramic.
+                            <div class="objective-icon">
+                                <i data-feather="user-check"></i>
+                            </div>
+                            <div class="objective-content">
+                                <strong>Decentralized Identity (DID):</strong> Use Ethereum wallets (e.g., MetaMask) or identity protocols like ENS and Ceramic.
+                            </div>
                         </div>
                         <div class="objective">
-                            <strong>🗳️ Community Moderation:</strong> Implement upvote/downvote systems, and explore DAO-style moderation.
+                            <div class="objective-icon">
+                                <i data-feather="thumbs-up"></i>
+                            </div>
+                            <div class="objective-content">
+                                <strong>Community Moderation:</strong> Implement upvote/downvote systems, and explore DAO-style moderation.
+                            </div>
                         </div>
                         <div class="objective">
-                            <strong>🔐 Content Integrity:</strong> Let users cryptographically sign their comments for authenticity and verifiability.
+                            <div class="objective-icon">
+                                <i data-feather="lock"></i>
+                            </div>
+                            <div class="objective-content">
+                                <strong>Content Integrity:</strong> Let users cryptographically sign their comments for authenticity and verifiability.
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -128,7 +159,7 @@
             <!-- Demo/placeholder section for future commenting interface -->
             <section class="demo" id="demo-section">
                 <div class="container">
-                    <h3 class="section-title">💬 Comment Interface Preview</h3>
+                    <h3 class="section-title">Comment Interface Preview</h3>
                     <div class="comment-interface">
                         <!-- This will be the core commenting interface -->
                         <div class="url-input">
@@ -158,7 +189,7 @@
             <div class="container">
                 <div class="footer-content">
                     <div class="footer-section">
-                        <h4>🗨️ Commentator</h4>
+                        <h4>Commentator</h4>
                         <p>Open-source universal web commenting system</p>
                     </div>
                     <div class="footer-section">
@@ -187,5 +218,10 @@
 
     <!-- JavaScript - Link to external script for functionality -->
     <script src="js/main.js"></script>
+    
+    <!-- Initialize Feather Icons -->
+    <script>
+        feather.replace();
+    </script>
 </body>
 </html>
