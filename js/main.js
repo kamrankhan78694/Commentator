@@ -25,6 +25,9 @@ async function loadHeaderAndFooter() {
             if (headerPlaceholder) {
                 headerPlaceholder.innerHTML = headerHTML;
                 configureNavigation();
+                // Re-initialize navigation-dependent functions after header is loaded
+                initSmoothScrolling();
+                initNavigationHighlight();
             }
         }
         
@@ -87,9 +90,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialize all functionality
     loadHeaderAndFooter();
-    initSmoothScrolling();
     initCommentInterface();
-    initNavigationHighlight();
 });
 
 /**
