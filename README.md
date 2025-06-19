@@ -1,15 +1,26 @@
 # <img src="assets/logo-light.svg" alt="Commentator" height="40"> Commentator
 
+[![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Version](https://img.shields.io/badge/version-1.0.0-green.svg)](https://github.com/kamrankhan78694/Commentator/releases)
+[![Open Source](https://img.shields.io/badge/Open%20Source-%E2%9D%A4-red.svg)](https://github.com/kamrankhan78694/Commentator)
+[![Web3](https://img.shields.io/badge/Web3-Enabled-purple.svg)](https://web3.foundation/)
+[![Decentralized](https://img.shields.io/badge/Decentralized-Network-orange.svg)](https://en.wikipedia.org/wiki/Decentralization)
+[![Community](https://img.shields.io/badge/Community-Driven-brightgreen.svg)](https://github.com/kamrankhan78694/Commentator/discussions)
+[![Contributors](https://img.shields.io/github/contributors/kamrankhan78694/Commentator.svg)](https://github.com/kamrankhan78694/Commentator/graphs/contributors)
+[![Issues](https://img.shields.io/github/issues/kamrankhan78694/Commentator.svg)](https://github.com/kamrankhan78694/Commentator/issues)
+[![Stars](https://img.shields.io/github/stars/kamrankhan78694/Commentator.svg)](https://github.com/kamrankhan78694/Commentator/stargazers)
+[![Forks](https://img.shields.io/github/forks/kamrankhan78694/Commentator.svg)](https://github.com/kamrankhan78694/Commentator/network)
+
 **Commentator** is an open-source, scalable, and disruptive project aimed at transforming web transparency through decentralized, community-driven feedback. As the future universal protocol for web commentary, it empowers users to leave comments on any website—including those that have disabled native comments or review systems—while guaranteeing censorship resistance, verified user identities, and permanent data ownership. By enabling open dialogue everywhere, it helps users make informed decisions and steer clear of scams.
 
 ## 🚀 Disruptive Vision
 
 Commentator is not just another commenting system—it's a **paradigm shift** toward:
-- **Universal Web Commentary**: Breaking the silos of platform-controlled feedback
-- **Decentralized Ownership**: Users own their data and identity, not platforms
-- **Censorship Resistance**: No single entity can silence community voices
-- **Authentic Verification**: Cryptographic proof of user identity and content integrity
-- **Global Scalability**: Designed to serve millions of users across any website, anywhere
+- 🌐 **Universal Web Commentary**: Breaking the silos of platform-controlled feedback
+- 👤 **Decentralized Ownership**: Users own their data and identity, not platforms
+- 🛡️ **Censorship Resistance**: No single entity can silence community voices
+- ✅ **Authentic Verification**: Cryptographic proof of user identity and content integrity
+- 📈 **Global Scalability**: Designed to serve millions of users across any website, anywhere
 
 ---
 
@@ -18,11 +29,11 @@ Commentator is not just another commenting system—it's a **paradigm shift** to
 Our long-term vision is to make Commentator a **fully decentralized public commenting system** that cannot be controlled or censored by any single entity.
 
 ### Key Objectives:
-- 🗂 **Decentralized Storage**: Store comment data on IPFS or Arweave using tools like `web3.storage` or `Bundlr`, ensuring content permanence and censorship resistance.
-- 🆔 **Decentralized Identity (DID)**: Use Ethereum wallets (e.g., MetaMask) or identity protocols like ENS and Ceramic to allow users to sign comments without centralized accounts.
+- 📊 **Decentralized Storage**: Store comment data on IPFS or Arweave using tools like `web3.storage` or `Bundlr`, ensuring content permanence and censorship resistance.
+- 🔐 **Decentralized Identity (DID)**: Use Ethereum wallets (e.g., MetaMask) or identity protocols like ENS and Ceramic to allow users to sign comments without centralized accounts.
 - 🗳️ **Community Moderation**: Implement upvote/downvote systems, and explore DAO-style moderation using token-based or reputation-based voting.
-- 🔐 **Content Integrity**: Let users cryptographically sign their comments for authenticity and verifiability.
-- 💡 **Open Protocol**: Create APIs and standards that can be used by other platforms to fetch or display Commentator data transparently.
+- ✅ **Content Integrity**: Let users cryptographically sign their comments for authenticity and verifiability.
+- 🔗 **Open Protocol**: Create APIs and standards that can be used by other platforms to fetch or display Commentator data transparently.
 
 This decentralized foundation ensures Commentator is not just a product—but a **disruptive protocol** that scales to serve the global community as a public utility.
 
@@ -56,14 +67,14 @@ Our ambitious growth and technical targets make Commentator a **scalable technol
 - ✅ **Universal Commenting** – Share feedback on any webpage, regardless of whether it supports native comments
 - 🛡️ **Fraud Prevention** – Expose suspicious websites by enabling users to leave honest reviews
 - 💬 **Open Participation** – Anyone can view or post comments without censorship
-- 🔓 **Fully Open-Source** – Transparent and community-driven, licensed under MIT
+- 📖 **Fully Open-Source** – Transparent and community-driven, licensed under MIT
 
 ### Disruptive Innovations in Development
 - 🌐 **Cross-Platform Protocol** – Works seamlessly across browsers, mobile apps, and third-party integrations
-- 🔐 **Cryptographic Verification** – Tamper-proof comment authenticity and user identity
-- 📊 **Community Governance** – DAO-based moderation with token-weighted voting systems
-- 🗂️ **Permanent Storage** – Comments preserved forever on IPFS and Arweave networks
-- 💡 **Developer Ecosystem** – Open APIs enabling third-party innovation and integration
+- ✅ **Cryptographic Verification** – Tamper-proof comment authenticity and user identity
+- 🏛️ **Community Governance** – DAO-based moderation with token-weighted voting systems
+- 📊 **Permanent Storage** – Comments preserved forever on IPFS and Arweave networks
+- 🔗 **Developer Ecosystem** – Open APIs enabling third-party innovation and integration
 
 ---
 
@@ -178,18 +189,18 @@ Ready to help build the future of decentralized web commentary?
    - [Technical Architecture](ARCHITECTURE.md) - System design and scalability
    - [Contributing Guidelines](CONTRIBUTING.md) - How to get involved
 
-2. **🏗️ Project Structure**: Start by exploring `index.html` to understand the UI components and layout
-3. **🎨 Styling**: CSS is organized in `css/main.css` with clear sections and comments
-4. **⚡ Functionality**: JavaScript interactions are in `js/main.js` with modular functions
-5. **🚀 Adding Features**: The comment interface in the demo section shows where core functionality will be implemented
+2. 🏗️ **Project Structure**: Start by exploring `index.html` to understand the UI components and layout
+3. 🎨 **Styling**: CSS is organized in `css/main.css` with clear sections and comments
+4. ⚡ **Functionality**: JavaScript interactions are in `js/main.js` with modular functions
+5. 🚀 **Adding Features**: The comment interface in the demo section shows where core functionality will be implemented
 
 ### 🎯 How to Make an Impact
 
-- **🐛 Fix Bugs**: Improve existing functionality and edge cases
-- **✨ Build Features**: Implement Web3 integration and decentralization components
-- **🏗️ Scale Architecture**: Design systems for millions of users
-- **📚 Write Documentation**: Help others understand and contribute to the project
-- **🧪 Test & QA**: Ensure reliability across browsers and platforms
-- **🌍 Spread the Word**: Help build the community around decentralized commentary
+- 🐛 **Fix Bugs**: Improve existing functionality and edge cases
+- ✨ **Build Features**: Implement Web3 integration and decentralization components
+- 🏗️ **Scale Architecture**: Design systems for millions of users
+- 📚 **Write Documentation**: Help others understand and contribute to the project
+- 🧪 **Test & QA**: Ensure reliability across browsers and platforms
+- 🌍 **Spread the Word**: Help build the community around decentralized commentary
 
 **Join us in building technology that serves the public good!** 🚀
