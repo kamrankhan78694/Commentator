@@ -335,7 +335,7 @@ function showNotification(message) {
         position: fixed;
         top: 20px;
         right: 20px;
-        background: #28a745;
+        background: #38a169;
         color: white;
         padding: 15px 20px;
         border-radius: 6px;
@@ -367,7 +367,7 @@ function showNotification(message) {
 // Add some additional styles for the comment interface
 const additionalStyles = `
     .comment {
-        border: 1px solid #e9ecef;
+        border: 1px solid #e2e8f0;
         border-radius: 8px;
         padding: 20px;
         margin-bottom: 15px;
@@ -390,43 +390,43 @@ const additionalStyles = `
     
     .comment-author {
         font-weight: 600;
-        color: #2c3e50;
+        color: #1a202c;
     }
     
     .comment-timestamp {
-        color: #6c757d;
+        color: #718096;
         font-size: 0.9em;
     }
     
     .comment-votes {
-        color: #28a745;
+        color: #38a169;
         font-weight: 500;
     }
     
     .comment-text {
-        color: #495057;
+        color: #2d3748;
         line-height: 1.6;
     }
     
     .new-comment {
-        border-color: #28a745;
-        background-color: #f8fff9;
+        border-color: #38a169;
+        background-color: #f0fff4;
     }
     
     .loading {
         text-align: center;
-        color: #6c757d;
+        color: #718096;
         font-style: italic;
     }
     
     .no-comments {
         text-align: center;
-        color: #6c757d;
+        color: #718096;
         font-style: italic;
     }
     
     .nav a.active {
-        color: #007bff;
+        color: #3182ce;
         font-weight: 600;
     }
     
