@@ -121,11 +121,14 @@ Once the full development environment is set up, you'll be able to use:
 
 ## 🎨 Jekyll Theme
 
-This project uses **custom static HTML/CSS/JS** architecture rather than a traditional Jekyll theme. However, if deployed via GitHub Pages, it may use Jekyll's default processing. The project is designed to be:
+This project uses a **hybrid Jekyll architecture** that combines Jekyll's processing capabilities with custom static HTML/CSS/JS. The architecture leverages Jekyll's Minima theme as a foundation while implementing extensive custom overrides. The project is designed to be:
 
-- **Theme-agnostic**: Works as a standalone HTML project or with GitHub Pages
+- **Hybrid Architecture**: Uses Jekyll for SEO/plugins with custom HTML content
+- **Theme-enhanced**: Built on Minima theme with significant customizations
 - **Customizable**: Easy to modify styling and layout through `css/main.css`
 - **Responsive**: Mobile-first design with modern CSS practices
+
+> 📋 **Architecture Details**: See [JEKYLL_ARCHITECTURE.md](JEKYLL_ARCHITECTURE.md) for comprehensive analysis of the current Jekyll theme setup, including configuration, directory structure, and optimization recommendations.
 
 ### Theme Customization
 
@@ -136,9 +139,27 @@ To customize the appearance:
 3. **Components**: Update individual component styles (buttons, cards, forms)
 4. **Responsive Design**: Adjust breakpoints and mobile styles in the media queries section
 
-If you want to use a Jekyll theme instead:
+**Current Architecture Enhancement:**
 
-1. Create a `_config.yml` file with your preferred theme:
+The project already uses Jekyll with the Minima theme configured in `_config.yml`. To enhance the current hybrid approach:
+
+1. **Optimize Content Pages**: Add Jekyll front matter to `index.html` and `documentation.html`:
+   ```yaml
+   ---
+   layout: default
+   title: "Page Title"
+   description: "Page description"
+   ---
+   ```
+2. **Leverage Theme Layouts**: Utilize `_layouts/default.html` for consistent structure
+3. **Enhance SEO**: Take advantage of Jekyll's SEO plugins already configured
+4. **See [JEKYLL_ARCHITECTURE.md](JEKYLL_ARCHITECTURE.md)** for detailed recommendations
+
+**Alternative Theme Setup:**
+
+If you want to switch to a different Jekyll theme:
+
+1. Update `_config.yml` with your preferred theme:
    ```yaml
    theme: minima
    # or
