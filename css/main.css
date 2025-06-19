@@ -108,6 +108,12 @@ a:hover {
     color: #1a202c;
 }
 
+.logo-image {
+    height: 40px;
+    width: auto;
+    max-width: 200px;
+}
+
 .nav {
     display: flex;
     gap: 30px;
@@ -490,6 +496,11 @@ a:hover {
     .feature-icon svg {
         width: 35px;
         height: 35px;
+    }
+    
+    .logo-image {
+        height: 32px;
+        max-width: 160px;
     }
     
     .objective-icon {
