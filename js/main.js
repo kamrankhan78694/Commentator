@@ -104,7 +104,7 @@ function configureNavigation() {
     if (!nav) return;
     
     const currentPage = window.location.pathname;
-    const baseUrl = getBaseUrl();
+    const baseUrl = BASE_URL;
     let navItems = [];
     
     if (currentPage.includes('documentation.html')) {
