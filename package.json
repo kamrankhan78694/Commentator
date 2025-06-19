@@ -29,5 +29,8 @@
   },
   "homepage": "https://github.com/kamrankhan78694/Commentator#readme",
   "devDependencies": {},
-  "dependencies": {}
+  "dependencies": {
+    "ethers": "^6.8.0",
+    "web3.storage": "^4.5.5"
+  }
 }
