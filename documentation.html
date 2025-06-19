@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commentator Documentation - Complete Guide</title>
+    <meta name="description" content="Comprehensive documentation for Commentator - Universal Web Comments System">
+    
+    <!-- Feather Icons for modern SVG icons -->
+    <script src="https://unpkg.com/feather-icons"></script>
+    
+    <!-- CSS - Link to existing stylesheet for consistency -->
+    <link rel="stylesheet" href="css/main.css">
+    
+    <style>
+        /* Documentation-specific styles */
+        .doc-nav {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            width: 250px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            padding: 20px;
+            z-index: 50;
+            max-height: calc(100vh - 120px);
+            overflow-y: auto;
+        }
+        
+        .doc-nav h4 {
+            margin-bottom: 15px;
+            color: #1a202c;
+            font-size: 1.1em;
+        }
+        
+        .doc-nav ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .doc-nav li {
+            margin-bottom: 8px;
+        }
+        
+        .doc-nav a {
+            color: #4a5568;
+            text-decoration: none;
+            font-size: 0.9em;
+            padding: 6px 12px;
+            border-radius: 6px;
+            display: block;
+            transition: all 0.2s ease;
+        }
+        
+        .doc-nav a:hover {
+            background-color: #f7fafc;
+            color: #3182ce;
+        }
+        
+        .doc-nav a.active {
+            background-color: #3182ce;
+            color: white;
+        }
+        
+        .doc-content {
+            margin-right: 280px;
+            padding: 40px 0;
+        }
+        
+        .greeting-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+            margin-bottom: 0;
+        }
+        
+        .greeting-title {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+        
+        .greeting-subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .doc-section {
+            padding: 60px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .doc-section:last-child {
+            border-bottom: none;
+        }
+        
+        .doc-section h2 {
+            font-size: 2.2em;
+            margin-bottom: 30px;
+            color: #1a202c;
+            font-weight: 700;
+        }
+        
+        .doc-section h3 {
+            font-size: 1.6em;
+            margin: 30px 0 20px 0;
+            color: #2d3748;
+            font-weight: 600;
+        }
+        
+        .doc-section h4 {
+            font-size: 1.3em;
+            margin: 25px 0 15px 0;
+            color: #2d3748;
+            font-weight: 600;
+        }
+        
+        .code-block {
+            background-color: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.9em;
+            line-height: 1.4;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+        
+        .feature-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-left: 4px solid #3182ce;
+            transition: transform 0.2s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-2px);
+        }
+        
+        .feature-card h4 {
+            color: #1a202c;
+            margin-bottom: 10px;
+        }
+        
+        .steps-list {
+            counter-reset: step-counter;
+            list-style: none;
+            padding: 0;
+        }
+        
+        .steps-list li {
+            counter-increment: step-counter;
+            margin: 20px 0;
+            padding: 20px;
+            background: #f7fafc;
+            border-radius: 12px;
+            position: relative;
+            padding-left: 70px;
+        }
+        
+        .steps-list li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 20px;
+            top: 20px;
+            background: #3182ce;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        .faq-item {
+            margin: 25px 0;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+        
+        .faq-question {
+            padding: 20px;
+            background: #f7fafc;
+            cursor: pointer;
+            font-weight: 600;
+            color: #1a202c;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.2s ease;
+        }
+        
+        .faq-question:hover {
+            background: #edf2f7;
+        }
+        
+        .faq-answer {
+            padding: 20px;
+            display: none;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .faq-answer.show {
+            display: block;
+        }
+        
+        .file-structure {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.9em;
+            line-height: 1.6;
+            margin: 20px 0;
+        }
+        
+        .highlight {
+            background: #fff3cd;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #856404;
+        }
+        
+        @media (max-width: 768px) {
+            .doc-nav {
+                position: static;
+                width: 100%;
+                margin-bottom: 20px;
+            }
+            
+            .doc-content {
+                margin-right: 0;
+            }
+            
+            .greeting-title {
+                font-size: 2em;
+            }
+            
+            .steps-list li {
+                padding-left: 50px;
+            }
+            
+            .steps-list li::before {
+                width: 25px;
+                height: 25px;
+                font-size: 0.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Main container -->
+    <div id="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="container">
+                <h1 class="logo">📚 Commentator Docs</h1>
+                <nav class="nav">
+                    <a href="index.html">← Back to Home</a>
+                    <a href="https://github.com/kamrankhan78694/Commentator" target="_blank">GitHub</a>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Personal Greeting -->
+        <section class="greeting-section">
+            <div class="container">
+                <h1 class="greeting-title">Welcome, Kamran! 👋</h1>
+                <p class="greeting-subtitle">
+                    This comprehensive documentation covers everything about your Commentator project. 
+                    From installation to contribution guidelines, it's all here to help you and your community succeed.
+                </p>
+            </div>
+        </section>
+
+        <!-- Navigation Sidebar -->
+        <div class="doc-nav">
+            <h4>📖 Navigation</h4>
+            <ul>
+                <li><a href="#overview">Project Overview</a></li>
+                <li><a href="#goals">Project Goals</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#how-it-works">How It Works</a></li>
+                <li><a href="#installation">Installation</a></li>
+                <li><a href="#getting-started">Getting Started</a></li>
+                <li><a href="#project-structure">Project Structure</a></li>
+                <li><a href="#contributing">Contributing</a></li>
+                <li><a href="#faq">FAQ</a></li>
+            </ul>
+        </div>
+
+        <!-- Main Documentation Content -->
+        <main class="doc-content">
+            <!-- Project Overview -->
+            <section id="overview" class="doc-section">
+                <div class="container">
+                    <h2>🗨️ Project Overview</h2>
+                    <p style="font-size: 1.1em; line-height: 1.8; color: #4a5568;">
+                        <strong>Commentator</strong> is an open-source project designed to improve transparency on the web by enabling community-driven feedback. 
+                        It allows users to comment on any website—even those that disable native comments or review systems—helping others make informed decisions and avoid scams.
+                    </p>
+                    <p style="font-size: 1.1em; line-height: 1.8; color: #4a5568; margin-top: 20px;">
+                        The project serves as both a practical tool for web transparency and a foundation for building decentralized communication protocols that serve the public good.
+                    </p>
+                </div>
+            </section>
+
+            <!-- Project Goals -->
+            <section id="goals" class="doc-section">
+                <div class="container">
+                    <h2>🎯 Project Goals: Decentralization</h2>
+                    <p style="font-size: 1.1em; line-height: 1.8; color: #4a5568; margin-bottom: 30px;">
+                        Our long-term vision is to make Commentator a <span class="highlight">fully decentralized public commenting system</span> that cannot be controlled or censored by any single entity.
+                    </p>
+                    
+                    <h3>Key Objectives:</h3>
+                    <div class="feature-grid">
+                        <div class="feature-card">
+                            <h4>🗂 Decentralized Storage</h4>
+                            <p>Store comment data on IPFS or Arweave using tools like <code>web3.storage</code> or <code>Bundlr</code>, ensuring content permanence and censorship resistance.</p>
+                        </div>
+                        <div class="feature-card">
+                            <h4>🆔 Decentralized Identity (DID)</h4>
+                            <p>Use Ethereum wallets (e.g., MetaMask) or identity protocols like ENS and Ceramic to allow users to sign comments without centralized accounts.</p>
+                        </div>
+                        <div class="feature-card">
+                            <h4>🗳️ Community Moderation</h4>
+                            <p>Implement upvote/downvote systems, and explore DAO-style moderation using token-based or reputation-based voting.</p>
+                        </div>
+                        <div class="feature-card">
+                            <h4>🔐 Content Integrity</h4>
+                            <p>Let users cryptographically sign their comments for authenticity and verifiability.</p>
+                        </div>
+                        <div class="feature-card">
+                            <h4>💡 Open Protocol</h4>
+                            <p>Create APIs and standards that can be used by other platforms to fetch or display Commentator data transparently.</p>
+                        </div>
+                    </div>
+                    
+                    <p style="font-size: 1.1em; line-height: 1.8; color: #4a5568; margin-top: 30px;">
+                        This decentralized foundation ensures Commentator is not just a product—but a <strong>protocol that serves the public good</strong>.
+                    </p>
+                </div>
+            </section>
+
+            <!-- Features -->
+            <section id="features" class="doc-section">
+                <div class="container">
+                    <h2>🚀 Features</h2>
+                    <div class="feature-grid">
+                        <div class="feature-card">
+                            <h4>✅ Universal Commenting</h4>
+                            <p>Share feedback on any webpage, regardless of whether it supports native comments.</p>
+                        </div>
+                        <div class="feature-card">
+                            <h4>🛡️ Fraud Prevention</h4>
+                            <p>Expose suspicious websites by enabling users to leave honest reviews.</p>
+                        </div>
+                        <div class="feature-card">
+                            <h4>💬 Open Participation</h4>
+                            <p>Anyone can view or post comments without censorship.</p>
+                        </div>
+                        <div class="feature-card">
+                            <h4>🔓 Fully Open-Source</h4>
+                            <p>Transparent and community-driven, licensed under MIT.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- How It Works -->
+            <section id="how-it-works" class="doc-section">
+                <div class="container">
+                    <h2>🔧 How It Works</h2>
+                    <ol class="steps-list">
+                        <li>
+                            <h4>Install & Access</h4>
+                            <p>Users install a browser extension or use the Commentator interface.</p>
+                        </li>
+                        <li>
+                            <h4>Comment on Any Site</h4>
+                            <p>When visiting a website, they can leave or view comments tied to the domain or specific URL.</p>
+                        </li>
+                        <li>
+                            <h4>Secure Storage</h4>
+                            <p>Comments are stored securely and rendered dynamically.</p>
+                        </li>
+                        <li>
+                            <h4>Community Benefit</h4>
+                            <p>Others benefit from the collective feedback to make better web decisions.</p>
+                        </li>
+                    </ol>
+                </div>
+            </section>
+
+            <!-- Installation -->
+            <section id="installation" class="doc-section">
+                <div class="container">
+                    <h2>📦 Installation</h2>
+                    
+                    <div style="background: #fff3cd; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #ffc107;">
+                        <p><strong>Coming Soon:</strong> Official browser extension and embeddable script.</p>
+                    </div>
+                    
+                    <h3>For Development</h3>
+                    <p>Clone the repository and start developing:</p>
+                    
+                    <div class="code-block">git clone https://github.com/kamrankhan78694/commentator.git
+cd commentator
+npm install
+npm run dev</div>
+                    
+                    <p>The development server will start on <code>http://localhost:3000</code>.</p>
+                </div>
+            </section>
+
+            <!-- Getting Started -->
+            <section id="getting-started" class="doc-section">
+                <div class="container">
+                    <h2>🚀 Getting Started</h2>
+                    
+                    <h3>Quick Start (No Build Required)</h3>
+                    <ol class="steps-list">
+                        <li>
+                            <h4>Clone the repository</h4>
+                            <div class="code-block">git clone https://github.com/kamrankhan78694/commentator.git
+cd commentator</div>
+                        </li>
+                        <li>
+                            <h4>Open the project</h4>
+                            <p>Simply open <code>index.html</code> in your web browser to see the Commentator interface.</p>
+                        </li>
+                        <li>
+                            <h4>Start contributing</h4>
+                            <p>The project structure is organized and ready for development.</p>
+                        </li>
+                    </ol>
+                    
+                    <h3>Development Environment (Coming Soon)</h3>
+                    <p>Once the full development environment is set up, you'll be able to use:</p>
+                    <ul style="margin: 20px 0; padding-left: 20px;">
+                        <li><code>npm install</code> - Install dependencies</li>
+                        <li><code>npm run dev</code> - Start development server</li>
+                        <li><code>npm run build</code> - Build for production</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Project Structure -->
+            <section id="project-structure" class="doc-section">
+                <div class="container">
+                    <h2>📁 Project Structure</h2>
+                    <p>The project is organized as follows:</p>
+                    
+                    <div class="file-structure">commentator/
+├── index.html          # Main entry point and interface
+├── css/
+│   └── main.css       # Stylesheet with comprehensive styling
+├── js/
+│   └── main.js        # JavaScript functionality and interactivity
+├── assets/            # Directory for images and other static resources
+├── documentation.html # This comprehensive documentation
+├── README.md          # Project overview and quick start guide
+├── package.json       # Project configuration and scripts
+└── LICENSE           # MIT License</div>
+                    
+                    <h3>Key Files Explained</h3>
+                    <div class="feature-grid">
+                        <div class="feature-card">
+                            <h4>index.html</h4>
+                            <p>The main interface showcasing Commentator's features and demo functionality.</p>
+                        </div>
+                        <div class="feature-card">
+                            <h4>css/main.css</h4>
+                            <p>Comprehensive stylesheet with clean, accessible styling and responsive design.</p>
+                        </div>
+                        <div class="feature-card">
+                            <h4>js/main.js</h4>
+                            <p>JavaScript functionality including smooth scrolling, comment interface, and navigation highlighting.</p>
+                        </div>
+                        <div class="feature-card">
+                            <h4>documentation.html</h4>
+                            <p>This comprehensive documentation with section navigation and enhanced styling.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Contributing -->
+            <section id="contributing" class="doc-section">
+                <div class="container">
+                    <h2>🤝 Contributing</h2>
+                    <p style="font-size: 1.1em; line-height: 1.8; color: #4a5568; margin-bottom: 30px;">
+                        We welcome contributions from developers of all skill levels. Here's how to get started:
+                    </p>
+                    
+                    <ol class="steps-list">
+                        <li>
+                            <h4>Understanding the Structure</h4>
+                            <p>Start by exploring <code>index.html</code> to understand the UI components and layout. The project uses semantic HTML with clear section organization.</p>
+                        </li>
+                        <li>
+                            <h4>Styling</h4>
+                            <p>CSS is organized in <code>css/main.css</code> with clear sections and comments. The stylesheet follows BEM-like naming conventions and includes comprehensive responsive design.</p>
+                        </li>
+                        <li>
+                            <h4>Functionality</h4>
+                            <p>JavaScript interactions are in <code>js/main.js</code> with modular functions. The code includes smooth scrolling, form handling, and navigation highlighting.</p>
+                        </li>
+                        <li>
+                            <h4>Adding Features</h4>
+                            <p>The comment interface in the demo section shows where core functionality will be implemented. Use the existing patterns for consistency.</p>
+                        </li>
+                    </ol>
+                    
+                    <h3>Development Workflow</h3>
+                    <div class="feature-grid">
+                        <div class="feature-card">
+                            <h4>1. Fork & Clone</h4>
+                            <p>Fork the repository and clone your copy locally for development.</p>
+                        </div>
+                        <div class="feature-card">
+                            <h4>2. Create Branch</h4>
+                            <p>Create a feature branch for your changes to keep work organized.</p>
+                        </div>
+                        <div class="feature-card">
+                            <h4>3. Test Changes</h4>
+                            <p>Test your changes locally by opening <code>index.html</code> in your browser.</p>
+                        </div>
+                        <div class="feature-card">
+                            <h4>4. Submit PR</h4>
+                            <p>Submit a pull request with a clear description of your changes.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- FAQ -->
+            <section id="faq" class="doc-section">
+                <div class="container">
+                    <h2>❓ Frequently Asked Questions</h2>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFaq(this)">
+                            <span>What makes Commentator different from other commenting systems?</span>
+                            <span>+</span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Commentator is designed to be universal and decentralized. Unlike traditional commenting systems that are controlled by website owners, Commentator allows users to comment on ANY website, even those that don't have native commenting systems. Our long-term goal is full decentralization using blockchain and IPFS technologies.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFaq(this)">
+                            <span>How do I get started with development?</span>
+                            <span>+</span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>The easiest way is to clone the repository and open <code>index.html</code> in your browser. No build process is required for basic development. The project uses vanilla HTML, CSS, and JavaScript, making it accessible to developers at all levels.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFaq(this)">
+                            <span>Is there a browser extension available?</span>
+                            <span>+</span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>The browser extension is currently in development. You can track progress on our GitHub repository and contribute to its development. The current web interface serves as a proof of concept and testing ground for the core functionality.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFaq(this)">
+                            <span>How will decentralization work?</span>
+                            <span>+</span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>We plan to implement decentralization through multiple layers: IPFS/Arweave for storage, Ethereum wallets for identity, cryptographic signatures for authenticity, and DAO-style governance for moderation. This ensures no single entity can control or censor the commenting system.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFaq(this)">
+                            <span>What's the current project status?</span>
+                            <span>+</span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>The project is currently in early development with a working web interface and demo functionality. Core features like comment storage, user authentication, and browser extension are in active development. Community contributions are welcome and essential for rapid progress.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFaq(this)">
+                            <span>How can I contribute without coding?</span>
+                            <span>+</span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Non-coding contributions are valuable! You can help with documentation, design, testing, user experience feedback, spreading awareness, or participating in community discussions. Every contribution helps build a better product for everyone.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-section">
+                        <h4>📚 Documentation</h4>
+                        <p>Complete guide for the Commentator project</p>
+                    </div>
+                    <div class="footer-section">
+                        <h4>🔗 Links</h4>
+                        <ul>
+                            <li><a href="index.html">Home</a></li>
+                            <li><a href="https://github.com/kamrankhan78694/Commentator" target="_blank">GitHub Repository</a></li>
+                            <li><a href="https://github.com/kamrankhan78694/Commentator/issues" target="_blank">Report Issues</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-section">
+                        <h4>💡 Get Involved</h4>
+                        <ul>
+                            <li><a href="#contributing">Contributing Guide</a></li>
+                            <li><a href="#faq">FAQ</a></li>
+                            <li><a href="https://github.com/kamrankhan78694/Commentator/blob/main/LICENSE" target="_blank">MIT License</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2024 Commentator. Open source under MIT License.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        /**
+         * Documentation JavaScript
+         * Handles section navigation, URL parameters, and interactive features
+         */
+
+        // Initialize documentation features when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('📚 Documentation initialized');
+            
+            // Initialize all functionality
+            initSectionNavigation();
+            initURLParameterSupport();
+            initNavigationHighlight();
+            
+            // Initialize Feather icons
+            if (typeof feather !== 'undefined') {
+                feather.replace();
+            }
+        });
+
+        /**
+         * Initialize section navigation with smooth scrolling
+         */
+        function initSectionNavigation() {
+            const navLinks = document.querySelectorAll('.doc-nav a[href^="#"]');
+            
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    
+                    if (targetElement) {
+                        // Update URL without page reload
+                        history.pushState(null, null, '#' + targetId);
+                        
+                        // Smooth scroll to target
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                        
+                        // Update active navigation
+                        updateActiveNavigation(targetId);
+                    }
+                });
+            });
+        }
+
+        /**
+         * Initialize URL parameter support for direct section linking
+         */
+        function initURLParameterSupport() {
+            // Check for section parameter in URL on page load
+            const urlParams = new URLSearchParams(window.location.search);
+            const sectionParam = urlParams.get('section');
+            const hashSection = window.location.hash.substring(1);
+            
+            // Prioritize URL hash over query parameter
+            const targetSection = hashSection || sectionParam;
+            
+            if (targetSection) {
+                const targetElement = document.getElementById(targetSection);
+                if (targetElement) {
+                    // Small delay to ensure page is fully loaded
+                    setTimeout(() => {
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                        updateActiveNavigation(targetSection);
+                    }, 100);
+                }
+            }
+        }
+
+        /**
+         * Initialize navigation highlighting on scroll
+         */
+        function initNavigationHighlight() {
+            const sections = document.querySelectorAll('section[id]');
+            const navLinks = document.querySelectorAll('.doc-nav a[href^="#"]');
+            
+            if (sections.length === 0 || navLinks.length === 0) return;
+            
+            // Throttle scroll events for better performance
+            let ticking = false;
+            
+            function updateScrollHighlight() {
+                let current = '';
+                
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop - 100; // Account for header
+                    const sectionHeight = section.clientHeight;
+                    
+                    if (window.scrollY >= sectionTop && window.scrollY < sectionTop + sectionHeight) {
+                        current = section.getAttribute('id');
+                    }
+                });
+                
+                if (current) {
+                    updateActiveNavigation(current);
+                    // Update URL hash without triggering scroll
+                    history.replaceState(null, null, '#' + current);
+                }
+                
+                ticking = false;
+            }
+            
+            window.addEventListener('scroll', function() {
+                if (!ticking) {
+                    requestAnimationFrame(updateScrollHighlight);
+                    ticking = true;
+                }
+            });
+        }
+
+        /**
+         * Update active navigation link
+         * @param {string} activeSection - The ID of the active section
+         */
+        function updateActiveNavigation(activeSection) {
+            const navLinks = document.querySelectorAll('.doc-nav a[href^="#"]');
+            
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + activeSection) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        /**
+         * Toggle FAQ answer visibility
+         * @param {HTMLElement} questionElement - The FAQ question element
+         */
+        function toggleFaq(questionElement) {
+            const answer = questionElement.nextElementSibling;
+            const icon = questionElement.querySelector('span:last-child');
+            
+            if (answer.classList.contains('show')) {
+                answer.classList.remove('show');
+                icon.textContent = '+';
+            } else {
+                // Close all other FAQ items
+                document.querySelectorAll('.faq-answer.show').forEach(item => {
+                    item.classList.remove('show');
+                    item.previousElementSibling.querySelector('span:last-child').textContent = '+';
+                });
+                
+                // Open current FAQ item
+                answer.classList.add('show');
+                icon.textContent = '−';
+            }
+        }
+
+        /**
+         * Utility function to scroll to specific section programmatically
+         * @param {string} sectionId - The ID of the section to scroll to
+         */
+        function scrollToSection(sectionId) {
+            const targetElement = document.getElementById(sectionId);
+            if (targetElement) {
+                targetElement.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+                updateActiveNavigation(sectionId);
+                history.pushState(null, null, '#' + sectionId);
+            }
+        }
+
+        // Expose scrollToSection function globally for external use
+        window.scrollToSection = scrollToSection;
+    </script>
+</body>
+</html>
