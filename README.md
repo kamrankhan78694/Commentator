@@ -1,6 +1,15 @@
 # <img src="assets/logo-light.svg" alt="Commentator" height="40"> Commentator
 
-**Commentator** is an open-source project designed to improve transparency on the web by enabling community-driven feedback. It allows users to comment on any website—even those that disable native comments or review systems—helping others make informed decisions and avoid scams.
+**Commentator** is a **disruptive, scalable technology** designed to revolutionize web transparency through decentralized, community-driven feedback. As the future **universal protocol for web commentary**, it enables users to comment on any website—even those that disable native comments or review systems—while ensuring censorship resistance, authentic user identity, and permanent data ownership.
+
+## 🚀 Disruptive Vision
+
+Commentator is not just another commenting system—it's a **paradigm shift** toward:
+- **Universal Web Commentary**: Breaking the silos of platform-controlled feedback
+- **Decentralized Ownership**: Users own their data and identity, not platforms
+- **Censorship Resistance**: No single entity can silence community voices
+- **Authentic Verification**: Cryptographic proof of user identity and content integrity
+- **Global Scalability**: Designed to serve millions of users across any website, anywhere
 
 ---
 
@@ -15,16 +24,46 @@ Our long-term vision is to make Commentator a **fully decentralized public comme
 - 🔐 **Content Integrity**: Let users cryptographically sign their comments for authenticity and verifiability.
 - 💡 **Open Protocol**: Create APIs and standards that can be used by other platforms to fetch or display Commentator data transparently.
 
-This decentralized foundation ensures Commentator is not just a product—but a protocol that serves the public good.
+This decentralized foundation ensures Commentator is not just a product—but a **disruptive protocol** that scales to serve the global community as a public utility.
+
+## 📊 Scalability Targets
+
+Our ambitious growth and technical targets make Commentator a **scalable technology** ready for global adoption:
+
+### 📈 User Growth Roadmap
+- **Phase 1 (MVP)**: 1,000 active users, 10,000 comments
+- **Phase 2 (Beta)**: 50,000 active users, 500,000 comments  
+- **Phase 3 (Scale)**: 1M active users, 10M comments
+- **Phase 4 (Global)**: 10M+ active users, 100M+ comments
+
+### ⚡ Performance Targets
+- **Response Time**: Sub-500ms comment loading globally
+- **Availability**: 99.9% uptime across distributed infrastructure
+- **Scalability**: Handle 10,000+ concurrent comment submissions
+- **Storage**: Petabyte-scale comment data on decentralized networks
+
+### 🌍 Global Infrastructure
+- **Multi-region Deployment**: Comments served from the nearest edge
+- **Auto-scaling Architecture**: Dynamic resource allocation based on demand
+- **CDN Distribution**: <100ms response times worldwide
+- **Decentralized Redundancy**: No single points of failure
 
 ---
 
 ## 🚀 Features
 
-- ✅ **Universal Commenting** – Share feedback on any webpage, regardless of whether it supports native comments.
-- 🛡️ **Fraud Prevention** – Expose suspicious websites by enabling users to leave honest reviews.
-- 💬 **Open Participation** – Anyone can view or post comments without censorship.
-- 🔓 **Fully Open-Source** – Transparent and community-driven, licensed under MIT.
+### Current Capabilities
+- ✅ **Universal Commenting** – Share feedback on any webpage, regardless of whether it supports native comments
+- 🛡️ **Fraud Prevention** – Expose suspicious websites by enabling users to leave honest reviews
+- 💬 **Open Participation** – Anyone can view or post comments without censorship
+- 🔓 **Fully Open-Source** – Transparent and community-driven, licensed under MIT
+
+### Disruptive Innovations in Development
+- 🌐 **Cross-Platform Protocol** – Works seamlessly across browsers, mobile apps, and third-party integrations
+- 🔐 **Cryptographic Verification** – Tamper-proof comment authenticity and user identity
+- 📊 **Community Governance** – DAO-based moderation with token-weighted voting systems
+- 🗂️ **Permanent Storage** – Comments preserved forever on IPFS and Arweave networks
+- 💡 **Developer Ecosystem** – Open APIs enabling third-party innovation and integration
 
 ---
 
@@ -69,6 +108,9 @@ The development server will start on `http://localhost:3000`.
    - `css/main.css` - Stylesheet with comprehensive styling
    - `js/main.js` - JavaScript functionality and interactivity
    - `assets/` - Directory for images and other static resources
+   - `ROADMAP.md` - Development roadmap and milestones
+   - `ARCHITECTURE.md` - Technical architecture documentation
+   - `CONTRIBUTING.md` - Contribution guidelines and workflow
 
 ### Development Environment (Coming Soon)
 
@@ -108,7 +150,25 @@ If you want to use a Jekyll theme instead:
 
 ### Contributing
 
-1. **Understanding the Structure**: Start by exploring `index.html` to understand the UI components and layout
-2. **Styling**: CSS is organized in `css/main.css` with clear sections and comments
-3. **Functionality**: JavaScript interactions are in `js/main.js` with modular functions
-4. **Adding Features**: The comment interface in the demo section shows where core functionality will be implemented
+Ready to help build the future of decentralized web commentary? 
+
+1. **📖 Read the Documentation**: 
+   - [Development Roadmap](ROADMAP.md) - Understanding our path to disruption
+   - [Technical Architecture](ARCHITECTURE.md) - System design and scalability
+   - [Contributing Guidelines](CONTRIBUTING.md) - How to get involved
+
+2. **🏗️ Project Structure**: Start by exploring `index.html` to understand the UI components and layout
+3. **🎨 Styling**: CSS is organized in `css/main.css` with clear sections and comments
+4. **⚡ Functionality**: JavaScript interactions are in `js/main.js` with modular functions
+5. **🚀 Adding Features**: The comment interface in the demo section shows where core functionality will be implemented
+
+### 🎯 How to Make an Impact
+
+- **🐛 Fix Bugs**: Improve existing functionality and edge cases
+- **✨ Build Features**: Implement Web3 integration and decentralization components
+- **🏗️ Scale Architecture**: Design systems for millions of users
+- **📚 Write Documentation**: Help others understand and contribute to the project
+- **🧪 Test & QA**: Ensure reliability across browsers and platforms
+- **🌍 Spread the Word**: Help build the community around decentralized commentary
+
+**Join us in building technology that serves the public good!** 🚀
