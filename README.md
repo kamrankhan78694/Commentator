@@ -77,6 +77,35 @@ Once the full development environment is set up, you'll be able to use:
 - `npm run dev` - Start development server
 - `npm run build` - Build for production
 
+## 🎨 Jekyll Theme
+
+This project uses **custom static HTML/CSS/JS** architecture rather than a traditional Jekyll theme. However, if deployed via GitHub Pages, it may use Jekyll's default processing. The project is designed to be:
+
+- **Theme-agnostic**: Works as a standalone HTML project or with GitHub Pages
+- **Customizable**: Easy to modify styling and layout through `css/main.css`
+- **Responsive**: Mobile-first design with modern CSS practices
+
+### Theme Customization
+
+To customize the appearance:
+
+1. **Colors & Typography**: Edit variables in `css/main.css` starting from line 23
+2. **Layout**: Modify the grid systems and spacing in the layout components section
+3. **Components**: Update individual component styles (buttons, cards, forms)
+4. **Responsive Design**: Adjust breakpoints and mobile styles in the media queries section
+
+If you want to use a Jekyll theme instead:
+
+1. Create a `_config.yml` file with your preferred theme:
+   ```yaml
+   theme: minima
+   # or
+   remote_theme: pages-themes/minimal@v0.2.0
+   ```
+2. Convert HTML files to Jekyll layouts in `_layouts/` directory
+3. Add Jekyll front matter to content files
+4. See [Jekyll Themes documentation](https://jekyllrb.com/docs/themes/) for more details
+
 ### Contributing
 
 1. **Understanding the Structure**: Start by exploring `index.html` to understand the UI components and layout
