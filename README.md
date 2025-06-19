@@ -1,4 +1,4 @@
-# 🗨️ Commentator
+# <img src="assets/logo-light.svg" alt="Commentator" height="40"> Commentator
 
 **Commentator** is an open-source project designed to improve transparency on the web by enabling community-driven feedback. It allows users to comment on any website—even those that disable native comments or review systems—helping others make informed decisions and avoid scams.
 
