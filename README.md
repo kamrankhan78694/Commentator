@@ -1,6 +1,6 @@
 # <img src="assets/logo-light.svg" alt="Commentator" height="40"> Commentator
 
-**Commentator** is a **disruptive, scalable technology** designed to revolutionize web transparency through decentralized, community-driven feedback. As the future **universal protocol for web commentary**, it enables users to comment on any website—even those that disable native comments or review systems—while ensuring censorship resistance, authentic user identity, and permanent data ownership.
+**Commentator** is **an open-source disruptive, scalable project** designed to revolutionize web transparency through decentralized, community-driven feedback. As the future **universal protocol for web commentary**, it enables users to comment on any website—even those that disable native comments or review systems—while ensuring censorship resistance, authentic user identity, and permanent data ownership.
 
 ## 🚀 Disruptive Vision
 
