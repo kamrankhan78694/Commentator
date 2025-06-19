@@ -1,39 +1,102 @@
 <!-- Footer with project info and links -->
-<footer class="footer">
+<footer class="footer" role="contentinfo">
     <div class="container">
         <div class="footer-content">
             <div class="footer-section">
-                <h4>Commentator</h4>
-                <p>Open-source universal web commenting system</p>
+                <div class="footer-brand">
+                    <h4>Commentator</h4>
+                    <p>Open-source universal web commenting system enabling transparency and community-driven feedback across the web.</p>
+                </div>
+                
+                <!-- Contact Information -->
+                <div class="footer-contact">
+                    <h5>Contact</h5>
+                    <p><span class="contact-item">
+                        <i data-feather="github" aria-hidden="true"></i>
+                        <a href="https://github.com/kamrankhan78694/Commentator" target="_blank" rel="noopener noreferrer">GitHub Project</a>
+                    </span></p>
+                    <p><span class="contact-item">
+                        <i data-feather="mail" aria-hidden="true"></i>
+                        <a href="https://github.com/kamrankhan78694/Commentator/discussions" target="_blank" rel="noopener noreferrer">Community Discussions</a>
+                    </span></p>
+                </div>
             </div>
+            
             <div class="footer-section">
-                <h4>Navigation</h4>
+                <h4>Quick Links</h4>
                 <ul>
                     <li><a href="index.html">Home</a></li>
                     <li><a href="documentation.html">Documentation</a></li>
                     <li><a href="index.html#features">Features</a></li>
                     <li><a href="index.html#about">About</a></li>
+                    <li><a href="index.html#how-it-works">How It Works</a></li>
                 </ul>
             </div>
+            
             <div class="footer-section">
-                <h4>Project Links</h4>
+                <h4>Project</h4>
                 <ul>
-                    <li><a href="https://github.com/kamrankhan78694/Commentator" target="_blank">GitHub Repository</a></li>
-                    <li><a href="https://github.com/kamrankhan78694/Commentator/issues" target="_blank">Report Issues</a></li>
-                    <li><a href="https://github.com/kamrankhan78694/Commentator/blob/main/LICENSE" target="_blank">MIT License</a></li>
+                    <li><a href="https://github.com/kamrankhan78694/Commentator" target="_blank" rel="noopener noreferrer">GitHub Repository</a></li>
+                    <li><a href="https://github.com/kamrankhan78694/Commentator/issues" target="_blank" rel="noopener noreferrer">Report Issues</a></li>
+                    <li><a href="https://github.com/kamrankhan78694/Commentator/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">MIT License</a></li>
+                    <li><a href="https://github.com/kamrankhan78694/Commentator/releases" target="_blank" rel="noopener noreferrer">Releases</a></li>
                 </ul>
             </div>
+            
             <div class="footer-section">
-                <h4>Get Involved</h4>
+                <h4>Community</h4>
                 <ul>
-                    <li><a href="https://github.com/kamrankhan78694/Commentator/pulls" target="_blank">Pull Requests</a></li>
-                    <li><a href="https://github.com/kamrankhan78694/Commentator/discussions" target="_blank">Discussions</a></li>
-                    <li><a href="https://github.com/kamrankhan78694/Commentator/blob/main/README.md" target="_blank">README</a></li>
+                    <li><a href="https://github.com/kamrankhan78694/Commentator/pulls" target="_blank" rel="noopener noreferrer">Pull Requests</a></li>
+                    <li><a href="https://github.com/kamrankhan78694/Commentator/discussions" target="_blank" rel="noopener noreferrer">Discussions</a></li>
+                    <li><a href="https://github.com/kamrankhan78694/Commentator/blob/main/README.md" target="_blank" rel="noopener noreferrer">README</a></li>
+                    <li><a href="https://github.com/kamrankhan78694/Commentator/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener noreferrer">Contributing</a></li>
                 </ul>
+                
+                <!-- Social Media Links -->
+                <div class="footer-social">
+                    <h5>Follow the Project</h5>
+                    <div class="social-links">
+                        <a href="https://github.com/kamrankhan78694/Commentator" target="_blank" rel="noopener noreferrer" aria-label="GitHub Repository">
+                            <i data-feather="github" aria-hidden="true"></i>
+                        </a>
+                        <a href="https://github.com/kamrankhan78694/Commentator/discussions" target="_blank" rel="noopener noreferrer" aria-label="Community Discussions">
+                            <i data-feather="message-circle" aria-hidden="true"></i>
+                        </a>
+                        <a href="https://github.com/kamrankhan78694/Commentator/issues" target="_blank" rel="noopener noreferrer" aria-label="Report Issues">
+                            <i data-feather="alert-circle" aria-hidden="true"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Newsletter Signup Section -->
+            <div class="footer-section footer-newsletter">
+                <h4>Stay Updated</h4>
+                <p>Get notified about new releases and important updates.</p>
+                <form class="newsletter-form" id="newsletter-form" action="#" method="post">
+                    <div class="newsletter-input-group">
+                        <input 
+                            type="email" 
+                            placeholder="Enter your email" 
+                            aria-label="Email address for newsletter"
+                            required
+                            id="newsletter-email"
+                            name="email"
+                        >
+                        <button type="submit" class="btn btn-primary" aria-label="Subscribe to newsletter">
+                            <i data-feather="send" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                    <small class="newsletter-notice">We'll only send important project updates. No spam!</small>
+                </form>
             </div>
         </div>
+        
         <div class="footer-bottom">
-            <p>&copy; 2025 Commentator. Licensed under MIT License.</p>
+            <div class="footer-bottom-content">
+                <p>&copy; 2025 Commentator. Licensed under <a href="https://github.com/kamrankhan78694/Commentator/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">MIT License</a>.</p>
+                <p class="footer-tagline">Building transparency, one comment at a time.</p>
+            </div>
         </div>
     </div>
 </footer>

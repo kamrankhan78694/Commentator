@@ -1,13 +1,29 @@
 <!-- Header section with project branding and navigation -->
-<header class="header">
+<header class="header" role="banner">
     <div class="container">
         <div class="logo">
-            <a href="index.html" style="text-decoration: none;" id="logo-link">
+            <a href="index.html" style="text-decoration: none;" id="logo-link" aria-label="Commentator Home">
                 <img src="assets/logo-light.svg" alt="Commentator - Universal Web Comments" class="logo-image">
             </a>
         </div>
-        <nav class="nav" id="main-nav">
-            <!-- Navigation will be populated by JavaScript based on current page -->
-        </nav>
+        
+        <!-- Mobile menu toggle button -->
+        <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Toggle navigation menu" aria-expanded="false">
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+        </button>
+        
+        <!-- Navigation container -->
+        <div class="nav-container" id="nav-container">
+            <nav class="nav" id="main-nav" role="navigation" aria-label="Main navigation">
+                <!-- Navigation will be populated by JavaScript based on current page -->
+            </nav>
+            
+            <!-- Header CTA button -->
+            <div class="header-cta">
+                <a href="#get-started" class="btn btn-primary" id="header-cta-btn">Get Started</a>
+            </div>
+        </div>
     </div>
 </header>

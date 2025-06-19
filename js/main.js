@@ -55,6 +55,7 @@ async function loadHeaderAndFooter() {
                 // Re-initialize navigation-dependent functions after header is loaded
                 initSmoothScrolling();
                 initNavigationHighlight();
+                initMobileMenu();
             }
         } else {
             console.warn('Failed to load header:', headerResponse.status);
@@ -70,6 +71,12 @@ async function loadHeaderAndFooter() {
                 
                 // Fix footer links to use proper base URL
                 fixFooterLinks(baseUrl);
+                // Initialize footer functionality
+                initNewsletterForm();
+                // Initialize feather icons in footer
+                if (typeof feather !== 'undefined') {
+                    feather.replace();
+                }
             }
         } else {
             console.warn('Failed to load footer:', footerResponse.status);
@@ -136,6 +143,19 @@ function configureNavigation() {
     ).join('');
 }
 
+/**
+ * Scroll to demo section smoothly
+ */
+function scrollToDemo() {
+    const demoSection = document.querySelector('.demo');
+    if (demoSection) {
+        demoSection.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+        });
+    }
+}
+
 // Wait for DOM to be fully loaded before initializing
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🗨️ Commentator interface initialized');
@@ -144,6 +164,91 @@ document.addEventListener('DOMContentLoaded', function() {
     loadHeaderAndFooter();
     initCommentInterface();
 });
+
+/**
+ * Initialize mobile menu functionality
+ */
+function initMobileMenu() {
+    const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+    const navContainer = document.getElementById('nav-container');
+    
+    if (!mobileMenuToggle || !navContainer) return;
+    
+    mobileMenuToggle.addEventListener('click', function() {
+        const isActive = mobileMenuToggle.classList.contains('active');
+        
+        if (isActive) {
+            mobileMenuToggle.classList.remove('active');
+            navContainer.classList.remove('active');
+            mobileMenuToggle.setAttribute('aria-expanded', 'false');
+        } else {
+            mobileMenuToggle.classList.add('active');
+            navContainer.classList.add('active');
+            mobileMenuToggle.setAttribute('aria-expanded', 'true');
+        }
+    });
+    
+    // Close mobile menu when clicking outside
+    document.addEventListener('click', function(e) {
+        const isClickInsideMenu = mobileMenuToggle.contains(e.target) || navContainer.contains(e.target);
+        
+        if (!isClickInsideMenu && navContainer.classList.contains('active')) {
+            mobileMenuToggle.classList.remove('active');
+            navContainer.classList.remove('active');
+            mobileMenuToggle.setAttribute('aria-expanded', 'false');
+        }
+    });
+    
+    // Close mobile menu when window is resized to desktop
+    window.addEventListener('resize', function() {
+        if (window.innerWidth > 768) {
+            mobileMenuToggle.classList.remove('active');
+            navContainer.classList.remove('active');
+            mobileMenuToggle.setAttribute('aria-expanded', 'false');
+        }
+    });
+}
+
+/**
+ * Initialize newsletter form functionality
+ */
+function initNewsletterForm() {
+    const newsletterForm = document.getElementById('newsletter-form');
+    
+    if (!newsletterForm) return;
+    
+    newsletterForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const emailInput = document.getElementById('newsletter-email');
+        const email = emailInput.value.trim();
+        
+        if (!email) {
+            showNotification('Please enter your email address', 'error');
+            return;
+        }
+        
+        if (!isValidEmail(email)) {
+            showNotification('Please enter a valid email address', 'error');
+            return;
+        }
+        
+        // Since this is a demo, we'll just show a success message
+        // In a real implementation, this would send the email to a backend service
+        showNotification('Thank you for subscribing! We\'ll keep you updated on important project news.', 'success');
+        emailInput.value = '';
+    });
+}
+
+/**
+ * Validate email address format
+ * @param {string} email - The email address to validate
+ * @returns {boolean} - True if valid email format
+ */
+function isValidEmail(email) {
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailPattern.test(email);
+}
 
 /**
  * Initialize smooth scrolling for navigation links
@@ -159,6 +264,15 @@ function initSmoothScrolling() {
             const targetElement = document.getElementById(targetId);
             
             if (targetElement) {
+                // Close mobile menu if open
+                const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+                const navContainer = document.getElementById('nav-container');
+                if (mobileMenuToggle && navContainer) {
+                    mobileMenuToggle.classList.remove('active');
+                    navContainer.classList.remove('active');
+                    mobileMenuToggle.setAttribute('aria-expanded', 'false');
+                }
+                
                 targetElement.scrollIntoView({
                     behavior: 'smooth',
                     block: 'start'
@@ -449,18 +563,37 @@ function submitComment(url, comment, commentsSection, commentTextarea) {
 /**
  * Show a notification message
  * @param {string} message - The message to display
+ * @param {string} type - The type of notification ('success', 'error', 'info')
  */
-function showNotification(message) {
+function showNotification(message, type = 'success') {
     // Create notification element
     const notification = document.createElement('div');
-    notification.className = 'notification';
+    notification.className = `notification notification-${type}`;
     notification.textContent = message;
+    
+    // Set colors based on type
+    let backgroundColor, textColor;
+    switch (type) {
+        case 'error':
+            backgroundColor = '#e53e3e';
+            textColor = 'white';
+            break;
+        case 'info':
+            backgroundColor = '#3182ce';
+            textColor = 'white';
+            break;
+        case 'success':
+        default:
+            backgroundColor = '#38a169';
+            textColor = 'white';
+    }
+    
     notification.style.cssText = `
         position: fixed;
         top: 20px;
         right: 20px;
-        background: #38a169;
-        color: white;
+        background: ${backgroundColor};
+        color: ${textColor};
         padding: 15px 20px;
         border-radius: 6px;
         box-shadow: 0 4px 15px rgba(0,0,0,0.2);
@@ -468,6 +601,8 @@ function showNotification(message) {
         opacity: 0;
         transform: translateX(100%);
         transition: all 0.3s ease;
+        max-width: 400px;
+        word-wrap: break-word;
     `;
     
     document.body.appendChild(notification);
