@@ -1,0 +1,55 @@
+# Site settings
+title: "Commentator"
+description: "Universal Web Comments - Improve transparency on the web by enabling community-driven feedback"
+baseurl: ""
+url: "https://kamrankhan78694.github.io/Commentator"
+
+# Author information
+author:
+  name: "Kamran Khan"
+  email: ""
+
+# Jekyll theme
+theme: minima
+
+# Plugins
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-seo-tag
+
+# Minima theme settings
+minima:
+  skin: auto
+
+# Exclude from processing
+exclude:
+  - README.md
+  - LICENSE
+  - package.json
+  - package-lock.json
+  - node_modules/
+  - .git/
+  - .gitignore
+
+# Include files
+include:
+  - _pages
+
+# Collections
+collections:
+  pages:
+    output: true
+    permalink: /:name/
+
+# Markdown settings
+markdown: kramdown
+highlighter: rouge
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+
+# Sass settings
+sass:
+  sass_dir: _sass
+  style: compressed
