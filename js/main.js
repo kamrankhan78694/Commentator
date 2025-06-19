@@ -3,6 +3,7 @@
  * 
  * This file provides basic interactivity for the Commentator homepage.
  * It includes:
+ * - Header and footer component loading
  * - Smooth scrolling navigation
  * - Comment interface placeholder functionality
  * - Basic form handling
@@ -11,11 +12,81 @@
  * Note: This is a foundational file that can be extended as the project grows.
  */
 
+/**
+ * Load header and footer components dynamically
+ */
+async function loadHeaderAndFooter() {
+    try {
+        // Load header
+        const headerResponse = await fetch('includes/header.html');
+        if (headerResponse.ok) {
+            const headerHTML = await headerResponse.text();
+            const headerPlaceholder = document.getElementById('header-placeholder');
+            if (headerPlaceholder) {
+                headerPlaceholder.innerHTML = headerHTML;
+                configureNavigation();
+            }
+        }
+        
+        // Load footer
+        const footerResponse = await fetch('includes/footer.html');
+        if (footerResponse.ok) {
+            const footerHTML = await footerResponse.text();
+            const footerPlaceholder = document.getElementById('footer-placeholder');
+            if (footerPlaceholder) {
+                footerPlaceholder.innerHTML = footerHTML;
+            }
+        }
+    } catch (error) {
+        console.error('Error loading header/footer components:', error);
+    }
+}
+
+/**
+ * Configure navigation based on current page
+ */
+function configureNavigation() {
+    const nav = document.getElementById('main-nav');
+    if (!nav) return;
+    
+    const currentPage = window.location.pathname;
+    let navItems = [];
+    
+    if (currentPage.includes('documentation.html')) {
+        // Documentation page navigation
+        navItems = [
+            { href: '#introduction', text: 'Introduction' },
+            { href: '#getting-started', text: 'Getting Started' },
+            { href: '#features', text: 'Features' },
+            { href: '#installation', text: 'Installation' },
+            { href: '#project-structure', text: 'Structure' },
+            { href: '#contributing', text: 'Contributing' },
+            { href: '#faq', text: 'FAQ' },
+            { href: 'index.html', text: 'Home' }
+        ];
+    } else {
+        // Homepage navigation
+        navItems = [
+            { href: '#features', text: 'Features' },
+            { href: '#how-it-works', text: 'How It Works' },
+            { href: '#about', text: 'About' },
+            { href: 'documentation.html', text: 'Documentation' },
+            { href: 'https://github.com/kamrankhan78694/Commentator', text: 'GitHub', target: '_blank' }
+        ];
+    }
+    
+    // Build navigation HTML
+    nav.innerHTML = navItems.map(item => 
+        `<a href="${item.href}"${item.target ? ` target="${item.target}"` : ''}>${item.text}</a>`
+    ).join('');
+}
+
 // Wait for DOM to be fully loaded before initializing
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🗨️ Commentator interface initialized');
     
     // Initialize all functionality
+    loadHeaderAndFooter();
     initSmoothScrolling();
     initCommentInterface();
     initNavigationHighlight();
