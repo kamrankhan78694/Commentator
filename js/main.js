@@ -143,6 +143,19 @@ function configureNavigation() {
     ).join('');
 }
 
+/**
+ * Scroll to demo section smoothly
+ */
+function scrollToDemo() {
+    const demoSection = document.querySelector('.demo');
+    if (demoSection) {
+        demoSection.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+        });
+    }
+}
+
 // Wait for DOM to be fully loaded before initializing
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🗨️ Commentator interface initialized');
@@ -251,6 +264,15 @@ function initSmoothScrolling() {
             const targetElement = document.getElementById(targetId);
             
             if (targetElement) {
+                // Close mobile menu if open
+                const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+                const navContainer = document.getElementById('nav-container');
+                if (mobileMenuToggle && navContainer) {
+                    mobileMenuToggle.classList.remove('active');
+                    navContainer.classList.remove('active');
+                    mobileMenuToggle.setAttribute('aria-expanded', 'false');
+                }
+                
                 targetElement.scrollIntoView({
                     behavior: 'smooth',
                     block: 'start'

@@ -400,6 +400,69 @@ a:hover {
     background-color: #f7fafc;
 }
 
+/* Get Started Section */
+.get-started {
+    padding: 80px 0;
+    background-color: white;
+}
+
+.get-started-content {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.get-started-steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 40px;
+    margin-top: 50px;
+}
+
+.step-card {
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid #e2e8f0;
+}
+
+.step-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+}
+
+.step-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 50%;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.step-content h4 {
+    color: #1a202c;
+    margin-bottom: 15px;
+    font-size: 1.3em;
+    font-weight: 600;
+}
+
+.step-content p {
+    color: #4a5568;
+    line-height: 1.6;
+    margin-bottom: 25px;
+}
+
+.step-content .btn {
+    margin-top: 10px;
+}
+
 .comment-interface {
     background-color: white;
     padding: 40px;
@@ -807,6 +870,16 @@ a:hover {
         flex-direction: column;
         text-align: center;
         gap: 10px;
+    }
+    
+    /* Get Started section mobile */
+    .get-started-steps {
+        grid-template-columns: 1fr;
+        gap: 25px;
+    }
+    
+    .step-card {
+        padding: 25px;
     }
 }
 
