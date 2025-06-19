@@ -6,6 +6,10 @@
 [![Web3](https://img.shields.io/badge/Web3-Enabled-purple.svg)](https://web3.foundation/)
 [![Decentralized](https://img.shields.io/badge/Decentralized-Network-orange.svg)](https://en.wikipedia.org/wiki/Decentralization)
 [![Community](https://img.shields.io/badge/Community-Driven-brightgreen.svg)](https://github.com/kamrankhan78694/Commentator/discussions)
+[![Contributors](https://img.shields.io/github/contributors/kamrankhan78694/Commentator.svg)](https://github.com/kamrankhan78694/Commentator/graphs/contributors)
+[![Issues](https://img.shields.io/github/issues/kamrankhan78694/Commentator.svg)](https://github.com/kamrankhan78694/Commentator/issues)
+[![Stars](https://img.shields.io/github/stars/kamrankhan78694/Commentator.svg)](https://github.com/kamrankhan78694/Commentator/stargazers)
+[![Forks](https://img.shields.io/github/forks/kamrankhan78694/Commentator.svg)](https://github.com/kamrankhan78694/Commentator/network)
 
 **Commentator** is an open-source, scalable, and disruptive project aimed at transforming web transparency through decentralized, community-driven feedback. As the future universal protocol for web commentary, it empowers users to leave comments on any website—including those that have disabled native comments or review systems—while guaranteeing censorship resistance, verified user identities, and permanent data ownership. By enabling open dialogue everywhere, it helps users make informed decisions and steer clear of scams.
 
