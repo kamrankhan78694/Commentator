@@ -535,11 +535,17 @@ npm run dev</code></pre>
         <div id="footer-placeholder"></div>
     </div>
 
+    <!-- JavaScript - Link to external script for main functionality -->
+    <script src="js/main.js"></script>
+    
     <!-- JavaScript for documentation navigation highlighting -->
     <script>
         // Documentation-specific JavaScript functionality
         document.addEventListener('DOMContentLoaded', function() {
             console.log('📚 Commentator Documentation initialized');
+            
+            // Load header and footer components
+            loadHeaderAndFooter();
             
             // Initialize navigation highlighting
             initDocumentationNavigation();
@@ -550,54 +556,11 @@ npm run dev</code></pre>
 
         /**
          * Initialize navigation highlighting for documentation sections
+         * Uses the same logic as main.js but customized for documentation
          */
         function initDocumentationNavigation() {
-            const sections = document.querySelectorAll('section[id]');
-            const navLinks = document.querySelectorAll('.nav a[href^="#"]');
-            
-            if (sections.length === 0 || navLinks.length === 0) return;
-            
-            window.addEventListener('scroll', function() {
-                let current = '';
-                
-                sections.forEach(section => {
-                    const sectionTop = section.offsetTop;
-                    const sectionHeight = section.clientHeight;
-                    if (scrollY >= (sectionTop - 200)) {
-                        current = section.getAttribute('id');
-                    }
-                });
-                
-                navLinks.forEach(link => {
-                    link.classList.remove('active');
-                    if (link.getAttribute('href') === '#' + current) {
-                        link.classList.add('active');
-                    }
-                });
-            });
-        }
-
-        /**
-         * Initialize smooth scrolling for navigation links
-         */
-        function initSmoothScrolling() {
-            const navLinks = document.querySelectorAll('.nav a[href^="#"], a[href^="#"]');
-            
-            navLinks.forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    
-                    const targetId = this.getAttribute('href').substring(1);
-                    const targetElement = document.getElementById(targetId);
-                    
-                    if (targetElement) {
-                        targetElement.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'start'
-                        });
-                    }
-                });
-            });
+            // Use the existing initNavigationHighlight function from main.js
+            initNavigationHighlight();
         }
 
         // Add styles for active navigation links
