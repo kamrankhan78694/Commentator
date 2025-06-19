@@ -13,36 +13,87 @@
  */
 
 /**
+ * Get the base URL for the site (handles GitHub Pages deployment)
+ */
+function getBaseUrl() {
+    // Check if we're on GitHub Pages
+    if (window.location.hostname === 'kamrankhan78694.github.io') {
+        return '/Commentator/';
+    }
+    // Local development or other deployments
+    return '/';
+}
+
+/**
  * Load header and footer components dynamically
  */
 async function loadHeaderAndFooter() {
     try {
+        const baseUrl = getBaseUrl();
+        
         // Load header
-        const headerResponse = await fetch('includes/header.html');
+        const headerResponse = await fetch(`${baseUrl}includes/header.html`);
         if (headerResponse.ok) {
             const headerHTML = await headerResponse.text();
             const headerPlaceholder = document.getElementById('header-placeholder');
             if (headerPlaceholder) {
                 headerPlaceholder.innerHTML = headerHTML;
+                
+                // Fix the logo link to use proper base URL
+                const logoLink = document.getElementById('logo-link');
+                if (logoLink) {
+                    logoLink.href = `${baseUrl}index.html`;
+                }
+                
+                // Fix the logo image path to use proper base URL
+                const logoImg = headerPlaceholder.querySelector('.logo-image');
+                if (logoImg) {
+                    logoImg.src = `${baseUrl}assets/logo-light.svg`;
+                }
+                
                 configureNavigation();
                 // Re-initialize navigation-dependent functions after header is loaded
                 initSmoothScrolling();
                 initNavigationHighlight();
             }
+        } else {
+            console.warn('Failed to load header:', headerResponse.status);
         }
         
         // Load footer
-        const footerResponse = await fetch('includes/footer.html');
+        const footerResponse = await fetch(`${baseUrl}includes/footer.html`);
         if (footerResponse.ok) {
             const footerHTML = await footerResponse.text();
             const footerPlaceholder = document.getElementById('footer-placeholder');
             if (footerPlaceholder) {
                 footerPlaceholder.innerHTML = footerHTML;
+                
+                // Fix footer links to use proper base URL
+                fixFooterLinks(baseUrl);
             }
+        } else {
+            console.warn('Failed to load footer:', footerResponse.status);
         }
     } catch (error) {
         console.error('Error loading header/footer components:', error);
     }
+}
+
+/**
+ * Fix footer links to use proper base URL
+ */
+function fixFooterLinks(baseUrl) {
+    const footer = document.getElementById('footer-placeholder');
+    if (!footer) return;
+    
+    // Fix internal navigation links
+    const internalLinks = footer.querySelectorAll('a[href^="index.html"], a[href^="documentation.html"]');
+    internalLinks.forEach(link => {
+        const href = link.getAttribute('href');
+        if (href.startsWith('index.html') || href.startsWith('documentation.html')) {
+            link.href = baseUrl + href;
+        }
+    });
 }
 
 /**
@@ -53,6 +104,7 @@ function configureNavigation() {
     if (!nav) return;
     
     const currentPage = window.location.pathname;
+    const baseUrl = getBaseUrl();
     let navItems = [];
     
     if (currentPage.includes('documentation.html')) {
@@ -65,7 +117,7 @@ function configureNavigation() {
             { href: '#project-structure', text: 'Structure' },
             { href: '#contributing', text: 'Contributing' },
             { href: '#faq', text: 'FAQ' },
-            { href: 'index.html', text: 'Home' }
+            { href: `${baseUrl}index.html`, text: 'Home' }
         ];
     } else {
         // Homepage navigation
@@ -73,7 +125,7 @@ function configureNavigation() {
             { href: '#features', text: 'Features' },
             { href: '#how-it-works', text: 'How It Works' },
             { href: '#about', text: 'About' },
-            { href: 'documentation.html', text: 'Documentation' },
+            { href: `${baseUrl}documentation.html`, text: 'Documentation' },
             { href: 'https://github.com/kamrankhan78694/Commentator', text: 'GitHub', target: '_blank' }
         ];
     }
