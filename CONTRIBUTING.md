@@ -20,11 +20,14 @@ Commentator aims to become the **universal protocol for decentralized web commen
 ## 🚀 Getting Started
 
 ### Prerequisites
-- **Node.js** 16+ and npm
+- **Node.js** 16+ and npm (for package management)
+- **Ruby** 3.0+ and Bundler (for Jekyll)
 - **Git** for version control
 - **Modern browser** (Chrome/Firefox) for testing
-- **MetaMask** or similar Web3 wallet (for Web3 features)
-- Basic knowledge of **HTML/CSS/JavaScript**
+- **MetaMask** or similar Web3 wallet (for future Web3 features)
+- Basic knowledge of **HTML/CSS/JavaScript** and **Jekyll/Liquid templating**
+
+> 📋 **Architecture Overview**: Review [JEKYLL_ARCHITECTURE.md](JEKYLL_ARCHITECTURE.md) to understand the current hybrid Jekyll setup before contributing.
 
 ### Quick Setup
 ```bash
@@ -32,14 +35,21 @@ Commentator aims to become the **universal protocol for decentralized web commen
 git clone https://github.com/kamrankhan78694/Commentator.git
 cd Commentator
 
-# Install dependencies (when available)
+# Install Ruby dependencies (Jekyll)
+bundle install
+
+# Install Node dependencies (when available)
 npm install
 
-# Start development server
+# Start Jekyll development server
+bundle exec jekyll serve
+
+# Or use the npm script for simple HTTP server
 npm run dev
 
 # Open in browser
-open http://localhost:3000
+open http://localhost:4000  # Jekyll server
+# or http://localhost:3000   # npm dev server
 ```
 
 ### Development Environment
