@@ -926,3 +926,100 @@ a:hover {
         height: 20px;
     }
 }
+
+/* ==========================================
+   Wallet and NFT Integration Styles
+   ========================================== */
+
+.wallet-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 12px;
+    padding: 25px;
+    margin-bottom: 30px;
+    color: white;
+    text-align: center;
+}
+
+.wallet-status p {
+    margin: 0 0 15px 0;
+    font-size: 1.1em;
+    opacity: 0.9;
+}
+
+.wallet-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.wallet-info p {
+    margin: 0;
+    font-size: 0.95em;
+}
+
+#wallet-address {
+    font-family: 'Courier New', monospace;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#network-name {
+    font-weight: 600;
+}
+
+.nft-comment {
+    border-left: 4px solid #667eea;
+    background: linear-gradient(135deg, #f8f9ff 0%, #f0f2ff 100%);
+}
+
+.nft-badge {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8em;
+    font-weight: 600;
+}
+
+.nft-info {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.nft-info a {
+    color: #667eea;
+    text-decoration: none;
+}
+
+.nft-info a:hover {
+    text-decoration: underline;
+}
+
+.comment-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+}
+
+.help-text {
+    color: #718096;
+    font-style: italic;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .wallet-info {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .wallet-section {
+        padding: 20px;
+    }
+}

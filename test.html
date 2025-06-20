@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NFT Comment System Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .test-section { border: 1px solid #ddd; padding: 15px; margin: 10px 0; border-radius: 5px; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        .info { background-color: #d1ecf1; border-color: #bee5eb; }
+        button { padding: 10px 15px; margin: 5px; cursor: pointer; }
+        code { background-color: #f8f9fa; padding: 2px 4px; border-radius: 3px; }
+    </style>
+</head>
+<body>
+    <h1>🧪 NFT Comment System Tests</h1>
+    
+    <div class="test-section info">
+        <h3>Test Overview</h3>
+        <p>This page tests the basic functionality of the NFT comment system:</p>
+        <ul>
+            <li>IPFS integration (mock mode)</li>
+            <li>Thread ID generation</li>
+            <li>IPFS hash extraction</li>
+            <li>Web3 compatibility checks</li>
+        </ul>
+    </div>
+
+    <div class="test-section">
+        <h3>1. IPFS Integration Test</h3>
+        <button onclick="testIPFS()">Test IPFS Upload</button>
+        <div id="ipfs-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>2. Thread ID Generation Test</h3>
+        <button onclick="testThreadId()">Test Thread ID</button>
+        <div id="thread-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>3. MetaMask Detection Test</h3>
+        <button onclick="testMetaMask()">Test MetaMask</button>
+        <div id="metamask-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>4. IPFS Hash Extraction Test</h3>
+        <button onclick="testHashExtraction()">Test Hash Extraction</button>
+        <div id="hash-result"></div>
+    </div>
+
+    <!-- Include the necessary scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/ethers@6.8.0/dist/ethers.umd.min.js"></script>
+    <script src="js/ipfs.js"></script>
+
+    <script>
+        async function testIPFS() {
+            const resultDiv = document.getElementById('ipfs-result');
+            resultDiv.innerHTML = '<p>Testing IPFS upload...</p>';
+            
+            try {
+                const testComment = "This is a test comment for IPFS upload.";
+                const metadata = { test: true, timestamp: new Date().toISOString() };
+                
+                const ipfsUrl = await IPFSIntegration.uploadCommentToIPFS(testComment, metadata);
+                
+                resultDiv.innerHTML = `
+                    <div class="success">
+                        <strong>✅ IPFS Upload Success!</strong><br>
+                        URL: <code>${ipfsUrl}</code><br>
+                        <small>Note: This is a mock URL for demo purposes</small>
+                    </div>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        <strong>❌ IPFS Upload Failed:</strong><br>
+                        <code>${error.message}</code>
+                    </div>
+                `;
+            }
+        }
+
+        function testThreadId() {
+            const resultDiv = document.getElementById('thread-result');
+            
+            const testUrls = [
+                'https://example.com',
+                'https://github.com/user/repo',
+                'https://www.reddit.com/r/ethereum/comments/123/post/',
+                'https://news.ycombinator.com/item?id=12345'
+            ];
+            
+            let resultsHtml = '<div class="success"><strong>✅ Thread ID Generation Results:</strong><br>';
+            
+            testUrls.forEach(url => {
+                const threadId = IPFSIntegration.generateThreadId(url);
+                resultsHtml += `<code>${url}</code> → <code>${threadId}</code><br>`;
+            });
+            
+            resultsHtml += '</div>';
+            resultDiv.innerHTML = resultsHtml;
+        }
+
+        function testMetaMask() {
+            const resultDiv = document.getElementById('metamask-result');
+            
+            if (typeof window.ethereum !== 'undefined') {
+                resultDiv.innerHTML = `
+                    <div class="success">
+                        <strong>✅ MetaMask Detected!</strong><br>
+                        Provider: <code>${window.ethereum.isMetaMask ? 'MetaMask' : 'Other Web3 Provider'}</code><br>
+                        Network ID: <code id="network-id">Checking...</code>
+                    </div>
+                `;
+                
+                // Try to get network ID
+                window.ethereum.request({ method: 'eth_chainId' })
+                    .then(chainId => {
+                        document.getElementById('network-id').textContent = parseInt(chainId, 16);
+                    })
+                    .catch(err => {
+                        document.getElementById('network-id').textContent = 'Unable to detect';
+                    });
+            } else {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        <strong>❌ MetaMask Not Detected</strong><br>
+                        Please install MetaMask browser extension to use Web3 features.<br>
+                        <a href="https://metamask.io" target="_blank">Download MetaMask</a>
+                    </div>
+                `;
+            }
+        }
+
+        function testHashExtraction() {
+            const resultDiv = document.getElementById('hash-result');
+            
+            const testUrls = [
+                'https://bafybeigdyrzt5sfp7udm7hu76uh7y26nf3efuylqabf3oclgtqy55fbzdi.ipfs.dweb.link/file.json',
+                'ipfs://QmYhMhJTtNk8iDa3kEBRzPjHNJgKhKSgHiZUUJMJNAz9dj/comment.json',
+                'https://gateway.pinata.cloud/ipfs/QmYhMhJTtNk8iDa3kEBRzPjHNJgKhKSgHiZUUJMJNAz9dj',
+                'QmYhMhJTtNk8iDa3kEBRzPjHNJgKhKSgHiZUUJMJNAz9dj'
+            ];
+            
+            let resultsHtml = '<div class="success"><strong>✅ Hash Extraction Results:</strong><br>';
+            
+            testUrls.forEach(url => {
+                const hash = IPFSIntegration.extractIPFSHash(url);
+                resultsHtml += `<small><code>${url}</code></small><br>→ <code>${hash}</code><br><br>`;
+            });
+            
+            resultsHtml += '</div>';
+            resultDiv.innerHTML = resultsHtml;
+        }
+
+        // Show configuration status on load
+        window.addEventListener('load', function() {
+            const isConfigured = IPFSIntegration.isIPFSConfigured();
+            if (!isConfigured) {
+                document.body.insertAdjacentHTML('afterbegin', `
+                    <div class="test-section info">
+                        <h3>⚙️ Configuration Status</h3>
+                        <p><strong>IPFS:</strong> Using mock implementation (no API key configured)</p>
+                        <p><strong>Smart Contract:</strong> Using mock implementation (no contract deployed)</p>
+                        <p>This is normal for demo purposes. See <code>WEB3_SETUP.md</code> for production setup.</p>
+                    </div>
+                `);
+            }
+        });
+    </script>
+</body>
+</html>

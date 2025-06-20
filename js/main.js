@@ -464,8 +464,9 @@ function loadCommentsForUrl(url, commentsSection) {
  * Display comments in the comments section
  * @param {Array} comments - Array of comment objects
  * @param {HTMLElement} commentsSection - The element to display comments in
+ * @param {boolean} isNFT - Whether to render as NFT comments
  */
-function displayComments(comments, commentsSection) {
+function displayComments(comments, commentsSection, isNFT = false) {
     if (comments.length === 0) {
         commentsSection.innerHTML = `
             <div class="no-comments">
@@ -475,16 +476,42 @@ function displayComments(comments, commentsSection) {
         return;
     }
     
-    const commentsHtml = comments.map(comment => `
-        <div class="comment">
-            <div class="comment-header">
-                <span class="comment-author">👤 ${comment.author}</span>
-                <span class="comment-timestamp">${comment.timestamp}</span>
-                <span class="comment-votes">👍 ${comment.votes}</span>
-            </div>
-            <div class="comment-text">${comment.text}</div>
-        </div>
-    `).join('');
+    const commentsHtml = comments.map(comment => {
+        if (comment.isNFT || isNFT) {
+            const shortAddress = comment.author.length > 10 
+                ? `${comment.author.slice(0, 6)}...${comment.author.slice(-4)}`
+                : comment.author;
+            
+            return `
+                <div class="comment nft-comment">
+                    <div class="comment-header">
+                        <span class="comment-author">👤 ${shortAddress}</span>
+                        <span class="comment-timestamp">${comment.timestamp}</span>
+                        <span class="comment-votes">👍 ${comment.votes}</span>
+                        <span class="nft-badge">🖼️ NFT #${comment.nftId || comment.id}</span>
+                    </div>
+                    <div class="comment-text">${comment.text}</div>
+                    <div class="nft-info">
+                        <small>
+                            <a href="${comment.ipfsUrl}" target="_blank" rel="noopener">View on IPFS</a>
+                            | Wallet: <span title="${comment.author}">${shortAddress}</span>
+                        </small>
+                    </div>
+                </div>
+            `;
+        } else {
+            return `
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">👤 ${comment.author}</span>
+                        <span class="comment-timestamp">${comment.timestamp}</span>
+                        <span class="comment-votes">👍 ${comment.votes}</span>
+                    </div>
+                    <div class="comment-text">${comment.text}</div>
+                </div>
+            `;
+        }
+    }).join('');
     
     commentsSection.innerHTML = `
         <div class="comments-list">
@@ -701,3 +728,427 @@ const additionalStyles = `
 const styleSheet = document.createElement('style');
 styleSheet.textContent = additionalStyles;
 document.head.appendChild(styleSheet);
+
+/**
+ * ========================================
+ * WEB3 & NFT Integration
+ * ========================================
+ */
+
+// Contract configuration (update these for your deployment)
+const CONTRACT_CONFIG = {
+    address: '0x1234567890123456789012345678901234567890', // Replace with deployed contract address
+    abi: [
+        // Essential ABI for CommentNFT contract
+        "function mintComment(address to, string memory threadId, string memory ipfsHash) public returns (uint256)",
+        "function getThreadComments(string memory threadId) public view returns (uint256[] memory)",
+        "function getComment(uint256 tokenId) public view returns (tuple(address author, string threadId, string ipfsHash, uint256 timestamp))",
+        "function tokenURI(uint256 tokenId) public view returns (string memory)",
+        "function totalComments() public view returns (uint256)"
+    ],
+    networks: {
+        mumbai: {
+            chainId: '0x13881', // 80001 in hex
+            name: 'Polygon Mumbai',
+            rpcUrl: 'https://rpc-mumbai.maticvigil.com/',
+            blockExplorer: 'https://mumbai.polygonscan.com/'
+        },
+        localhost: {
+            chainId: '0x7a69', // 31337 in hex  
+            name: 'Local Hardhat',
+            rpcUrl: 'http://127.0.0.1:8545',
+            blockExplorer: ''
+        }
+    }
+};
+
+// Web3 state
+let web3State = {
+    provider: null,
+    signer: null,
+    contract: null,
+    userAddress: null,
+    networkId: null,
+    connected: false
+};
+
+/**
+ * Initialize Web3 functionality
+ */
+function initWeb3() {
+    const connectBtn = document.getElementById('connect-wallet-btn');
+    const disconnectBtn = document.getElementById('disconnect-wallet-btn');
+    const submitBtn = document.getElementById('submit-comment-btn');
+    
+    if (connectBtn) {
+        connectBtn.addEventListener('click', connectWallet);
+    }
+    
+    if (disconnectBtn) {
+        disconnectBtn.addEventListener('click', disconnectWallet);
+    }
+    
+    // Check if already connected
+    if (window.ethereum) {
+        window.ethereum.request({ method: 'eth_accounts' })
+            .then(accounts => {
+                if (accounts.length > 0) {
+                    connectWallet();
+                }
+            })
+            .catch(console.error);
+    }
+    
+    // Listen for account changes
+    if (window.ethereum) {
+        window.ethereum.on('accountsChanged', handleAccountsChanged);
+        window.ethereum.on('chainChanged', handleChainChanged);
+    }
+}
+
+/**
+ * Connect to MetaMask wallet
+ */
+async function connectWallet() {
+    try {
+        if (!window.ethereum) {
+            showNotification('MetaMask not detected. Please install MetaMask.', 'error');
+            return;
+        }
+        
+        showNotification('Connecting to MetaMask...', 'info');
+        
+        // Request account access
+        const accounts = await window.ethereum.request({
+            method: 'eth_requestAccounts'
+        });
+        
+        if (accounts.length === 0) {
+            throw new Error('No accounts found');
+        }
+        
+        // Initialize ethers provider
+        web3State.provider = new ethers.BrowserProvider(window.ethereum);
+        web3State.signer = await web3State.provider.getSigner();
+        web3State.userAddress = accounts[0];
+        
+        // Get network info
+        const network = await web3State.provider.getNetwork();
+        web3State.networkId = network.chainId.toString();
+        
+        // Initialize contract (use mock contract for demo)
+        try {
+            web3State.contract = new ethers.Contract(
+                CONTRACT_CONFIG.address,
+                CONTRACT_CONFIG.abi,
+                web3State.signer
+            );
+        } catch (error) {
+            console.warn('Contract not deployed, using mock contract for demo');
+            web3State.contract = null;
+        }
+        
+        web3State.connected = true;
+        updateWalletUI();
+        
+        showNotification('Wallet connected successfully!', 'success');
+        
+    } catch (error) {
+        console.error('Error connecting wallet:', error);
+        showNotification(`Failed to connect wallet: ${error.message}`, 'error');
+    }
+}
+
+/**
+ * Disconnect wallet
+ */
+function disconnectWallet() {
+    web3State = {
+        provider: null,
+        signer: null,
+        contract: null,
+        userAddress: null,
+        networkId: null,
+        connected: false
+    };
+    
+    updateWalletUI();
+    showNotification('Wallet disconnected', 'info');
+}
+
+/**
+ * Handle account changes
+ */
+function handleAccountsChanged(accounts) {
+    if (accounts.length === 0) {
+        disconnectWallet();
+    } else if (accounts[0] !== web3State.userAddress) {
+        connectWallet();
+    }
+}
+
+/**
+ * Handle chain/network changes
+ */
+function handleChainChanged(chainId) {
+    // Reload the page when network changes
+    window.location.reload();
+}
+
+/**
+ * Update wallet UI
+ */
+function updateWalletUI() {
+    const walletStatus = document.getElementById('wallet-status');
+    const walletInfo = document.getElementById('wallet-info');
+    const walletAddress = document.getElementById('wallet-address');
+    const networkName = document.getElementById('network-name');
+    const submitBtn = document.getElementById('submit-comment-btn');
+    
+    if (web3State.connected) {
+        if (walletStatus) walletStatus.style.display = 'none';
+        if (walletInfo) walletInfo.style.display = 'block';
+        
+        if (walletAddress) {
+            const shortAddress = `${web3State.userAddress.slice(0, 6)}...${web3State.userAddress.slice(-4)}`;
+            walletAddress.textContent = shortAddress;
+            walletAddress.title = web3State.userAddress;
+        }
+        
+        if (networkName) {
+            const network = getNetworkName(web3State.networkId);
+            networkName.textContent = network;
+        }
+        
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Submit Comment as NFT';
+        }
+    } else {
+        if (walletStatus) walletStatus.style.display = 'block';
+        if (walletInfo) walletInfo.style.display = 'none';
+        
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Connect Wallet to Submit';
+        }
+    }
+}
+
+/**
+ * Get network name from chain ID
+ */
+function getNetworkName(chainId) {
+    const networks = {
+        '1': 'Ethereum Mainnet',
+        '5': 'Goerli Testnet',
+        '137': 'Polygon Mainnet',
+        '80001': 'Polygon Mumbai',
+        '31337': 'Local Hardhat'
+    };
+    return networks[chainId] || `Network ${chainId}`;
+}
+
+/**
+ * Modified submit comment function with NFT integration
+ */
+async function submitCommentAsNFT(url, comment, commentsSection, commentTextarea) {
+    if (!web3State.connected) {
+        showNotification('Please connect your wallet first', 'error');
+        return;
+    }
+    
+    const submitBtn = document.getElementById('submit-comment-btn');
+    const originalText = submitBtn.textContent;
+    
+    try {
+        // Step 1: Upload to IPFS
+        submitBtn.textContent = 'Uploading to IPFS...';
+        submitBtn.disabled = true;
+        
+        const ipfsUrl = await IPFSIntegration.uploadCommentToIPFS(comment, {
+            author: web3State.userAddress,
+            url: url
+        });
+        
+        console.log('Comment uploaded to IPFS:', ipfsUrl);
+        
+        // Step 2: Mint NFT
+        submitBtn.textContent = 'Minting NFT...';
+        
+        const threadId = IPFSIntegration.generateThreadId(url);
+        const ipfsHash = IPFSIntegration.extractIPFSHash(ipfsUrl);
+        
+        let tokenId;
+        if (web3State.contract) {
+            // Real contract interaction
+            const tx = await web3State.contract.mintComment(
+                web3State.userAddress,
+                threadId,
+                ipfsHash
+            );
+            
+            submitBtn.textContent = 'Confirming transaction...';
+            const receipt = await tx.wait();
+            
+            // Extract token ID from events
+            const event = receipt.logs.find(log => log.topics[0] === ethers.id('CommentMinted(uint256,address,string,string,uint256)'));
+            tokenId = ethers.getBigInt(event?.topics[1] || '0').toString();
+            
+        } else {
+            // Mock NFT minting for demo
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            tokenId = Date.now().toString();
+            console.log('Mock NFT minted with token ID:', tokenId);
+        }
+        
+        // Step 3: Display the new NFT comment
+        const newComment = {
+            id: tokenId,
+            author: web3State.userAddress,
+            text: comment,
+            timestamp: new Date().toLocaleString(),
+            votes: 0,
+            nftId: tokenId,
+            ipfsUrl: ipfsUrl,
+            isNFT: true
+        };
+        
+        displayNFTComment(newComment, commentsSection);
+        
+        // Clear the textarea
+        commentTextarea.value = '';
+        
+        showNotification('Comment minted as NFT successfully! 🎉', 'success');
+        
+    } catch (error) {
+        console.error('Error submitting comment as NFT:', error);
+        showNotification(`Failed to submit comment: ${error.message}`, 'error');
+    } finally {
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = !web3State.connected;
+    }
+}
+
+/**
+ * Display NFT comment in the UI
+ */
+function displayNFTComment(comment, commentsSection) {
+    const existingComments = commentsSection.querySelector('.comments-list');
+    
+    const shortAddress = comment.author.slice(0, 6) + '...' + comment.author.slice(-4);
+    const nftCommentHtml = `
+        <div class="comment nft-comment new-comment">
+            <div class="comment-header">
+                <span class="comment-author">👤 ${shortAddress}</span>
+                <span class="comment-timestamp">${comment.timestamp}</span>
+                <span class="comment-votes">👍 ${comment.votes}</span>
+                <span class="nft-badge">🖼️ NFT #${comment.nftId}</span>
+            </div>
+            <div class="comment-text">${comment.text}</div>
+            <div class="nft-info">
+                <small>
+                    <a href="${comment.ipfsUrl}" target="_blank" rel="noopener">View on IPFS</a>
+                    | Wallet: <span title="${comment.author}">${shortAddress}</span>
+                </small>
+            </div>
+        </div>
+    `;
+    
+    if (existingComments) {
+        existingComments.insertAdjacentHTML('beforeend', nftCommentHtml);
+    } else {
+        displayComments([comment], commentsSection, true);
+    }
+    
+    // Scroll to the new comment
+    setTimeout(() => {
+        const newCommentElement = commentsSection.querySelector('.new-comment');
+        if (newCommentElement) {
+            newCommentElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            setTimeout(() => {
+                newCommentElement.classList.remove('new-comment');
+            }, 3000);
+        }
+    }, 100);
+}
+
+/**
+ * Update the existing submitComment function to use NFT integration
+ */
+function submitComment(url, comment, commentsSection, commentTextarea) {
+    if (web3State.connected) {
+        // Use NFT integration if wallet is connected
+        submitCommentAsNFT(url, comment, commentsSection, commentTextarea);
+    } else {
+        // Fall back to original behavior for demo purposes
+        originalSubmitComment(url, comment, commentsSection, commentTextarea);
+    }
+}
+
+/**
+ * Store original submit comment function
+ */
+function originalSubmitComment(url, comment, commentsSection, commentTextarea) {
+    // Show submitting state
+    const submitBtn = document.getElementById('submit-comment-btn');
+    const originalText = submitBtn.textContent;
+    submitBtn.textContent = 'Submitting...';
+    submitBtn.disabled = true;
+    
+    // Simulate API delay
+    setTimeout(() => {
+        // Create new comment object
+        const newComment = {
+            id: Date.now(),
+            author: 'You', // In a real app, this would be the logged-in user
+            text: comment,
+            timestamp: 'Just now',
+            votes: 0
+        };
+        
+        // Add to existing comments or create new list
+        const existingComments = commentsSection.querySelector('.comments-list');
+        if (existingComments) {
+            // Add to existing comments
+            const newCommentHtml = `
+                <div class="comment new-comment">
+                    <div class="comment-header">
+                        <span class="comment-author">👤 ${newComment.author}</span>
+                        <span class="comment-timestamp">${newComment.timestamp}</span>
+                        <span class="comment-votes">👍 ${newComment.votes}</span>
+                    </div>
+                    <div class="comment-text">${newComment.text}</div>
+                </div>
+            `;
+            existingComments.insertAdjacentHTML('beforeend', newCommentHtml);
+        } else {
+            // Create new comments list
+            displayComments([newComment], commentsSection);
+        }
+        
+        // Clear the textarea
+        commentTextarea.value = '';
+        
+        // Reset submit button
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+        
+        // Show success message
+        showNotification('Comment submitted successfully! 🎉');
+        
+        // Scroll to the new comment
+        const newCommentElement = commentsSection.querySelector('.new-comment');
+        if (newCommentElement) {
+            newCommentElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            setTimeout(() => {
+                newCommentElement.classList.remove('new-comment');
+            }, 3000);
+        }
+    }, 1000);
+}
+
+// Initialize Web3 when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    initWeb3();
+});

@@ -9,6 +9,9 @@
     <!-- Feather Icons for modern SVG icons -->
     <script src="https://unpkg.com/feather-icons"></script>
     
+    <!-- Web3 Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/ethers@6.8.0/dist/ethers.umd.min.js"></script>
+    
     <!-- CSS - Link to external stylesheet for maintainability -->
     <link rel="stylesheet" href="css/main.css">
     
@@ -151,6 +154,20 @@
         <section class="demo" id="demo-section">
             <div class="container">
                 <h3 class="section-title">Comment Interface Preview</h3>
+                
+                <!-- Wallet Connection -->
+                <div class="wallet-section" id="wallet-section">
+                    <div class="wallet-status" id="wallet-status">
+                        <p>Connect your wallet to mint comments as NFTs</p>
+                        <button id="connect-wallet-btn" class="btn btn-primary">Connect MetaMask</button>
+                    </div>
+                    <div class="wallet-info" id="wallet-info" style="display: none;">
+                        <p>Connected: <span id="wallet-address"></span></p>
+                        <p>Network: <span id="network-name"></span></p>
+                        <button id="disconnect-wallet-btn" class="btn btn-secondary">Disconnect</button>
+                    </div>
+                </div>
+                
                 <div class="comment-interface">
                     <!-- This will be the core commenting interface -->
                     <div class="url-input">
@@ -166,9 +183,12 @@
                     
                     <!-- Add comment form -->
                     <div class="add-comment" id="add-comment-form">
-                        <h4>Add Your Comment</h4>
+                        <h4>Add Your Comment (as NFT)</h4>
                         <textarea id="comment-text" placeholder="Share your thoughts about this website..." rows="4"></textarea>
-                        <button id="submit-comment-btn" class="btn btn-primary">Submit Comment</button>
+                        <div class="comment-actions">
+                            <button id="submit-comment-btn" class="btn btn-primary" disabled>Submit Comment as NFT</button>
+                            <small class="help-text">Your comment will be stored on IPFS and minted as an NFT</small>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -216,6 +236,7 @@
     <div id="footer-placeholder"></div>
     
     <!-- JavaScript - Link to external script for functionality -->
+    <script src="js/ipfs.js"></script>
     <script src="js/main.js"></script>
     
     <!-- Initialize Feather Icons -->
