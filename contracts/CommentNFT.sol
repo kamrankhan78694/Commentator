@@ -19,8 +19,8 @@ contract CommentNFT is ERC721, ERC721URIStorage, Ownable {
     // Mapping from token ID to comment metadata
     mapping(uint256 => CommentData) public comments;
     
-    // Mapping from thread ID to list of comment token IDs
-    mapping(string => uint256[]) public threadComments;
+    // Mapping from hashed thread ID (bytes32) to list of comment token IDs
+    mapping(bytes32 => uint256[]) public threadComments;
     
     struct CommentData {
         address author;
