@@ -41,7 +41,7 @@ contract CommentNFT is ERC721, ERC721URIStorage, Ownable {
     
     /**
      * @dev Mint a new comment NFT
-     * @param to Address to mint the NFT to
+     * @param to Address to mint the NFT to (must be msg.sender)
      * @param threadId Thread identifier (e.g., "example.com/thread-123")
      * @param ipfsHash IPFS hash of the comment content
      */
@@ -50,24 +50,28 @@ contract CommentNFT is ERC721, ERC721URIStorage, Ownable {
         string memory threadId,
         string memory ipfsHash
     ) public returns (uint256) {
+        // Prevent unauthorized minting - users can only mint to themselves
+        require(to == msg.sender, "Can only mint to your own address");
+        
         uint256 tokenId = _tokenIdCounter.current();
         _tokenIdCounter.increment();
         
         _safeMint(to, tokenId);
         _setTokenURI(tokenId, ipfsHash);
         
-        // Store comment data
+        // Store comment data - use msg.sender for authenticity
         comments[tokenId] = CommentData({
-            author: to,
+            author: msg.sender,
             threadId: threadId,
             ipfsHash: ipfsHash,
             timestamp: block.timestamp
         });
         
-        // Add to thread
-        threadComments[threadId].push(tokenId);
+        // Add to thread (hash the threadId for efficient storage)
+        bytes32 threadHash = keccak256(abi.encodePacked(threadId));
+        threadComments[threadHash].push(tokenId);
         
-        emit CommentMinted(tokenId, to, threadId, ipfsHash, block.timestamp);
+        emit CommentMinted(tokenId, msg.sender, threadId, ipfsHash, block.timestamp);
         
         return tokenId;
     }
@@ -82,7 +86,8 @@ contract CommentNFT is ERC721, ERC721URIStorage, Ownable {
         view 
         returns (uint256[] memory) 
     {
-        return threadComments[threadId];
+        bytes32 threadHash = keccak256(abi.encodePacked(threadId));
+        return threadComments[threadHash];
     }
     
     /**

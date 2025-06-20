@@ -99,7 +99,7 @@ const tokenIds = await contract.getThreadComments(threadId);
 ## Contract Functions
 
 ### Core Functions
-- `mintComment(address to, string threadId, string ipfsHash)` - Mint new comment NFT
+- `mintComment(address to, string threadId, string ipfsHash)` - Mint new comment NFT (to must equal msg.sender for security)
 - `getThreadComments(string threadId)` - Get all comments for a URL/thread
 - `getComment(uint256 tokenId)` - Get comment metadata by token ID
 - `tokenURI(uint256 tokenId)` - Get IPFS URL for comment content
@@ -143,6 +143,7 @@ For development without Web3.Storage or deployed contracts:
 - Use testnet MATIC, never real funds for testing
 - Validate all user inputs before blockchain interactions
 - Consider implementing comment moderation mechanisms
+- **Access Control**: The `mintComment` function restricts minting to the caller's own address only, preventing unauthorized NFT minting to arbitrary addresses
 
 ## Contributing
 
