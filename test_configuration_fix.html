@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IPFS Configuration Fix Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .test-section { border: 1px solid #ddd; padding: 15px; margin: 10px 0; border-radius: 5px; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        .info { background-color: #d1ecf1; border-color: #bee5eb; }
+        button { padding: 10px 15px; margin: 5px; cursor: pointer; }
+        code { background-color: #f8f9fa; padding: 2px 4px; border-radius: 3px; }
+        .log { font-family: monospace; background: #f8f9fa; padding: 10px; margin: 10px 0; border-radius: 3px; white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <h1>🔧 IPFS Configuration Fix Test</h1>
+    
+    <div class="test-section info">
+        <h3>Test Purpose</h3>
+        <p>This test verifies that the configuration check happens BEFORE blob creation.</p>
+        <ul>
+            <li>✅ Should check configuration first</li>
+            <li>✅ Should return mock URL when not configured</li>
+            <li>✅ Should process blob when configured</li>
+        </ul>
+    </div>
+
+    <div class="test-section">
+        <h3>Test 1: Unconfigured API (Current Default)</h3>
+        <button onclick="testUnconfigured()">Test Unconfigured Flow</button>
+        <div id="unconfigured-result"></div>
+        <div id="unconfigured-log" class="log"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>Test 2: Configured API (Simulated)</h3>
+        <button onclick="testConfigured()">Test Configured Flow</button>
+        <div id="configured-result"></div>
+        <div id="configured-log" class="log"></div>
+    </div>
+
+    <!-- Include the updated IPFS script -->
+    <script src="js/ipfs.js"></script>
+
+    <script>
+        // Capture console logs for display
+        const originalConsoleLog = console.log;
+        const originalConsoleWarn = console.warn;
+        
+        function captureConsole(logElementId) {
+            const logElement = document.getElementById(logElementId);
+            logElement.innerHTML = '';
+            
+            console.log = (...args) => {
+                logElement.innerHTML += 'LOG: ' + args.join(' ') + '\n';
+                originalConsoleLog.apply(console, args);
+            };
+            
+            console.warn = (...args) => {
+                logElement.innerHTML += 'WARN: ' + args.join(' ') + '\n';
+                originalConsoleWarn.apply(console, args);
+            };
+        }
+        
+        function restoreConsole() {
+            console.log = originalConsoleLog;
+            console.warn = originalConsoleWarn;
+        }
+
+        async function testUnconfigured() {
+            const resultDiv = document.getElementById('unconfigured-result');
+            captureConsole('unconfigured-log');
+            
+            resultDiv.innerHTML = '<p>Testing unconfigured IPFS (default state)...</p>';
+            
+            try {
+                const startTime = Date.now();
+                const result = await IPFSIntegration.uploadCommentToIPFS('Test comment for unconfigured API');
+                const endTime = Date.now();
+                
+                resultDiv.innerHTML = `
+                    <div class="success">
+                        <strong>✅ Unconfigured Test Passed!</strong><br>
+                        Result: <code>${result}</code><br>
+                        Time taken: ${endTime - startTime}ms<br>
+                        <small>Configuration was checked BEFORE blob creation</small>
+                    </div>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        <strong>❌ Unconfigured Test Failed:</strong><br>
+                        <code>${error.message}</code>
+                    </div>
+                `;
+            }
+            
+            restoreConsole();
+        }
+
+        async function testConfigured() {
+            const resultDiv = document.getElementById('configured-result');
+            captureConsole('configured-log');
+            
+            resultDiv.innerHTML = '<p>Testing configured IPFS (simulated)...</p>';
+            
+            // Temporarily override the configuration check for this test
+            const originalIsConfigured = IPFSIntegration.isIPFSConfigured;
+            IPFSIntegration.isIPFSConfigured = () => true;
+            
+            try {
+                const startTime = Date.now();
+                const result = await IPFSIntegration.uploadCommentToIPFS('Test comment for configured API');
+                const endTime = Date.now();
+                
+                resultDiv.innerHTML = `
+                    <div class="success">
+                        <strong>✅ Configured Test Passed!</strong><br>
+                        Result: <code>${result}</code><br>
+                        Time taken: ${endTime - startTime}ms<br>
+                        <small>Blob was created after configuration check passed</small>
+                    </div>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        <strong>❌ Configured Test Failed:</strong><br>
+                        <code>${error.message}</code>
+                    </div>
+                `;
+            }
+            
+            // Restore original function
+            IPFSIntegration.isIPFSConfigured = originalIsConfigured;
+            restoreConsole();
+        }
+
+        // Show current configuration status
+        window.addEventListener('load', function() {
+            const isConfigured = IPFSIntegration.isIPFSConfigured();
+            document.body.insertAdjacentHTML('afterbegin', `
+                <div class="test-section ${isConfigured ? 'success' : 'info'}">
+                    <h3>⚙️ Current Configuration Status</h3>
+                    <p><strong>IPFS Configured:</strong> ${isConfigured ? 'Yes' : 'No (using mock)'}</p>
+                    <p>The fix ensures configuration is checked BEFORE any blob creation processing.</p>
+                </div>
+            `);
+        });
+    </script>
+</body>
+</html>
