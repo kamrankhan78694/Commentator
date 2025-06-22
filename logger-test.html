@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Logger Test - Commentator</title>
+    
+    <!-- Main styles -->
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/logger-panel.css">
+    
+    <!-- Feather Icons -->
+    <script src="https://unpkg.com/feather-icons"></script>
+    
+    <style>
+        body {
+            padding: 20px;
+            background: #f7fafc;
+        }
+        
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        
+        .test-button {
+            margin: 5px;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        
+        .test-button.info { background: #3182ce; color: white; }
+        .test-button.success { background: #38a169; color: white; }
+        .test-button.warning { background: #d69e2e; color: white; }
+        .test-button.error { background: #e53e3e; color: white; }
+        .test-button.action { background: #805ad5; color: white; }
+        
+        .test-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        .instructions {
+            background: #e6fffa;
+            border: 1px solid #81e6d9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .instructions h3 {
+            margin: 0 0 10px 0;
+            color: #234e52;
+        }
+        
+        .instructions p {
+            margin: 5px 0;
+            color: #2c7a7b;
+        }
+        
+        .instructions kbd {
+            background: #2c7a7b;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🗨️ Commentator Debug Logger Test</h1>
+        
+        <div class="instructions">
+            <h3>Instructions:</h3>
+            <p>1. Press <kbd>Ctrl + ~</kbd> to toggle the debug panel</p>
+            <p>2. Try the test buttons below to see different log types</p>
+            <p>3. Test the search and filter functionality</p>
+            <p>4. Try dragging the panel around</p>
+            <p>5. Test the resize handle in the bottom-right corner</p>
+            <p>6. Use the "Copy All" button to copy logs to clipboard</p>
+        </div>
+        
+        <h3>Test Buttons:</h3>
+        
+        <button class="test-button info" onclick="testInfo()">
+            Log Info Message
+        </button>
+        
+        <button class="test-button success" onclick="testSuccess()">
+            Log Success Message  
+        </button>
+        
+        <button class="test-button warning" onclick="testWarning()">
+            Log Warning Message
+        </button>
+        
+        <button class="test-button error" onclick="testError()">
+            Log Error Message
+        </button>
+        
+        <button class="test-button action" onclick="testAction()">
+            Log Action Message
+        </button>
+        
+        <br><br>
+        
+        <button class="test-button info" onclick="testBulkLogs()">
+            Generate Bulk Logs (50 entries)
+        </button>
+        
+        <button class="test-button warning" onclick="testWithDetails()">
+            Log with Details Object
+        </button>
+        
+        <button class="test-button error" onclick="testLongMessage()">
+            Log Very Long Message
+        </button>
+        
+        <br><br>
+        
+        <button class="test-button action" onclick="showPanel()">
+            Show Debug Panel
+        </button>
+        
+        <button class="test-button info" onclick="hidePanel()">
+            Hide Debug Panel
+        </button>
+        
+        <button class="test-button warning" onclick="clearLogs()">
+            Clear All Logs
+        </button>
+        
+        <div style="margin-top: 30px;">
+            <h3>Features to Test:</h3>
+            <ul>
+                <li>✅ Keyboard shortcut (Ctrl + ~)</li>
+                <li>✅ Drag panel by header</li>
+                <li>✅ Resize panel using bottom-right handle</li>
+                <li>✅ Filter logs by type (dropdown)</li>
+                <li>✅ Search logs (search box)</li>
+                <li>✅ Copy all logs to clipboard</li>
+                <li>✅ Clear all logs</li>
+                <li>✅ Minimize panel</li>
+                <li>✅ Real-time log animation</li>
+                <li>✅ Responsive design (try resizing window)</li>
+            </ul>
+        </div>
+    </div>
+    
+    <!-- Logger System -->
+    <script src="js/logger.js"></script>
+    
+    <script>
+        // Initialize Feather icons
+        feather.replace();
+        
+        // Test functions
+        function testInfo() {
+            window.CommentatorLogger.info('This is an info message - everything is working normally', 'TEST');
+        }
+        
+        function testSuccess() {
+            window.CommentatorLogger.success('Operation completed successfully! All systems are go.', 'TEST');
+        }
+        
+        function testWarning() {
+            window.CommentatorLogger.warning('Warning: This is a potential issue that needs attention', 'TEST');
+        }
+        
+        function testError() {
+            window.CommentatorLogger.error('Error: Something went wrong and needs immediate attention', 'TEST');
+        }
+        
+        function testAction() {
+            // Simulate different action statuses
+            const statuses = ['info', 'success', 'warning', 'error'];
+            const actions = [
+                'User login attempt',
+                'Data save operation', 
+                'Network request',
+                'File upload',
+                'Form validation'
+            ];
+            
+            const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
+            const randomAction = actions[Math.floor(Math.random() * actions.length)];
+            
+            window.CommentatorLogger.action(`${randomAction} - ${randomStatus}`, randomStatus, 'ACTION');
+        }
+        
+        function testBulkLogs() {
+            const messages = [
+                'Database connection established',
+                'User authentication verified', 
+                'Loading user preferences',
+                'Fetching recent activity',
+                'Initializing UI components',
+                'Setting up event listeners',
+                'Validating form data',
+                'Processing user input',
+                'Updating display elements',
+                'Saving changes to database'
+            ];
+            
+            const levels = ['info', 'success', 'warning', 'error', 'action'];
+            const categories = ['DB', 'AUTH', 'UI', 'API', 'VALIDATION'];
+            
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const message = messages[Math.floor(Math.random() * messages.length)];
+                    const level = levels[Math.floor(Math.random() * levels.length)];
+                    const category = categories[Math.floor(Math.random() * categories.length)];
+                    
+                    window.CommentatorLogger.log(`${message} (${i + 1}/50)`, level, category);
+                }, i * 100);
+            }
+        }
+        
+        function testWithDetails() {
+            const details = {
+                userId: 12345,
+                sessionId: 'abc-123-def-456',
+                userAgent: navigator.userAgent,
+                timestamp: new Date().toISOString(),
+                metadata: {
+                    page: 'test-page',
+                    action: 'test-action',
+                    parameters: {
+                        test: true,
+                        environment: 'development'
+                    }
+                }
+            };
+            
+            window.CommentatorLogger.warning('Complex operation with detailed context information', 'SYSTEM', details);
+        }
+        
+        function testLongMessage() {
+            const longMessage = 'This is a very long message that tests how the debug panel handles extensive text content. '.repeat(10) + 'This message should wrap properly and remain readable within the panel constraints.';
+            
+            window.CommentatorLogger.info(longMessage, 'LONG_MESSAGE');
+        }
+        
+        function showPanel() {
+            window.CommentatorLogger.show();
+        }
+        
+        function hidePanel() {
+            window.CommentatorLogger.hide();
+        }
+        
+        function clearLogs() {
+            window.CommentatorLogger.clearLogs();
+        }
+        
+        // Initialize logger and show welcome messages
+        setTimeout(() => {
+            window.CommentatorLogger.success('Debug Logger Test Page Loaded', 'INIT');
+            window.CommentatorLogger.info('Press Ctrl + ~ to toggle the debug panel', 'HELP');
+            window.CommentatorLogger.action('Ready for testing', 'success', 'TEST');
+        }, 500);
+    </script>
+</body>
+</html>

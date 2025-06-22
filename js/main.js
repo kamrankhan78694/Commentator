@@ -34,6 +34,9 @@ async function loadHeaderAndFooter() {
         // Load header
         const headerResponse = await fetch(`${baseUrl}includes/header.html`);
         if (headerResponse.ok) {
+            if (window.CommentatorLogger) {
+                window.CommentatorLogger.success('Header loaded successfully', 'COMPONENTS');
+            }
             const headerHTML = await headerResponse.text();
             const headerPlaceholder = document.getElementById('header-placeholder');
             if (headerPlaceholder) {
@@ -60,6 +63,9 @@ async function loadHeaderAndFooter() {
             }
         } else {
             console.warn('Failed to load header:', headerResponse.status);
+            if (window.CommentatorLogger) {
+                window.CommentatorLogger.error(`Failed to load header: ${headerResponse.status}`, 'COMPONENTS');
+            }
         }
         
         // Load breadcrumb
@@ -71,6 +77,9 @@ async function loadHeaderAndFooter() {
         // Load footer
         const footerResponse = await fetch(`${baseUrl}includes/footer.html`);
         if (footerResponse.ok) {
+            if (window.CommentatorLogger) {
+                window.CommentatorLogger.success('Footer loaded successfully', 'COMPONENTS');
+            }
             const footerHTML = await footerResponse.text();
             const footerPlaceholder = document.getElementById('footer-placeholder');
             if (footerPlaceholder) {
@@ -87,6 +96,9 @@ async function loadHeaderAndFooter() {
             }
         } else {
             console.warn('Failed to load footer:', footerResponse.status);
+            if (window.CommentatorLogger) {
+                window.CommentatorLogger.error(`Failed to load footer: ${footerResponse.status}`, 'COMPONENTS');
+            }
         }
         
         // Initialize back to top button
@@ -99,6 +111,9 @@ async function loadHeaderAndFooter() {
         
     } catch (error) {
         console.error('Error loading header/footer components:', error);
+        if (window.CommentatorLogger) {
+            window.CommentatorLogger.error('Error loading header/footer components', 'COMPONENTS', error);
+        }
     }
 }
 
@@ -175,9 +190,26 @@ function scrollToDemo() {
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🗨️ Commentator interface initialized');
     
+    // Log application initialization
+    if (window.CommentatorLogger) {
+        window.CommentatorLogger.info('Application initializing...', 'INIT');
+        window.CommentatorLogger.action('Loading header and footer components', 'info', 'INIT');
+    }
+    
     // Initialize all functionality
     loadHeaderAndFooter();
     initCommentInterface();
+    
+    // Initialize debug help button
+    initDebugHelpButton();
+    
+    // Log successful initialization
+    setTimeout(() => {
+        if (window.CommentatorLogger) {
+            window.CommentatorLogger.success('Application initialized successfully', 'INIT');
+            window.CommentatorLogger.info('Debug panel available - Press Ctrl+~ to toggle', 'HELP');
+        }
+    }, 1000);
 });
 
 /**
@@ -323,6 +355,9 @@ function initCommentInterface() {
     // Handle "View Demo" button click
     if (demoBtn) {
         demoBtn.addEventListener('click', function() {
+            if (window.CommentatorLogger) {
+                window.CommentatorLogger.action('User clicked "View Demo" button', 'info', 'USER_INTERACTION');
+            }
             // Scroll to demo section and focus on URL input
             const demoSection = document.getElementById('demo-section');
             if (demoSection) {
@@ -339,13 +374,23 @@ function initCommentInterface() {
         loadCommentsBtn.addEventListener('click', function() {
             const url = urlInput.value.trim();
             
+            if (window.CommentatorLogger) {
+                window.CommentatorLogger.action(`User clicked "Load Comments" for URL: ${url || '(empty)'}`, 'info', 'USER_INTERACTION');
+            }
+            
             if (!url) {
+                if (window.CommentatorLogger) {
+                    window.CommentatorLogger.warning('User attempted to load comments with empty URL', 'VALIDATION');
+                }
                 showNotification('Please enter a valid URL', 'error');
                 urlInput.focus();
                 return;
             }
             
             if (!isValidUrl(url)) {
+                if (window.CommentatorLogger) {
+                    window.CommentatorLogger.warning(`User entered invalid URL: ${url}`, 'VALIDATION');
+                }
                 showNotification('Please enter a valid URL (e.g., https://example.com)', 'error');
                 urlInput.focus();
                 return;
@@ -685,6 +730,10 @@ function validateAccessibility() {
  * @param {HTMLElement} commentsSection - The element to display comments in
  */
 async function loadCommentsForUrl(url, commentsSection) {
+    if (window.CommentatorLogger) {
+        window.CommentatorLogger.action(`Loading comments for ${url}`, 'info', 'COMMENTS');
+    }
+    
     // Show loading state
     commentsSection.innerHTML = `
         <div class="loading">
@@ -700,6 +749,10 @@ async function loadCommentsForUrl(url, commentsSection) {
         
         // Load comments from Firebase
         const comments = await window.FirebaseService.loadComments(url);
+        
+        if (window.CommentatorLogger) {
+            window.CommentatorLogger.success(`Loaded ${comments.length} comments for ${url}`, 'COMMENTS');
+        }
         
         // Format timestamps for display
         const formattedComments = comments.map(comment => ({
@@ -735,6 +788,9 @@ async function loadCommentsForUrl(url, commentsSection) {
         
     } catch (error) {
         console.error('Error loading comments:', error);
+        if (window.CommentatorLogger) {
+            window.CommentatorLogger.error(`Failed to load comments for ${url}: ${error.message}`, 'COMMENTS', error);
+        }
         commentsSection.innerHTML = `
             <div class="error-state">
                 <p>❌ Failed to load comments: ${error.message}</p>
@@ -750,6 +806,9 @@ async function loadCommentsForUrl(url, commentsSection) {
         const retryButton = document.getElementById('retry-button');
         if (retryButton) {
             retryButton.addEventListener('click', () => {
+                if (window.CommentatorLogger) {
+                    window.CommentatorLogger.action('Retrying comment load', 'info', 'COMMENTS');
+                }
                 loadCommentsForUrl(url, commentsSection);
             });
         }
@@ -1525,6 +1584,21 @@ function formatTimestamp(timestamp) {
     // For older dates, show actual date
     const date = new Date(timestamp);
     return date.toLocaleDateString();
+}
+
+/**
+ * Initialize debug help button functionality
+ */
+function initDebugHelpButton() {
+    const debugHelpBtn = document.getElementById('debug-help-btn');
+    if (debugHelpBtn && window.CommentatorLogger) {
+        debugHelpBtn.addEventListener('click', function() {
+            window.CommentatorLogger.toggle();
+            if (window.CommentatorLogger) {
+                window.CommentatorLogger.action('Debug panel toggled via help button', 'info', 'USER_INTERACTION');
+            }
+        });
+    }
 }
 
 /**
