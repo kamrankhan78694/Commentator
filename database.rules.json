@@ -1,7 +1,76 @@
 {
-  /* Visit https://firebase.google.com/docs/database/security to learn more about security rules. */
   "rules": {
-    ".read": false,
-    ".write": false
+    "comments": {
+      "$urlHash": {
+        ".read": true,
+        ".write": "auth != null",
+        ".validate": "newData.hasChildren(['text', 'author', 'timestamp'])",
+        "text": {
+          ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 5000"
+        },
+        "author": {
+          ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 100"
+        },
+        "timestamp": {
+          ".validate": "newData.isNumber()"
+        },
+        "votes": {
+          ".validate": "newData.isNumber()"
+        },
+        "nftId": {
+          ".validate": "newData.isString() || newData.isNumber()"
+        },
+        "ipfsUrl": {
+          ".validate": "newData.isString()"
+        },
+        "isNFT": {
+          ".validate": "newData.isBoolean()"
+        }
+      }
+    },
+    "users": {
+      "$userId": {
+        ".read": "auth != null && auth.uid == $userId",
+        ".write": "auth != null && auth.uid == $userId",
+        ".validate": "newData.hasChildren(['displayName', 'createdAt'])",
+        "displayName": {
+          ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 50"
+        },
+        "email": {
+          ".validate": "newData.isString()"
+        },
+        "walletAddress": {
+          ".validate": "newData.isString()"
+        },
+        "createdAt": {
+          ".validate": "newData.isNumber()"
+        },
+        "lastActive": {
+          ".validate": "newData.isNumber()"
+        }
+      }
+    },
+    "sessions": {
+      "$sessionId": {
+        ".read": "auth != null",
+        ".write": "auth != null",
+        ".validate": "newData.hasChildren(['userId', 'createdAt'])",
+        "userId": {
+          ".validate": "newData.isString() && auth.uid == newData.val()"
+        },
+        "createdAt": {
+          ".validate": "newData.isNumber()"
+        },
+        "lastActivity": {
+          ".validate": "newData.isNumber()"
+        },
+        "userAgent": {
+          ".validate": "newData.isString()"
+        },
+        "ipAddress": {
+          ".validate": "newData.isString()"
+        }
+      }
+    }
   }
 }
