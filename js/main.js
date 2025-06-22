@@ -56,10 +56,17 @@ async function loadHeaderAndFooter() {
                 initSmoothScrolling();
                 initNavigationHighlight();
                 initMobileMenu();
+                initKeyboardNavigation();
             }
         } else {
             console.warn('Failed to load header:', headerResponse.status);
         }
+        
+        // Load breadcrumb
+        await loadBreadcrumb(baseUrl);
+        
+        // Load navigation schema
+        await loadNavigationSchema(baseUrl);
         
         // Load footer
         const footerResponse = await fetch(`${baseUrl}includes/footer.html`);
@@ -81,6 +88,15 @@ async function loadHeaderAndFooter() {
         } else {
             console.warn('Failed to load footer:', footerResponse.status);
         }
+        
+        // Initialize back to top button
+        initBackToTop();
+        
+        // Run accessibility validation in development
+        setTimeout(() => {
+            validateAccessibility();
+        }, 1000);
+        
     } catch (error) {
         console.error('Error loading header/footer components:', error);
     }
@@ -422,6 +438,245 @@ function isValidUrl(string) {
     } catch (_) {
         return false;
     }
+}
+
+/**
+ * Load breadcrumb navigation
+ */
+async function loadBreadcrumb(baseUrl) {
+    try {
+        const breadcrumbResponse = await fetch(`${baseUrl}includes/breadcrumb.html`);
+        if (breadcrumbResponse.ok) {
+            const breadcrumbHTML = await breadcrumbResponse.text();
+            
+            // Insert breadcrumb after header
+            const header = document.querySelector('.header');
+            if (header) {
+                const breadcrumbContainer = document.createElement('div');
+                breadcrumbContainer.innerHTML = breadcrumbHTML;
+                header.parentNode.insertBefore(breadcrumbContainer.firstElementChild, header.nextSibling);
+                
+                // Generate breadcrumb items
+                generateBreadcrumbItems(baseUrl);
+            }
+        }
+    } catch (error) {
+        console.warn('Failed to load breadcrumb:', error);
+    }
+}
+
+/**
+ * Generate breadcrumb items based on current page
+ */
+function generateBreadcrumbItems(baseUrl) {
+    const breadcrumbList = document.querySelector('.breadcrumb-list');
+    if (!breadcrumbList) return;
+    
+    const currentPath = window.location.pathname;
+    const pathSegments = currentPath.split('/').filter(segment => segment);
+    
+    // Always start with Home
+    const breadcrumbItems = [
+        { name: 'Home', url: `${baseUrl}index.html`, position: 1 }
+    ];
+    
+    // Add path-specific breadcrumbs
+    if (currentPath.includes('/docs/')) {
+        breadcrumbItems.push({ name: 'Documentation', url: `${baseUrl}docs/`, position: 2 });
+        
+        // Add specific documentation page
+        const docPage = pathSegments[pathSegments.length - 1];
+        if (docPage && docPage !== 'index.html') {
+            const pageName = docPage.replace('.html', '').replace(/-/g, ' ')
+                .replace(/\b\w/g, l => l.toUpperCase());
+            breadcrumbItems.push({ name: pageName, url: '', position: 3, current: true });
+        }
+    }
+    
+    // Generate breadcrumb HTML with schema markup
+    breadcrumbList.innerHTML = breadcrumbItems.map((item, index) => {
+        if (item.current) {
+            return `
+                <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                    <span class="breadcrumb-current" itemprop="name">${item.name}</span>
+                    <meta itemprop="position" content="${item.position}">
+                </li>
+            `;
+        } else {
+            return `
+                <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                    <a href="${item.url}" class="breadcrumb-link" itemprop="item">
+                        <span itemprop="name">${item.name}</span>
+                    </a>
+                    <meta itemprop="position" content="${item.position}">
+                </li>
+            `;
+        }
+    }).join('');
+}
+
+/**
+ * Load navigation schema for SEO
+ */
+async function loadNavigationSchema(baseUrl) {
+    try {
+        const schemaResponse = await fetch(`${baseUrl}includes/navigation-schema.html`);
+        if (schemaResponse.ok) {
+            const schemaHTML = await schemaResponse.text();
+            
+            // Add schema to head
+            const head = document.querySelector('head');
+            if (head) {
+                const schemaContainer = document.createElement('div');
+                schemaContainer.innerHTML = schemaHTML;
+                head.appendChild(schemaContainer);
+            }
+        }
+    } catch (error) {
+        console.warn('Failed to load navigation schema:', error);
+    }
+}
+
+/**
+ * Initialize keyboard navigation
+ */
+function initKeyboardNavigation() {
+    // Add keyboard support for navigation links
+    const navLinks = document.querySelectorAll('.nav a');
+    
+    navLinks.forEach((link, index) => {
+        link.addEventListener('keydown', function(e) {
+            const links = Array.from(navLinks);
+            const currentIndex = links.indexOf(this);
+            
+            switch (e.key) {
+                case 'ArrowLeft':
+                case 'ArrowUp':
+                    e.preventDefault();
+                    const prevIndex = currentIndex > 0 ? currentIndex - 1 : links.length - 1;
+                    links[prevIndex].focus();
+                    break;
+                case 'ArrowRight':
+                case 'ArrowDown':
+                    e.preventDefault();
+                    const nextIndex = currentIndex < links.length - 1 ? currentIndex + 1 : 0;
+                    links[nextIndex].focus();
+                    break;
+                case 'Home':
+                    e.preventDefault();
+                    links[0].focus();
+                    break;
+                case 'End':
+                    e.preventDefault();
+                    links[links.length - 1].focus();
+                    break;
+            }
+        });
+    });
+    
+    // Escape key to close mobile menu
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+            const navContainer = document.getElementById('nav-container');
+            
+            if (mobileMenuToggle && navContainer && navContainer.classList.contains('active')) {
+                mobileMenuToggle.classList.remove('active');
+                navContainer.classList.remove('active');
+                mobileMenuToggle.setAttribute('aria-expanded', 'false');
+                mobileMenuToggle.focus();
+            }
+        }
+    });
+}
+
+/**
+ * Initialize back to top button
+ */
+function initBackToTop() {
+    // Create back to top button
+    const backToTopBtn = document.createElement('button');
+    backToTopBtn.className = 'back-to-top';
+    backToTopBtn.innerHTML = '<i data-feather="arrow-up"></i>';
+    backToTopBtn.setAttribute('aria-label', 'Back to top');
+    backToTopBtn.setAttribute('title', 'Back to top');
+    
+    document.body.appendChild(backToTopBtn);
+    
+    // Show/hide button based on scroll position
+    function toggleBackToTop() {
+        if (window.pageYOffset > 300) {
+            backToTopBtn.classList.add('visible');
+        } else {
+            backToTopBtn.classList.remove('visible');
+        }
+    }
+    
+    // Scroll to top when clicked
+    backToTopBtn.addEventListener('click', function() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    });
+    
+    // Listen for scroll events
+    window.addEventListener('scroll', toggleBackToTop);
+    
+    // Initialize feather icons for the button
+    if (typeof feather !== 'undefined') {
+        feather.replace();
+    }
+}
+
+/**
+ * Basic accessibility validation
+ */
+function validateAccessibility() {
+    const issues = [];
+    
+    // Check for missing alt text on images
+    const images = document.querySelectorAll('img');
+    images.forEach(img => {
+        if (!img.getAttribute('alt')) {
+            issues.push(`Image missing alt text: ${img.src}`);
+        }
+    });
+    
+    // Check for proper heading hierarchy
+    const headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+    let lastLevel = 0;
+    headings.forEach(heading => {
+        const level = parseInt(heading.tagName.charAt(1));
+        if (level > lastLevel + 1) {
+            issues.push(`Heading hierarchy issue: ${heading.tagName} after h${lastLevel}`);
+        }
+        lastLevel = level;
+    });
+    
+    // Check for interactive elements without proper focus indicators
+    const interactiveElements = document.querySelectorAll('a, button, input, textarea, select');
+    interactiveElements.forEach(element => {
+        const style = window.getComputedStyle(element, ':focus');
+        if (!style.outline || style.outline === 'none') {
+            if (!style.boxShadow || !style.border) {
+                issues.push(`Interactive element may lack proper focus indicator: ${element.tagName}`);
+            }
+        }
+    });
+    
+    // Log issues in development
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        if (issues.length > 0) {
+            console.group('🔍 Accessibility Issues Found:');
+            issues.forEach(issue => console.warn(issue));
+            console.groupEnd();
+        } else {
+            console.log('✅ No accessibility issues detected');
+        }
+    }
+    
+    return issues;
 }
 
 /**
