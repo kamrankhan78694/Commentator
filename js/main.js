@@ -474,7 +474,7 @@ async function loadCommentsForUrl(url, commentsSection) {
         `;
         const retryButton = document.getElementById('retry-button');
         retryButton.addEventListener('click', () => {
-            loadCommentsForUrl(url, document.getElementById('comments-section'));
+            loadCommentsForUrl(url, commentsSection);
         });
     }
 }
