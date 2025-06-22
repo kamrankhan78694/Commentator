@@ -1,89 +1,172 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Welcome to Firebase Hosting</title>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commentator - Universal Web Comments</title>
+    <meta name="description" content="Universal commenting system enabling community-driven feedback on any website">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.28.0/feather.min.css">
+    
+    <!-- Feather Icons -->
+    <script src="https://unpkg.com/feather-icons"></script>
+</head>
+<body>
+    <div id="app">
+        <!-- Header placeholder - will be loaded dynamically -->
+        <div id="header-placeholder"></div>
 
-    <!-- update the version number as needed -->
-    <script defer src="/__/firebase/11.9.1/firebase-app-compat.js"></script>
-    <!-- include only the Firebase features as you need -->
-    <script defer src="/__/firebase/11.9.1/firebase-auth-compat.js"></script>
-    <script defer src="/__/firebase/11.9.1/firebase-database-compat.js"></script>
-    <script defer src="/__/firebase/11.9.1/firebase-firestore-compat.js"></script>
-    <script defer src="/__/firebase/11.9.1/firebase-functions-compat.js"></script>
-    <script defer src="/__/firebase/11.9.1/firebase-messaging-compat.js"></script>
-    <script defer src="/__/firebase/11.9.1/firebase-storage-compat.js"></script>
-    <script defer src="/__/firebase/11.9.1/firebase-analytics-compat.js"></script>
-    <script defer src="/__/firebase/11.9.1/firebase-remote-config-compat.js"></script>
-    <script defer src="/__/firebase/11.9.1/firebase-performance-compat.js"></script>
-    <!-- 
-      initialize the SDK after all desired features are loaded, set useEmulator to false
-      to avoid connecting the SDK to running emulators.
-    -->
-    <script defer src="/__/firebase/init.js?useEmulator=true"></script>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container">
+                <h1 class="hero-title">💬 Universal Web Comments</h1>
+                <p class="hero-subtitle">
+                    Enable community-driven feedback on any website with our decentralized commenting system.
+                </p>
+                <div class="hero-actions">
+                    <a href="#demo" class="btn btn-primary">Try Demo</a>
+                    <a href="docs/" class="btn btn-secondary">Documentation</a>
+                </div>
+            </div>
+        </section>
 
-    <style media="screen">
-      body { background: #ECEFF1; color: rgba(0,0,0,0.87); font-family: Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }
-      #message { background: white; max-width: 360px; margin: 100px auto 16px; padding: 32px 24px; border-radius: 3px; }
-      #message h2 { color: #ffa100; font-weight: bold; font-size: 16px; margin: 0 0 8px; }
-      #message h1 { font-size: 22px; font-weight: 300; color: rgba(0,0,0,0.6); margin: 0 0 16px;}
-      #message p { line-height: 140%; margin: 16px 0 24px; font-size: 14px; }
-      #message a { display: block; text-align: center; background: #039be5; text-transform: uppercase; text-decoration: none; color: white; padding: 16px; border-radius: 4px; }
-      #message, #message a { box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24); }
-      #load { color: rgba(0,0,0,0.4); text-align: center; font-size: 13px; }
-      @media (max-width: 600px) {
-        body, #message { margin-top: 0; background: white; box-shadow: none; }
-        body { border-top: 16px solid #ffa100; }
-      }
-    </style>
-  </head>
-  <body>
-    <div id="message">
-      <h2>Welcome</h2>
-      <h1>Firebase Hosting Setup Complete</h1>
-      <p>You're seeing this because you've successfully setup Firebase Hosting. Now it's time to go build something extraordinary!</p>
-      <a target="_blank" href="https://firebase.google.com/docs/hosting/">Open Hosting Documentation</a>
+        <!-- Features Section -->
+        <section class="features">
+            <div class="container">
+                <h2 class="section-title">🚀 Key Features</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i data-feather="globe"></i>
+                        </div>
+                        <h3>Universal Compatibility</h3>
+                        <p>Comment on any website, regardless of native support</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i data-feather="database"></i>
+                        </div>
+                        <h3>Firebase Backend</h3>
+                        <p>Reliable real-time data storage and synchronization</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i data-feather="shield"></i>
+                        </div>
+                        <h3>Secure & Private</h3>
+                        <p>Anonymous authentication with secure data handling</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i data-feather="zap"></i>
+                        </div>
+                        <h3>Real-time Updates</h3>
+                        <p>See new comments instantly without page refresh</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Demo Section -->
+        <section id="demo" class="demo">
+            <div class="container">
+                <h2 class="section-title">🎯 Try it Now</h2>
+                <div class="demo-interface">
+                    <div class="url-input-section">
+                        <label for="url-input">Enter any website URL to load or add comments:</label>
+                        <div class="input-group">
+                            <input 
+                                type="url" 
+                                id="url-input" 
+                                placeholder="https://example.com" 
+                                class="url-input"
+                            >
+                            <button id="load-comments-btn" class="btn btn-primary">
+                                <i data-feather="message-circle"></i>
+                                Load Comments
+                            </button>
+                        </div>
+                        <p class="input-help">
+                            💡 Try with any URL like GitHub repos, news articles, or documentation pages
+                        </p>
+                    </div>
+
+                    <!-- Comments Display Section -->
+                    <div id="comments-section" class="comments-section">
+                        <div class="empty-state">
+                            <div class="empty-icon">
+                                <i data-feather="message-square"></i>
+                            </div>
+                            <p>Enter a URL above to see comments for that page</p>
+                        </div>
+                    </div>
+
+                    <!-- Comment Input Section -->
+                    <div class="comment-input-section">
+                        <h3>💭 Add Your Comment</h3>
+                        <div class="comment-form">
+                            <textarea 
+                                id="comment-text" 
+                                placeholder="Share your thoughts about this website..."
+                                class="comment-textarea"
+                                rows="4"
+                            ></textarea>
+                            <div class="comment-actions">
+                                <div class="user-info">
+                                    <span id="user-status">🔄 Connecting...</span>
+                                </div>
+                                <button id="submit-comment-btn" class="btn btn-primary" disabled>
+                                    <i data-feather="send"></i>
+                                    Submit Comment
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- How it Works Section -->
+        <section class="about">
+            <div class="container">
+                <h2 class="section-title">🔧 How It Works</h2>
+                <div class="about-content">
+                    <div class="about-text">
+                        <h3>Simple Integration</h3>
+                        <p>
+                            Commentator provides a universal commenting system that works on any website. 
+                            Comments are stored in Firebase Realtime Database, ensuring persistence and 
+                            real-time synchronization across all users.
+                        </p>
+                        <ul>
+                            <li>🔐 Secure anonymous authentication</li>
+                            <li>📊 Real-time comment synchronization</li>
+                            <li>💾 Persistent data storage</li>
+                            <li>🌍 Universal compatibility</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer placeholder - will be loaded dynamically -->
+        <div id="footer-placeholder"></div>
     </div>
-    <p id="load">Firebase SDK Loading&hellip;</p>
 
+    <!-- Firebase Configuration -->
+    <script type="module" src="firebase-config.js"></script>
+    
+    <!-- Firebase Service -->
+    <script type="module" src="js/firebase-service.js"></script>
+    
+    <!-- Main JavaScript -->
+    <script src="js/main.js"></script>
+
+    <!-- Initialize Feather Icons -->
     <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        const loadEl = document.querySelector('#load');
-        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
-        // // The Firebase SDK is initialized and available here!
-        //
-        // firebase.auth().onAuthStateChanged(user => { });
-        // firebase.database().ref('/path/to/ref').on('value', snapshot => { });
-        // firebase.firestore().doc('/foo/bar').get().then(() => { });
-        // firebase.functions().httpsCallable('yourFunction')().then(() => { });
-        // firebase.messaging().requestPermission().then(() => { });
-        // firebase.storage().ref('/path/to/ref').getDownloadURL().then(() => { });
-        // firebase.analytics(); // call to activate
-        // firebase.analytics().logEvent('tutorial_completed');
-        // firebase.performance(); // call to activate
-        //
-        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
-
-        try {
-          let app = firebase.app();
-          let features = [
-            'auth', 
-            'database', 
-            'firestore',
-            'functions',
-            'messaging', 
-            'storage', 
-            'analytics', 
-            'remoteConfig',
-            'performance',
-          ].filter(feature => typeof app[feature] === 'function');
-          loadEl.textContent = `Firebase SDK loaded with ${features.join(', ')}`;
-        } catch (e) {
-          console.error(e);
-          loadEl.textContent = 'Error loading the Firebase SDK, check the console.';
-        }
-      });
+        feather.replace();
     </script>
-  </body>
+</body>
 </html>

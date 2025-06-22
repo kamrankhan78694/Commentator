@@ -416,11 +416,11 @@ function isValidUrl(string) {
 }
 
 /**
- * Simulate loading comments for a URL
+ * Load comments for a URL using Firebase
  * @param {string} url - The URL to load comments for
  * @param {HTMLElement} commentsSection - The element to display comments in
  */
-function loadCommentsForUrl(url, commentsSection) {
+async function loadCommentsForUrl(url, commentsSection) {
     // Show loading state
     commentsSection.innerHTML = `
         <div class="loading">
@@ -428,35 +428,47 @@ function loadCommentsForUrl(url, commentsSection) {
         </div>
     `;
     
-    // Simulate API delay
-    setTimeout(() => {
-        // Mock comment data (replace with actual API call)
-        const mockComments = [
-            {
-                id: 1,
-                author: 'WebUser123',
-                text: 'This website has been really helpful for my research. Great content!',
-                timestamp: '2 hours ago',
-                votes: 5
-            },
-            {
-                id: 2,
-                author: 'TechReviewer',
-                text: 'Be careful with this site - I noticed some suspicious redirects when clicking certain links.',
-                timestamp: '1 day ago',
-                votes: 12
-            },
-            {
-                id: 3,
-                author: 'HappyCustomer',
-                text: 'Excellent service and fast delivery. Highly recommend!',
-                timestamp: '3 days ago',
-                votes: 8
-            }
-        ];
+    try {
+        // Check if Firebase service is available
+        if (typeof window.FirebaseService === 'undefined') {
+            throw new Error('Firebase service not available');
+        }
         
-        displayComments(mockComments, commentsSection);
-    }, 1500);
+        // Load comments from Firebase
+        const comments = await window.FirebaseService.loadComments(url);
+        
+        // Format timestamps for display
+        const formattedComments = comments.map(comment => ({
+            ...comment,
+            author: comment.author || 'Anonymous',
+            timestamp: formatTimestamp(comment.createdAt || comment.timestamp),
+            votes: comment.votes || 0
+        }));
+        
+        displayComments(formattedComments, commentsSection);
+        
+        // Set up real-time listener for new comments
+        window.currentCommentsUnsubscribe = window.FirebaseService.subscribeToComments(url, (updatedComments) => {
+            const formattedUpdated = updatedComments.map(comment => ({
+                ...comment,
+                author: comment.author || 'Anonymous',
+                timestamp: formatTimestamp(comment.createdAt || comment.timestamp),
+                votes: comment.votes || 0
+            }));
+            displayComments(formattedUpdated, commentsSection);
+        });
+        
+    } catch (error) {
+        console.error('Error loading comments:', error);
+        commentsSection.innerHTML = `
+            <div class="error-state">
+                <p>❌ Failed to load comments: ${error.message}</p>
+                <button onclick="loadCommentsForUrl('${url}', document.getElementById('comments-section'))" class="btn btn-secondary">
+                    Retry
+                </button>
+            </div>
+        `;
+    }
 }
 
 /**
@@ -1073,68 +1085,79 @@ function displayNFTComment(comment, commentsSection) {
 }
 
 /**
- * Update the existing submitComment function to use NFT integration
+ * Update the existing submitComment function to use Firebase integration
  */
 function submitComment(url, comment, commentsSection, commentTextarea) {
     if (web3State.connected) {
         // Use NFT integration if wallet is connected
         submitCommentAsNFT(url, comment, commentsSection, commentTextarea);
     } else {
-        // Fall back to original behavior for demo purposes
-        originalSubmitComment(url, comment, commentsSection, commentTextarea);
+        // Use Firebase for regular comments
+        submitCommentToFirebase(url, comment, commentsSection, commentTextarea);
     }
 }
 
 /**
- * Store original submit comment function
+ * Submit comment to Firebase
  */
-function originalSubmitComment(url, comment, commentsSection, commentTextarea) {
+async function submitCommentToFirebase(url, comment, commentsSection, commentTextarea) {
     // Show submitting state
     const submitBtn = document.getElementById('submit-comment-btn');
     const originalText = submitBtn.textContent;
     submitBtn.textContent = 'Submitting...';
     submitBtn.disabled = true;
     
-    // Simulate API delay
-    setTimeout(() => {
+    try {
+        // Check if Firebase service is available
+        if (typeof window.FirebaseService === 'undefined') {
+            throw new Error('Firebase service not available');
+        }
+        
+        // Check if user is authenticated
+        if (!window.FirebaseService.isUserAuthenticated()) {
+            throw new Error('User not authenticated');
+        }
+        
+        // Get current user info
+        const currentUser = window.FirebaseService.getCurrentUser();
+        const userDisplayName = await getUserDisplayName();
+        
         // Create new comment object
-        const newComment = {
-            id: Date.now(),
-            author: 'You', // In a real app, this would be the logged-in user
+        const commentData = {
             text: comment,
-            timestamp: 'Just now',
-            votes: 0
+            author: userDisplayName,
+            votes: 0,
+            isNFT: false
         };
         
-        // Add to existing comments or create new list
-        const existingComments = commentsSection.querySelector('.comments-list');
-        if (existingComments) {
-            // Add to existing comments
-            const newCommentHtml = `
-                <div class="comment new-comment">
-                    <div class="comment-header">
-                        <span class="comment-author">👤 ${newComment.author}</span>
-                        <span class="comment-timestamp">${newComment.timestamp}</span>
-                        <span class="comment-votes">👍 ${newComment.votes}</span>
-                    </div>
-                    <div class="comment-text">${newComment.text}</div>
-                </div>
-            `;
-            existingComments.insertAdjacentHTML('beforeend', newCommentHtml);
-        } else {
-            // Create new comments list
-            displayComments([newComment], commentsSection);
-        }
+        // Save comment to Firebase
+        const commentId = await window.FirebaseService.saveComment(url, commentData);
         
         // Clear the textarea
         commentTextarea.value = '';
         
+        // Show success message
+        showNotification('Comment submitted successfully! 🎉', 'success');
+        
+        console.log('Comment submitted with ID:', commentId);
+        
+    } catch (error) {
+        console.error('Error submitting comment:', error);
+        showNotification(`Failed to submit comment: ${error.message}`, 'error');
+    } finally {
         // Reset submit button
         submitBtn.textContent = originalText;
         submitBtn.disabled = false;
-        
-        // Show success message
-        showNotification('Comment submitted successfully! 🎉');
+    }
+}
+
+/**
+ * Store original submit comment function (now deprecated)
+ */
+function originalSubmitComment(url, comment, commentsSection, commentTextarea) {
+    // Redirect to Firebase implementation
+    submitCommentToFirebase(url, comment, commentsSection, commentTextarea);
+}
         
         // Scroll to the new comment
         const newCommentElement = commentsSection.querySelector('.new-comment');
@@ -1150,4 +1173,167 @@ function originalSubmitComment(url, comment, commentsSection, commentTextarea) {
 // Initialize Web3 when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
     initWeb3();
+    initFirebaseAuth();
+});
+
+/**
+ * ========================================
+ * FIREBASE INTEGRATION UTILITIES
+ * ========================================
+ */
+
+// Global variables for Firebase integration
+let currentSession = null;
+let currentCommentsUnsubscribe = null;
+
+/**
+ * Initialize Firebase authentication and session
+ */
+async function initFirebaseAuth() {
+    try {
+        // Check if Firebase service is available
+        if (typeof window.FirebaseService === 'undefined') {
+            console.warn('Firebase service not available, waiting...');
+            setTimeout(initFirebaseAuth, 1000);
+            return;
+        }
+        
+        // Initialize authentication
+        const user = await window.FirebaseService.initAuth();
+        
+        if (user) {
+            // Update user status display
+            updateUserStatus('✅ Connected anonymously');
+            
+            // Enable submit button
+            const submitBtn = document.getElementById('submit-comment-btn');
+            if (submitBtn) {
+                submitBtn.disabled = false;
+            }
+            
+            // Create session
+            currentSession = await window.FirebaseService.createSession({
+                userAgent: navigator.userAgent,
+                referrer: document.referrer
+            });
+            
+            // Set up session activity tracking
+            setInterval(() => {
+                if (currentSession) {
+                    window.FirebaseService.updateSessionActivity(currentSession);
+                }
+            }, 30000); // Update every 30 seconds
+            
+            console.log('Firebase authentication initialized successfully');
+        } else {
+            updateUserStatus('❌ Authentication failed');
+        }
+        
+    } catch (error) {
+        console.error('Error initializing Firebase auth:', error);
+        updateUserStatus('❌ Connection error');
+    }
+}
+
+/**
+ * Update user status display
+ * @param {string} status - Status message to display
+ */
+function updateUserStatus(status) {
+    const userStatus = document.getElementById('user-status');
+    if (userStatus) {
+        userStatus.textContent = status;
+    }
+}
+
+/**
+ * Get user display name
+ * @returns {Promise<string>} - User display name
+ */
+async function getUserDisplayName() {
+    try {
+        const userData = await window.FirebaseService.loadUserData();
+        if (userData && userData.displayName) {
+            return userData.displayName;
+        }
+        
+        // Generate a random display name for anonymous users
+        const adjectives = ['Happy', 'Smart', 'Kind', 'Friendly', 'Creative', 'Honest', 'Wise', 'Funny'];
+        const nouns = ['User', 'Commenter', 'Visitor', 'Reader', 'Member', 'Guest', 'Friend', 'Person'];
+        const randomAdjective = adjectives[Math.floor(Math.random() * adjectives.length)];
+        const randomNoun = nouns[Math.floor(Math.random() * nouns.length)];
+        const randomNumber = Math.floor(Math.random() * 1000);
+        
+        const displayName = `${randomAdjective}${randomNoun}${randomNumber}`;
+        
+        // Save the generated display name
+        await window.FirebaseService.saveUserData({
+            displayName,
+            createdAt: Date.now()
+        });
+        
+        return displayName;
+        
+    } catch (error) {
+        console.error('Error getting user display name:', error);
+        return 'Anonymous';
+    }
+}
+
+/**
+ * Format timestamp for display
+ * @param {number} timestamp - Unix timestamp
+ * @returns {string} - Formatted time string
+ */
+function formatTimestamp(timestamp) {
+    if (!timestamp) return 'Unknown time';
+    
+    const now = Date.now();
+    const diff = now - timestamp;
+    
+    // Convert to seconds
+    const seconds = Math.floor(diff / 1000);
+    
+    if (seconds < 60) {
+        return 'Just now';
+    }
+    
+    const minutes = Math.floor(seconds / 60);
+    if (minutes < 60) {
+        return `${minutes} minute${minutes === 1 ? '' : 's'} ago`;
+    }
+    
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) {
+        return `${hours} hour${hours === 1 ? '' : 's'} ago`;
+    }
+    
+    const days = Math.floor(hours / 24);
+    if (days < 7) {
+        return `${days} day${days === 1 ? '' : 's'} ago`;
+    }
+    
+    const weeks = Math.floor(days / 7);
+    if (weeks < 4) {
+        return `${weeks} week${weeks === 1 ? '' : 's'} ago`;
+    }
+    
+    // For older dates, show actual date
+    const date = new Date(timestamp);
+    return date.toLocaleDateString();
+}
+
+/**
+ * Clean up Firebase listeners when page unloads
+ */
+window.addEventListener('beforeunload', function() {
+    // Unsubscribe from comment updates
+    if (currentCommentsUnsubscribe) {
+        currentCommentsUnsubscribe();
+    }
+    
+    // Close session
+    if (currentSession) {
+        window.FirebaseService.closeSession(currentSession);
+    }
 });
