@@ -1,0 +1,524 @@
+/**
+ * Commentator Debug Panel Styles
+ * 
+ * Terminal-style debug panel with Commentator branding
+ * Features: draggable, resizable, responsive, accessible
+ */
+
+/* ===== DEBUG PANEL CONTAINER ===== */
+.commentator-debug-panel {
+    position: fixed;
+    top: 50px;
+    left: 50px;
+    width: 600px;
+    height: 400px;
+    z-index: 10000;
+    font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', 'Menlo', monospace;
+    font-size: 13px;
+    background: #1a202c;
+    border-radius: 8px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.commentator-debug-panel.hidden {
+    opacity: 0;
+    transform: scale(0.95) translateY(-20px);
+    pointer-events: none;
+}
+
+.commentator-debug-panel.visible {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    pointer-events: all;
+}
+
+.commentator-debug-panel.minimized {
+    height: 50px !important;
+    overflow: hidden;
+}
+
+.commentator-debug-panel.minimized .debug-panel-toolbar,
+.commentator-debug-panel.minimized .debug-panel-content {
+    display: none;
+}
+
+.commentator-debug-panel.dragging {
+    user-select: none;
+    cursor: move;
+}
+
+.commentator-debug-panel.resizing {
+    user-select: none;
+}
+
+/* ===== PANEL HEADER ===== */
+.debug-panel-header {
+    background: linear-gradient(135deg, #3182ce 0%, #2c5282 100%);
+    color: white;
+    padding: 8px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: move;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    user-select: none;
+    position: relative;
+}
+
+.debug-panel-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent 40%, rgba(255, 255, 255, 0.1) 50%, transparent 60%);
+    animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.debug-panel-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.debug-logo {
+    font-size: 16px;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.debug-panel-controls {
+    display: flex;
+    gap: 4px;
+}
+
+.debug-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: white;
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    padding: 0;
+}
+
+.debug-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
+}
+
+.debug-btn:active {
+    transform: scale(0.95);
+}
+
+.debug-btn svg {
+    width: 14px;
+    height: 14px;
+}
+
+/* ===== TOOLBAR ===== */
+.debug-panel-toolbar {
+    background: #2d3748;
+    padding: 8px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #4a5568;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.debug-toolbar-left,
+.debug-toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.debug-filter {
+    background: #4a5568;
+    border: 1px solid #718096;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-family: inherit;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+}
+
+.debug-filter:focus {
+    outline: none;
+    border-color: #3182ce;
+    box-shadow: 0 0 0 2px rgba(49, 130, 206, 0.3);
+}
+
+.debug-search {
+    background: #4a5568;
+    border: 1px solid #718096;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-family: inherit;
+    min-width: 120px;
+    transition: all 0.2s ease;
+}
+
+.debug-search:focus {
+    outline: none;
+    border-color: #3182ce;
+    box-shadow: 0 0 0 2px rgba(49, 130, 206, 0.3);
+    min-width: 160px;
+}
+
+.debug-search::placeholder {
+    color: #a0aec0;
+}
+
+.debug-log-count {
+    color: #a0aec0;
+    font-size: 11px;
+    white-space: nowrap;
+}
+
+/* ===== PANEL CONTENT ===== */
+.debug-panel-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.debug-logs-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px;
+    background: #1a202c;
+    scroll-behavior: smooth;
+}
+
+.debug-logs-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.debug-logs-container::-webkit-scrollbar-track {
+    background: #2d3748;
+}
+
+.debug-logs-container::-webkit-scrollbar-thumb {
+    background: #4a5568;
+    border-radius: 4px;
+}
+
+.debug-logs-container::-webkit-scrollbar-thumb:hover {
+    background: #718096;
+}
+
+/* ===== LOG ENTRIES ===== */
+.debug-log-entry {
+    margin-bottom: 1px;
+    padding: 6px 8px;
+    border-left: 3px solid transparent;
+    background: rgba(255, 255, 255, 0.02);
+    transition: all 0.3s ease;
+    opacity: 0;
+    transform: translateX(-10px);
+    border-radius: 0 4px 4px 0;
+}
+
+.debug-log-entry.visible {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.debug-log-entry:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* Log level colors matching Commentator theme */
+.debug-log-info {
+    border-left-color: #3182ce;
+    color: #e2e8f0;
+}
+
+.debug-log-success {
+    border-left-color: #38a169;
+    color: #c6f6d5;
+}
+
+.debug-log-warning {
+    border-left-color: #d69e2e;
+    color: #faf089;
+}
+
+.debug-log-error {
+    border-left-color: #e53e3e;
+    color: #fed7d7;
+    background: rgba(229, 62, 62, 0.1);
+}
+
+.debug-log-action {
+    border-left-color: #805ad5;
+    color: #e9d8fd;
+}
+
+.debug-log-header {
+    display: flex;
+    gap: 8px;
+    font-size: 11px;
+    margin-bottom: 4px;
+    opacity: 0.8;
+}
+
+.debug-log-time {
+    color: #a0aec0;
+    min-width: 70px;
+}
+
+.debug-log-level {
+    font-weight: 600;
+    min-width: 60px;
+    text-transform: uppercase;
+}
+
+.debug-log-category {
+    color: #cbd5e0;
+    font-weight: 500;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 1px 4px;
+    border-radius: 3px;
+    font-size: 10px;
+}
+
+.debug-log-message {
+    color: inherit;
+    line-height: 1.4;
+    word-break: break-word;
+}
+
+.debug-log-details {
+    margin-top: 6px;
+    padding: 6px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+    font-size: 11px;
+    color: #a0aec0;
+    white-space: pre-wrap;
+    overflow-x: auto;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* ===== WELCOME MESSAGE ===== */
+.debug-welcome-message {
+    text-align: center;
+    padding: 40px 20px;
+    color: #a0aec0;
+    opacity: 0.8;
+}
+
+.debug-welcome-message p:first-child {
+    font-size: 16px;
+    margin-bottom: 8px;
+    color: #3182ce;
+}
+
+.debug-welcome-message kbd {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: inherit;
+    font-size: 11px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.debug-no-logs {
+    text-align: center;
+    padding: 40px 20px;
+    color: #a0aec0;
+    opacity: 0.6;
+    font-style: italic;
+}
+
+/* ===== RESIZE HANDLE ===== */
+.debug-panel-resize-handle {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 16px;
+    height: 16px;
+    cursor: nw-resize;
+    background: linear-gradient(-45deg, transparent 40%, #3182ce 50%, transparent 60%);
+    opacity: 0.5;
+    transition: opacity 0.2s ease;
+}
+
+.debug-panel-resize-handle:hover {
+    opacity: 1;
+}
+
+.debug-panel-resize-handle::before {
+    content: '';
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    width: 0;
+    height: 0;
+    border-left: 12px solid transparent;
+    border-bottom: 12px solid rgba(255, 255, 255, 0.1);
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 768px) {
+    .commentator-debug-panel {
+        width: calc(100vw - 20px) !important;
+        height: calc(100vh - 100px) !important;
+        left: 10px !important;
+        top: 10px !important;
+        max-width: none;
+    }
+    
+    .debug-panel-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+    
+    .debug-toolbar-left,
+    .debug-toolbar-right {
+        justify-content: space-between;
+        width: 100%;
+    }
+    
+    .debug-search {
+        min-width: auto;
+        flex: 1;
+    }
+    
+    .debug-log-header {
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 480px) {
+    .commentator-debug-panel {
+        font-size: 12px;
+    }
+    
+    .debug-panel-title {
+        font-size: 13px;
+    }
+    
+    .debug-log-header {
+        font-size: 10px;
+    }
+    
+    .debug-log-details {
+        font-size: 10px;
+    }
+}
+
+/* ===== ACCESSIBILITY ===== */
+.commentator-debug-panel:focus-within {
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 0 3px rgba(49, 130, 206, 0.3);
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .commentator-debug-panel {
+        border: 2px solid white;
+    }
+    
+    .debug-log-entry {
+        border-left-width: 4px;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .commentator-debug-panel,
+    .debug-log-entry,
+    .debug-btn {
+        transition: none;
+    }
+    
+    .debug-logo,
+    .debug-panel-header::before {
+        animation: none;
+    }
+}
+
+/* Focus indicators for keyboard navigation */
+.debug-btn:focus,
+.debug-filter:focus,
+.debug-search:focus {
+    outline: 2px solid #3182ce;
+    outline-offset: 2px;
+}
+
+/* Dark mode is default, but support for light mode if needed */
+@media (prefers-color-scheme: light) {
+    .commentator-debug-panel {
+        /* Keep terminal dark even in light mode for better contrast */
+    }
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes slideInFromRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOutToRight {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+.commentator-debug-panel.slide-in {
+    animation: slideInFromRight 0.3s ease-out;
+}
+
+.commentator-debug-panel.slide-out {
+    animation: slideOutToRight 0.3s ease-in;
+}
+
+/* ===== PRINT STYLES ===== */
+@media print {
+    .commentator-debug-panel {
+        display: none;
+    }
+}

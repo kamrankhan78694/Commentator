@@ -34,6 +34,9 @@ async function loadHeaderAndFooter() {
         // Load header
         const headerResponse = await fetch(`${baseUrl}includes/header.html`);
         if (headerResponse.ok) {
+            if (window.CommentatorLogger) {
+                window.CommentatorLogger.success('Header loaded successfully', 'COMPONENTS');
+            }
             const headerHTML = await headerResponse.text();
             const headerPlaceholder = document.getElementById('header-placeholder');
             if (headerPlaceholder) {
@@ -59,11 +62,17 @@ async function loadHeaderAndFooter() {
             }
         } else {
             console.warn('Failed to load header:', headerResponse.status);
+            if (window.CommentatorLogger) {
+                window.CommentatorLogger.error(`Failed to load header: ${headerResponse.status}`, 'COMPONENTS');
+            }
         }
         
         // Load footer
         const footerResponse = await fetch(`${baseUrl}includes/footer.html`);
         if (footerResponse.ok) {
+            if (window.CommentatorLogger) {
+                window.CommentatorLogger.success('Footer loaded successfully', 'COMPONENTS');
+            }
             const footerHTML = await footerResponse.text();
             const footerPlaceholder = document.getElementById('footer-placeholder');
             if (footerPlaceholder) {
@@ -80,9 +89,15 @@ async function loadHeaderAndFooter() {
             }
         } else {
             console.warn('Failed to load footer:', footerResponse.status);
+            if (window.CommentatorLogger) {
+                window.CommentatorLogger.error(`Failed to load footer: ${footerResponse.status}`, 'COMPONENTS');
+            }
         }
     } catch (error) {
         console.error('Error loading header/footer components:', error);
+        if (window.CommentatorLogger) {
+            window.CommentatorLogger.error('Error loading header/footer components', 'COMPONENTS', error);
+        }
     }
 }
 
@@ -159,9 +174,23 @@ function scrollToDemo() {
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🗨️ Commentator interface initialized');
     
+    // Log application initialization
+    if (window.CommentatorLogger) {
+        window.CommentatorLogger.info('Application initializing...', 'INIT');
+        window.CommentatorLogger.action('Loading header and footer components', 'info', 'INIT');
+    }
+    
     // Initialize all functionality
     loadHeaderAndFooter();
     initCommentInterface();
+    
+    // Log successful initialization
+    setTimeout(() => {
+        if (window.CommentatorLogger) {
+            window.CommentatorLogger.success('Application initialized successfully', 'INIT');
+            window.CommentatorLogger.info('Debug panel available - Press Ctrl+~ to toggle', 'HELP');
+        }
+    }, 1000);
 });
 
 /**
@@ -430,6 +459,10 @@ function isValidUrl(string) {
  * @param {HTMLElement} commentsSection - The element to display comments in
  */
 async function loadCommentsForUrl(url, commentsSection) {
+    if (window.CommentatorLogger) {
+        window.CommentatorLogger.action(`Loading comments for ${url}`, 'info', 'COMMENTS');
+    }
+    
     // Show loading state
     commentsSection.innerHTML = `
         <div class="loading">
@@ -445,6 +478,10 @@ async function loadCommentsForUrl(url, commentsSection) {
         
         // Load comments from Firebase
         const comments = await window.FirebaseService.loadComments(url);
+        
+        if (window.CommentatorLogger) {
+            window.CommentatorLogger.success(`Loaded ${comments.length} comments for ${url}`, 'COMMENTS');
+        }
         
         // Format timestamps for display
         const formattedComments = comments.map(comment => ({
@@ -480,6 +517,9 @@ async function loadCommentsForUrl(url, commentsSection) {
         
     } catch (error) {
         console.error('Error loading comments:', error);
+        if (window.CommentatorLogger) {
+            window.CommentatorLogger.error(`Failed to load comments for ${url}: ${error.message}`, 'COMMENTS', error);
+        }
         commentsSection.innerHTML = `
             <div class="error-state">
                 <p>❌ Failed to load comments: ${error.message}</p>
@@ -495,6 +535,9 @@ async function loadCommentsForUrl(url, commentsSection) {
         const retryButton = document.getElementById('retry-button');
         if (retryButton) {
             retryButton.addEventListener('click', () => {
+                if (window.CommentatorLogger) {
+                    window.CommentatorLogger.action('Retrying comment load', 'info', 'COMMENTS');
+                }
                 loadCommentsForUrl(url, commentsSection);
             });
         }
