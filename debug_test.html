@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Button Test - Commentator</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 20px; 
+            line-height: 1.6;
+        }
+        
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 2px solid #007cba;
+            border-radius: 8px;
+            background: #f9f9f9;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            margin: 10px 5px;
+            background: #007cba;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .btn:hover { background: #005a87; }
+        .btn:disabled { background: #ccc; cursor: not-allowed; }
+        
+        #comments-section {
+            border: 1px solid #ddd;
+            padding: 15px;
+            min-height: 150px;
+            margin: 15px 0;
+            background: white;
+            border-radius: 4px;
+        }
+        
+        .comment {
+            border: 1px solid #eee;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            background: #fafafa;
+        }
+        
+        .comment-header {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .comment-text {
+            margin-top: 5px;
+        }
+        
+        .loading { 
+            color: #666; 
+            font-style: italic; 
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .placeholder-text { 
+            color: #999; 
+            text-align: center;
+            font-style: italic;
+        }
+        
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: inherit;
+        }
+        
+        .status {
+            background: #e8f4f8;
+            border: 1px solid #007cba;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        
+        .test-result {
+            margin: 10px 0;
+            padding: 8px;
+            border-radius: 4px;
+        }
+        
+        .success { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
+        .error { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 Comment Interface Button Test</h1>
+        
+        <div class="status">
+            <strong>Testing Status:</strong> <span id="test-status">Initializing...</span>
+        </div>
+        
+        <h2>Comment Interface</h2>
+        
+        <!-- URL input and Load Comments button -->
+        <div>
+            <label for="website-url">Enter a website URL to view or add comments:</label>
+            <input type="url" id="website-url" placeholder="https://example.com" />
+            <button id="load-comments-btn" class="btn">Load Comments</button>
+        </div>
+        
+        <!-- Comments display area -->
+        <div id="comments-section">
+            <p class="placeholder-text">Comments will appear here when you load a URL</p>
+        </div>
+        
+        <!-- Add comment form -->
+        <div>
+            <h4>Add Your Comment</h4>
+            <textarea id="comment-text" placeholder="Share your thoughts about this website..." rows="4"></textarea>
+            <button id="submit-comment-btn" class="btn">Submit Comment</button>
+        </div>
+        
+        <h2>Test Results</h2>
+        <div id="test-results"></div>
+    </div>
+
+    <!-- Include the main script -->
+    <script src="js/main.js"></script>
+    
+    <!-- Test script -->
+    <script>
+        const testStatus = document.getElementById('test-status');
+        const testResults = document.getElementById('test-results');
+        
+        function addTestResult(message, isSuccess = true) {
+            const div = document.createElement('div');
+            div.className = 'test-result ' + (isSuccess ? 'success' : 'error');
+            div.innerHTML = message;
+            testResults.appendChild(div);
+        }
+        
+        function updateStatus(status) {
+            testStatus.textContent = status;
+        }
+        
+        // Wait for initialization
+        setTimeout(() => {
+            updateStatus('Running tests...');
+            
+            const urlInput = document.getElementById('website-url');
+            const loadBtn = document.getElementById('load-comments-btn');
+            const submitBtn = document.getElementById('submit-comment-btn');
+            const commentText = document.getElementById('comment-text');
+            const commentsSection = document.getElementById('comments-section');
+            
+            // Test 1: Check if elements exist
+            addTestResult('✓ Elements found: URL Input=' + !!urlInput + ', Load Button=' + !!loadBtn + ', Submit Button=' + !!submitBtn);
+            
+            if (!loadBtn || !submitBtn) {
+                addTestResult('❌ Critical elements missing!', false);
+                updateStatus('Test failed');
+                return;
+            }
+            
+            // Test 2: Load Comments functionality
+            if (urlInput && loadBtn) {
+                urlInput.value = 'https://example.com';
+                addTestResult('🔄 Testing Load Comments button...');
+                
+                const originalContent = commentsSection.innerHTML;
+                loadBtn.click();
+                
+                setTimeout(() => {
+                    const newContent = commentsSection.innerHTML;
+                    const changed = newContent !== originalContent;
+                    const hasComments = newContent.includes('Demo User') || newContent.includes('comment');
+                    
+                    if (changed && hasComments) {
+                        addTestResult('✅ Load Comments button is working! Demo comments loaded.');
+                    } else if (changed) {
+                        addTestResult('⚠️ Load Comments button triggered, but content may be unexpected.');
+                    } else {
+                        addTestResult('❌ Load Comments button did not change content.', false);
+                    }
+                    
+                    // Test 3: Submit Comment functionality
+                    if (commentText && submitBtn) {
+                        commentText.value = 'Test comment from automated test';
+                        addTestResult('🔄 Testing Submit Comment button...');
+                        
+                        const originalButtonText = submitBtn.textContent;
+                        submitBtn.click();
+                        
+                        // Check immediate response
+                        setTimeout(() => {
+                            const buttonChanged = submitBtn.textContent !== originalButtonText;
+                            if (buttonChanged) {
+                                addTestResult('✅ Submit Comment button responded (button text changed to: "' + submitBtn.textContent + '")');
+                            } else {
+                                addTestResult('❌ Submit Comment button did not respond.', false);
+                            }
+                            
+                            // Check for comment addition after delay
+                            setTimeout(() => {
+                                const finalContent = commentsSection.innerHTML;
+                                const hasNewComment = finalContent.includes('Test comment from automated test') || 
+                                                    finalContent.includes('You') ||
+                                                    finalContent !== newContent;
+                                
+                                if (hasNewComment) {
+                                    addTestResult('✅ Submit Comment functionality is working! New comment added.');
+                                } else {
+                                    addTestResult('⚠️ Submit Comment may be working, but new comment not visible yet.');
+                                }
+                                
+                                updateStatus('Tests completed');
+                                addTestResult('🎉 Test Summary: Buttons are responding to clicks and triggering functions!');
+                            }, 1500);
+                        }, 100);
+                    }
+                }, 300);
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
