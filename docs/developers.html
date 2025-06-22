@@ -1,0 +1,250 @@
+---
+layout: default
+title: "Developer Setup - Commentator"
+description: "Development environment setup and workflow guidelines for Commentator contributors."
+---
+
+<!-- Hero section -->
+<section class="hero">
+    <div class="container">
+        <h2 class="hero-title">👨‍💻 Developer Setup</h2>
+        <p class="hero-subtitle">
+            Complete guide to setting up your development environment for contributing to Commentator.
+        </p>
+    </div>
+</section>
+
+<!-- Prerequisites -->
+<section class="features">
+    <div class="container">
+        <h3 class="section-title">📋 Prerequisites</h3>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i data-feather="package"></i>
+                </div>
+                <h4>Node.js & NPM</h4>
+                <p>Node.js 16+ and npm for package management and development tools.</p>
+                <pre style="margin-top: 15px;"><code>node --version
+npm --version</code></pre>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i data-feather="gem"></i>
+                </div>
+                <h4>Ruby & Jekyll</h4>
+                <p>Ruby 3.0+ and Bundler for Jekyll site generation.</p>
+                <pre style="margin-top: 15px;"><code>ruby --version
+gem install bundler</code></pre>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i data-feather="git-branch"></i>
+                </div>
+                <h4>Git</h4>
+                <p>Version control for managing code changes and collaboration.</p>
+                <pre style="margin-top: 15px;"><code>git --version</code></pre>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Setup Steps -->
+<section class="about">
+    <div class="container">
+        <h3 class="section-title">🚀 Development Setup</h3>
+        
+        <div class="steps">
+            <div class="step">
+                <div class="step-number">1</div>
+                <div>
+                    <h4>Fork & Clone Repository</h4>
+                    <pre><code># Fork the repository on GitHub, then clone your fork
+git clone https://github.com/YOUR-USERNAME/Commentator.git
+cd Commentator</code></pre>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <div>
+                    <h4>Install Dependencies</h4>
+                    <pre><code># Install Node.js dependencies
+npm install
+
+# Install Ruby gems for Jekyll
+bundle install</code></pre>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <div>
+                    <h4>Start Development Server</h4>
+                    <pre><code># Option 1: Jekyll development server
+bundle exec jekyll serve --livereload
+
+# Option 2: Simple npm development server
+npm run dev</code></pre>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-number">4</div>
+                <div>
+                    <h4>Create Feature Branch</h4>
+                    <pre><code># Create and switch to a new feature branch
+git checkout -b feature/your-feature-name
+
+# Make your changes and commit
+git add .
+git commit -m "Add your feature description"</code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Project Structure -->
+<section class="features">
+    <div class="container">
+        <h3 class="section-title">📁 Project Structure Overview</h3>
+        
+        <div class="feature-card" style="max-width: 800px; margin: 0 auto;">
+            <div class="feature-icon">
+                <i data-feather="folder"></i>
+            </div>
+            <h4>Directory Layout</h4>
+            <pre style="text-align: left; margin-top: 20px;"><code>Commentator/
+├── docs/                 # Documentation pages (Jekyll HTML)
+│   ├── index.html       # Documentation landing page
+│   ├── getting-started.html
+│   ├── usage.html
+│   └── ...
+├── _layouts/            # Jekyll layout templates
+│   └── default.html     # Main layout template
+├── _includes/           # Jekyll includes
+│   └── head.html        # HTML head template
+├── css/                 # Stylesheets
+│   └── main.css         # Main stylesheet
+├── js/                  # JavaScript files
+│   └── main.js          # Main JavaScript functionality
+├── includes/            # Static HTML includes
+│   ├── header.html      # Header component
+│   └── footer.html      # Footer component
+├── assets/              # Static assets
+├── index.html           # Main application page
+├── _config.yml          # Jekyll configuration
+├── package.json         # Node.js dependencies
+├── Gemfile              # Ruby gems
+└── README.md            # Project README</code></pre>
+        </div>
+    </div>
+</section>
+
+<!-- Development Workflow -->
+<section class="about">
+    <div class="container">
+        <h3 class="section-title">🔄 Development Workflow</h3>
+        
+        <div class="objectives">
+            <div class="objective">
+                <div class="feature-icon">
+                    <i data-feather="edit"></i>
+                </div>
+                <div>
+                    <h4>1. Making Changes</h4>
+                    <ul style="text-align: left; margin-top: 10px;">
+                        <li>Edit files in your preferred code editor</li>
+                        <li>Use the live reload server to see changes instantly</li>
+                        <li>Test changes in multiple browsers</li>
+                        <li>Follow existing code style and conventions</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="objective">
+                <div class="feature-icon">
+                    <i data-feather="check-circle"></i>
+                </div>
+                <div>
+                    <h4>2. Testing Changes</h4>
+                    <ul style="text-align: left; margin-top: 10px;">
+                        <li>Test in Chrome, Firefox, and Safari</li>
+                        <li>Check mobile responsiveness</li>
+                        <li>Verify Jekyll build works: <code>bundle exec jekyll build</code></li>
+                        <li>Validate HTML and CSS</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="objective">
+                <div class="feature-icon">
+                    <i data-feather="git-pull-request"></i>
+                </div>
+                <div>
+                    <h4>3. Submitting Changes</h4>
+                    <ul style="text-align: left; margin-top: 10px;">
+                        <li>Commit with descriptive messages</li>
+                        <li>Push to your fork: <code>git push origin feature/your-feature</code></li>
+                        <li>Create pull request on GitHub</li>
+                        <li>Respond to code review feedback</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Coding Standards -->
+<section class="features">
+    <div class="container">
+        <h3 class="section-title">📝 Coding Standards</h3>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i data-feather="code"></i>
+                </div>
+                <h4>HTML/CSS</h4>
+                <ul style="text-align: left; margin-top: 15px;">
+                    <li>Use semantic HTML5 elements</li>
+                    <li>Follow BEM-like CSS naming</li>
+                    <li>Mobile-first responsive design</li>
+                    <li>Accessibility best practices</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i data-feather="layers"></i>
+                </div>
+                <h4>JavaScript</h4>
+                <ul style="text-align: left; margin-top: 15px;">
+                    <li>Modern ES6+ syntax</li>
+                    <li>Modular function design</li>
+                    <li>Clear documentation</li>
+                    <li>No external framework dependencies</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i data-feather="file-text"></i>
+                </div>
+                <h4>Jekyll/Markdown</h4>
+                <ul style="text-align: left; margin-top: 15px;">
+                    <li>Use Jekyll front matter</li>
+                    <li>Consistent layout structure</li>
+                    <li>Clear documentation</li>
+                    <li>SEO-friendly content</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Helpful Resources -->
+<section class="about">
+    <div class="container">
+        <h3 class="section-title">📚 Helpful Resources</h3>
+        <div class="hero-actions">
+            <a href="architecture.html" class="btn btn-primary">Architecture Guide</a>
+            <a href="contributing.html" class="btn btn-secondary">Contributing Guidelines</a>
+            <a href="https://github.com/kamrankhan78694/Commentator/issues" target="_blank" class="btn btn-secondary">Current Issues</a>
+        </div>
+    </div>
+</section>

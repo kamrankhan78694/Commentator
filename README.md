@@ -154,7 +154,7 @@ To customize the appearance:
 
 The project already uses Jekyll with the Minima theme configured in `_config.yml`. To enhance the current hybrid approach:
 
-1. **Optimize Content Pages**: Add Jekyll front matter to `index.html` and `documentation.html`:
+1. **Optimize Content Pages**: Add Jekyll front matter to `index.html` and docs pages:
    ```yaml
    ---
    layout: default

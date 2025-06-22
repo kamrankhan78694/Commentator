@@ -94,10 +94,10 @@ function fixFooterLinks(baseUrl) {
     if (!footer) return;
     
     // Fix internal navigation links
-    const internalLinks = footer.querySelectorAll('a[href^="index.html"], a[href^="documentation.html"]');
+    const internalLinks = footer.querySelectorAll('a[href^="index.html"], a[href^="docs/"]');
     internalLinks.forEach(link => {
         const href = link.getAttribute('href');
-        if (href.startsWith('index.html') || href.startsWith('documentation.html')) {
+        if (href.startsWith('index.html') || href.startsWith('docs/')) {
             link.href = baseUrl + href;
         }
     });
@@ -114,16 +114,15 @@ function configureNavigation() {
     const baseUrl = BASE_URL;
     let navItems = [];
     
-    if (currentPage.includes('documentation.html')) {
+    if (currentPage.includes('/docs/')) {
         // Documentation page navigation
         navItems = [
-            { href: '#introduction', text: 'Introduction' },
-            { href: '#getting-started', text: 'Getting Started' },
-            { href: '#features', text: 'Features' },
-            { href: '#installation', text: 'Installation' },
-            { href: '#project-structure', text: 'Structure' },
-            { href: '#contributing', text: 'Contributing' },
-            { href: '#faq', text: 'FAQ' },
+            { href: `${baseUrl}docs/`, text: 'Documentation Home' },
+            { href: `${baseUrl}docs/getting-started.html`, text: 'Getting Started' },
+            { href: `${baseUrl}docs/usage.html`, text: 'Usage' },
+            { href: `${baseUrl}docs/api.html`, text: 'API' },
+            { href: `${baseUrl}docs/contributing.html`, text: 'Contributing' },
+            { href: `${baseUrl}docs/faq.html`, text: 'FAQ' },
             { href: `${baseUrl}index.html`, text: 'Home' }
         ];
     } else {
@@ -132,7 +131,7 @@ function configureNavigation() {
             { href: '#features', text: 'Features' },
             { href: '#how-it-works', text: 'How It Works' },
             { href: '#about', text: 'About' },
-            { href: `${baseUrl}documentation.html`, text: 'Documentation' },
+            { href: `${baseUrl}docs/`, text: 'Documentation' },
             { href: 'https://github.com/kamrankhan78694/Commentator', text: 'GitHub', target: '_blank' }
         ];
     }
