@@ -1159,12 +1159,6 @@ async function submitCommentToFirebase(url, comment, commentsSection, commentTex
     }
 }
 
-/**
- * Store original submit comment function (now deprecated)
- */
-function originalSubmitComment(url, comment, commentsSection, commentTextarea) {
-    // Redirect to Firebase implementation
-    submitCommentToFirebase(url, comment, commentsSection, commentTextarea);
 }
         
         // Scroll to the new comment
