@@ -1,0 +1,152 @@
+---
+layout: default
+title: "API Reference - Commentator"
+description: "Complete API documentation for developers integrating Commentator."
+---
+
+<!-- Hero section -->
+<section class="hero">
+    <div class="container">
+        <h2 class="hero-title">⚡ API Reference</h2>
+        <p class="hero-subtitle">
+            Complete API documentation for developers integrating Commentator into their applications.
+        </p>
+    </div>
+</section>
+
+<!-- Coming Soon -->
+<section class="features">
+    <div class="container">
+        <h3 class="section-title">🚧 API Under Development</h3>
+        <div class="about-description">
+            <p>The Commentator API is currently under active development. We're building a comprehensive RESTful API that will support:</p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i data-feather="message-circle"></i>
+                </div>
+                <h4>Comment Management</h4>
+                <p>Full CRUD operations for comments including create, read, update, delete, and search functionality.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i data-feather="user"></i>
+                </div>
+                <h4>User Authentication</h4>
+                <p>Web3 wallet integration, traditional authentication, and decentralized identity management.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i data-feather="thumbs-up"></i>
+                </div>
+                <h4>Voting & Moderation</h4>
+                <p>Upvote/downvote systems, community moderation, and reputation management endpoints.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i data-feather="activity"></i>
+                </div>
+                <h4>Real-time Updates</h4>
+                <p>WebSocket connections for live comment updates and real-time user interactions.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Planned API Structure -->
+<section class="about">
+    <div class="container">
+        <h3 class="section-title">📋 Planned API Endpoints</h3>
+        
+        <div class="objectives">
+            <div class="objective">
+                <div class="feature-icon">
+                    <i data-feather="message-square"></i>
+                </div>
+                <div>
+                    <h4>Comments API</h4>
+                    <pre><code>GET    /api/v1/comments
+POST   /api/v1/comments
+GET    /api/v1/comments/{id}
+PUT    /api/v1/comments/{id}
+DELETE /api/v1/comments/{id}</code></pre>
+                </div>
+            </div>
+            <div class="objective">
+                <div class="feature-icon">
+                    <i data-feather="users"></i>
+                </div>
+                <div>
+                    <h4>Users API</h4>
+                    <pre><code>GET    /api/v1/users/profile
+POST   /api/v1/users/auth
+PUT    /api/v1/users/profile
+GET    /api/v1/users/{id}/comments</code></pre>
+                </div>
+            </div>
+            <div class="objective">
+                <div class="feature-icon">
+                    <i data-feather="trending-up"></i>
+                </div>
+                <div>
+                    <h4>Voting API</h4>
+                    <pre><code>POST   /api/v1/comments/{id}/vote
+GET    /api/v1/comments/{id}/votes
+DELETE /api/v1/comments/{id}/vote</code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- JavaScript SDK -->
+<section class="features">
+    <div class="container">
+        <h3 class="section-title">📦 JavaScript SDK (Planned)</h3>
+        <div class="about-description">
+            <p>We're planning a comprehensive JavaScript SDK for easy integration:</p>
+        </div>
+
+        <div class="feature-card" style="max-width: 800px; margin: 0 auto;">
+            <div class="feature-icon">
+                <i data-feather="code"></i>
+            </div>
+            <h4>Example Usage</h4>
+            <pre style="text-align: left; margin-top: 20px;"><code>// Initialize Commentator
+const commentator = new Commentator({
+  apiKey: 'your-api-key',
+  site: window.location.hostname
+});
+
+// Load comments for current page
+commentator.loadComments({
+  url: window.location.href,
+  container: '#comments-container'
+});
+
+// Post a new comment
+commentator.postComment({
+  content: 'Great article!',
+  author: 'user123',
+  url: window.location.href
+});</code></pre>
+        </div>
+    </div>
+</section>
+
+<!-- Get Updates -->
+<section class="about">
+    <div class="container">
+        <h3 class="section-title">📢 Stay Updated</h3>
+        <div class="about-description">
+            <p>Want to be notified when the API is ready? Follow our development:</p>
+        </div>
+        <div class="hero-actions">
+            <a href="https://github.com/kamrankhan78694/Commentator" target="_blank" class="btn btn-primary">Watch on GitHub</a>
+            <a href="roadmap.html" class="btn btn-secondary">View Roadmap</a>
+            <a href="contributing.html" class="btn btn-secondary">Help Build It</a>
+        </div>
+    </div>
+</section>

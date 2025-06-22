@@ -68,6 +68,10 @@ Our ambitious growth and technical targets make Commentator a **scalable technol
 - 🛡️ **Fraud Prevention** – Expose suspicious websites by enabling users to leave honest reviews
 - 💬 **Open Participation** – Anyone can view or post comments without censorship
 - 📖 **Fully Open-Source** – Transparent and community-driven, licensed under MIT
+- 🔥 **Firebase Backend** – Persistent data storage with real-time synchronization
+- 🔐 **Anonymous Authentication** – Secure commenting without account requirements
+- ⚡ **Real-time Updates** – See new comments instantly without page refresh
+- 📊 **Session Management** – User activity tracking and analytics support
 
 ### Disruptive Innovations in Development
 - 🌐 **Cross-Platform Protocol** – Works seamlessly across browsers, mobile apps, and third-party integrations
@@ -84,6 +88,168 @@ Our ambitious growth and technical targets make Commentator a **scalable technol
 2. When visiting a website, they can leave or view comments tied to the domain or specific URL.
 3. Comments are stored securely and rendered dynamically.
 4. Others benefit from the collective feedback to make better web decisions.
+
+---
+
+## 🔥 Firebase Backend Integration
+
+Commentator now features a **comprehensive Firebase Realtime Database backend** that provides persistent, real-time data storage and synchronization. This eliminates the previous mock data limitations and enables a fully functional commenting system.
+
+### 🏗️ Backend Architecture
+
+**Data Structure:**
+```
+commentator78694/
+├── comments/
+│   └── {urlHash}/
+│       └── {commentId}: {
+│           text: string,
+│           author: string,
+│           timestamp: number,
+│           votes: number,
+│           userId: string,
+│           createdAt: number,
+│           isNFT?: boolean,
+│           nftId?: string,
+│           ipfsUrl?: string
+│       }
+├── users/
+│   └── {userId}: {
+│       displayName: string,
+│       email?: string,
+│       walletAddress?: string,
+│       createdAt: number,
+│       lastActive: number
+│   }
+└── sessions/
+    └── {sessionId}: {
+        userId: string,
+        createdAt: number,
+        lastActivity: number,
+        userAgent?: string,
+        ipAddress?: string
+    }
+```
+
+### 🔐 Security Rules
+
+The Firebase security rules ensure:
+- **Comments**: Public read access, authenticated write access with validation
+- **Users**: User-specific read/write access for own data only  
+- **Sessions**: Authenticated access with user ownership validation
+- **Data Validation**: Strict type and length validation for all fields
+
+### ⚡ Key Features
+
+**Real-time Synchronization:**
+- Comments appear instantly across all users without page refresh
+- Live updates when new comments are posted
+- Automatic cleanup of listeners when users leave pages
+
+**Anonymous Authentication:**
+- Secure anonymous user creation for commenting
+- Generated display names for user privacy
+- Session tracking for analytics and user engagement
+
+**Persistent Data Storage:**
+- All comments, user profiles, and sessions stored permanently
+- Data survives page reloads and browser sessions
+- URL-based comment organization using secure hashing
+
+**Error Handling & User Experience:**
+- Comprehensive error handling with user-friendly messages
+- Loading states and feedback for all operations
+- Graceful fallbacks when Firebase is unavailable
+
+### 🚀 Firebase Service API
+
+The `FirebaseService` module provides a complete API for data operations:
+
+```javascript
+// Authentication
+await FirebaseService.initAuth()
+FirebaseService.getCurrentUser()
+FirebaseService.isUserAuthenticated()
+
+// Comments
+await FirebaseService.saveComment(url, commentData)
+await FirebaseService.loadComments(url)
+FirebaseService.subscribeToComments(url, callback)
+
+// Users  
+await FirebaseService.saveUserData(userData)
+await FirebaseService.loadUserData(userId)
+
+// Sessions
+await FirebaseService.createSession(sessionData)
+await FirebaseService.updateSessionActivity(sessionId)
+await FirebaseService.closeSession(sessionId)
+```
+
+### 🔧 Configuration
+
+**Firebase Configuration** (`firebase-config.js`):
+```javascript
+const firebaseConfig = {
+  apiKey: "AIzaSyDtzBKu_0uxIv6r3PaYuIphB1jCgMqdjEk",
+  authDomain: "commentator78694.firebaseapp.com", 
+  databaseURL: "https://commentator78694-default-rtdb.firebaseio.com",
+  projectId: "commentator78694",
+  // ... other config
+};
+```
+
+**Database Rules** (`database.rules.json`):
+```json
+{
+  "rules": {
+    "comments": {
+      "$urlHash": {
+        ".read": true,
+        ".write": "auth != null",
+        // ... validation rules
+      }
+    }
+  }
+}
+```
+
+### 📊 Usage Examples
+
+**Loading Comments for a URL:**
+```javascript
+const comments = await FirebaseService.loadComments('https://example.com');
+console.log(`Found ${comments.length} comments`);
+```
+
+**Submitting a Comment:**
+```javascript
+const commentData = {
+  text: "Great website!",
+  author: "HappyUser123",
+  votes: 0
+};
+const commentId = await FirebaseService.saveComment(url, commentData);
+```
+
+**Real-time Comment Updates:**
+```javascript
+const unsubscribe = FirebaseService.subscribeToComments(url, (comments) => {
+  displayComments(comments);
+});
+// Call unsubscribe() when done
+```
+
+### 🌍 Production Deployment
+
+For production use:
+
+1. **Firebase Setup**: Configure your own Firebase project with Realtime Database
+2. **Environment Configuration**: Update `firebase-config.js` with your project credentials  
+3. **Security Rules**: Deploy the provided `database.rules.json` to your Firebase project
+4. **Domain Verification**: Add your domain to Firebase Auth authorized domains
+
+The current implementation uses a demo Firebase project suitable for development and testing.
 
 ---
 
@@ -154,7 +320,7 @@ To customize the appearance:
 
 The project already uses Jekyll with the Minima theme configured in `_config.yml`. To enhance the current hybrid approach:
 
-1. **Optimize Content Pages**: Add Jekyll front matter to `index.html` and `documentation.html`:
+1. **Optimize Content Pages**: Add Jekyll front matter to `index.html` and docs pages:
    ```yaml
    ---
    layout: default

@@ -1,0 +1,248 @@
+---
+layout: default
+title: "Architecture - Commentator"
+description: "Technical architecture overview and system design documentation for Commentator."
+---
+
+<!-- Hero section -->
+<section class="hero">
+    <div class="container">
+        <h2 class="hero-title">🏗️ Architecture</h2>
+        <p class="hero-subtitle">
+            Technical architecture overview and system design documentation for Commentator's scalable decentralized commenting system.
+        </p>
+    </div>
+</section>
+
+<!-- Current Project Structure -->
+<section class="about">
+    <div class="container">
+        <h3 class="section-title">🏗️ Current Project Structure</h3>
+        <div class="about-description">
+            <p>Commentator follows a clean, organized structure that's easy to understand and contribute to:</p>
+        </div>
+
+        <div class="objectives">
+            <div class="objective">
+                <div class="feature-icon">
+                    <i data-feather="file-text"></i>
+                </div>
+                <div>
+                    <h4>📄 index.html</h4>
+                    <p><strong>Main entry point and interface</strong><br>
+                    Contains the landing page with hero section, features, demo interface, and project information. Well-structured HTML5 with semantic elements.</p>
+                </div>
+            </div>
+            <div class="objective">
+                <div class="feature-icon">
+                    <i data-feather="palette"></i>
+                </div>
+                <div>
+                    <h4>🎨 css/main.css</h4>
+                    <p><strong>Comprehensive stylesheet</strong><br>
+                    Modern CSS with clean sections for reset, layout, components, and responsive design. Uses CSS Grid and Flexbox for layouts.</p>
+                </div>
+            </div>
+            <div class="objective">
+                <div class="feature-icon">
+                    <i data-feather="code"></i>
+                </div>
+                <div>
+                    <h4>⚡ js/main.js</h4>
+                    <p><strong>JavaScript functionality</strong><br>
+                    Modular JavaScript with smooth scrolling, comment interface, navigation highlighting, and form handling. Well-documented functions.</p>
+                </div>
+            </div>
+            <div class="objective">
+                <div class="feature-icon">
+                    <i data-feather="folder"></i>
+                </div>
+                <div>
+                    <h4>📁 assets/</h4>
+                    <p><strong>Static resources directory</strong><br>
+                    Directory for images, icons, fonts, and other static assets. Currently placeholder for future branding materials.</p>
+                </div>
+            </div>
+            <div class="objective">
+                <div class="feature-icon">
+                    <i data-feather="book-open"></i>
+                </div>
+                <div>
+                    <h4>📚 docs/</h4>
+                    <p><strong>Comprehensive documentation</strong><br>
+                    User-friendly documentation covering all aspects of the project, from introduction to advanced contributing guidelines.</p>
+                </div>
+            </div>
+            <div class="objective">
+                <div class="feature-icon">
+                    <i data-feather="package"></i>
+                </div>
+                <div>
+                    <h4>📦 Configuration Files</h4>
+                    <p><strong>Project metadata and configuration</strong><br>
+                    <code>package.json</code> for project metadata, <code>README.md</code> for GitHub documentation, <code>LICENSE</code> for MIT licensing.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- System Architecture Overview -->
+<section class="features">
+    <div class="container">
+        <h3 class="section-title">🎯 System Architecture Overview</h3>
+        <div class="about-description">
+            <p>Commentator is designed as a <strong>decentralized, scalable commenting protocol</strong> that operates across multiple layers to ensure performance, reliability, and censorship resistance.</p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i data-feather="monitor"></i>
+                </div>
+                <h4>User Interfaces</h4>
+                <p>Browser Extensions (Chrome/Firefox), Web App (React/JS), and Mobile Apps (iOS/Android) provide multiple access points.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i data-feather="server"></i>
+                </div>
+                <h4>API Gateway Layer</h4>
+                <p>REST APIs for comments, GraphQL for queries, and WebSocket for real-time updates handle all client communications.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i data-feather="cpu"></i>
+                </div>
+                <h4>Business Logic Layer</h4>
+                <p>Comment Service (CRUD Operations), Identity Service (Web3 Auth), and Moderation Service (DAO Voting) handle core functionality.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i data-feather="database"></i>
+                </div>
+                <h4>Data Layer</h4>
+                <p>IPFS Storage for comments, Arweave for permanent storage, and Traditional DB for metadata and caching.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i data-feather="cloud"></i>
+                </div>
+                <h4>Infrastructure Layer</h4>
+                <p>CDN Network, Load Balancers, and Monitoring/Logging systems ensure scalability and reliability.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i data-feather="shield"></i>
+                </div>
+                <h4>Security Layer</h4>
+                <p>Cryptographic verification, identity management, and content integrity systems protect the platform.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Jekyll Architecture -->
+<section class="about">
+    <div class="container">
+        <h3 class="section-title">🎨 Jekyll Architecture</h3>
+        <div class="about-description">
+            <p>This project uses a <strong>hybrid Jekyll architecture</strong> that combines Jekyll's processing capabilities with custom static HTML/CSS/JS. The architecture leverages Jekyll's Minima theme as a foundation while implementing extensive custom overrides.</p>
+        </div>
+
+        <div class="objectives">
+            <div class="objective">
+                <div class="feature-icon">
+                    <i data-feather="layers"></i>
+                </div>
+                <div>
+                    <h4>Hybrid Architecture</h4>
+                    <p>Uses Jekyll for SEO/plugins with custom HTML content, combining the best of both static and dynamic approaches.</p>
+                </div>
+            </div>
+            <div class="objective">
+                <div class="feature-icon">
+                    <i data-feather="paint-bucket"></i>
+                </div>
+                <div>
+                    <h4>Theme-Enhanced</h4>
+                    <p>Built on Minima theme with significant customizations for unique branding and functionality.</p>
+                </div>
+            </div>
+            <div class="objective">
+                <div class="feature-icon">
+                    <i data-feather="settings"></i>
+                </div>
+                <div>
+                    <h4>Customizable</h4>
+                    <p>Easy to modify styling and layout through <code>css/main.css</code> with well-organized sections.</p>
+                </div>
+            </div>
+            <div class="objective">
+                <div class="feature-icon">
+                    <i data-feather="smartphone"></i>
+                </div>
+                <div>
+                    <h4>Responsive</h4>
+                    <p>Mobile-first design with modern CSS practices for optimal user experience across devices.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Future Architecture -->
+<section class="features">
+    <div class="container">
+        <h3 class="section-title">🚀 Future Decentralized Architecture</h3>
+        <div class="about-description">
+            <p>Our roadmap includes transitioning to a fully decentralized architecture with these key components:</p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i data-feather="database"></i>
+                </div>
+                <h4>Decentralized Storage</h4>
+                <p>IPFS and Arweave integration for permanent, censorship-resistant comment storage.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i data-feather="user-check"></i>
+                </div>
+                <h4>Web3 Identity</h4>
+                <p>Ethereum wallets, ENS, and Ceramic Network for decentralized identity management.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i data-feather="vote"></i>
+                </div>
+                <h4>DAO Governance</h4>
+                <p>Community-driven moderation through decentralized autonomous organization mechanisms.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i data-feather="lock"></i>
+                </div>
+                <h4>Cryptographic Security</h4>
+                <p>Comment signing, content verification, and cryptographic proof systems.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Next Steps -->
+<section class="about">
+    <div class="container">
+        <h3 class="section-title">🎯 Learn More</h3>
+        <div class="about-description">
+            <p>Dive deeper into specific aspects of the architecture:</p>
+        </div>
+        <div class="hero-actions">
+            <a href="developers.html" class="btn btn-primary">Developer Setup</a>
+            <a href="api.html" class="btn btn-secondary">API Reference</a>
+            <a href="security.html" class="btn btn-secondary">Security Model</a>
+        </div>
+    </div>
+</section>

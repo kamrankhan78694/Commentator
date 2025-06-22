@@ -1,89 +1,189 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Welcome to Firebase Hosting</title>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commentator - Universal Web Comments</title>
+    <meta name="description" content="Commentator is an open-source project designed to improve transparency on the web by enabling community-driven feedback on any website.">
+    
+    <!-- Feather Icons for modern SVG icons -->
+    <script src="https://unpkg.com/feather-icons"></script>
+    
+    <!-- CSS - Link to external stylesheet for maintainability -->
+    <link rel="stylesheet" href="css/main.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16.png">
+    <link rel="apple-touch-icon" href="assets/favicon.png">
+</head>
+<body>
+    <!-- Main container for the application -->
+    <div id="app">
+        <!-- Header placeholder - will be loaded dynamically -->
+        <div id="header-placeholder"></div>
 
-    <!-- update the version number as needed -->
-    <script defer src="/__/firebase/11.9.1/firebase-app-compat.js"></script>
-    <!-- include only the Firebase features as you need -->
-    <script defer src="/__/firebase/11.9.1/firebase-auth-compat.js"></script>
-    <script defer src="/__/firebase/11.9.1/firebase-database-compat.js"></script>
-    <script defer src="/__/firebase/11.9.1/firebase-firestore-compat.js"></script>
-    <script defer src="/__/firebase/11.9.1/firebase-functions-compat.js"></script>
-    <script defer src="/__/firebase/11.9.1/firebase-messaging-compat.js"></script>
-    <script defer src="/__/firebase/11.9.1/firebase-storage-compat.js"></script>
-    <script defer src="/__/firebase/11.9.1/firebase-analytics-compat.js"></script>
-    <script defer src="/__/firebase/11.9.1/firebase-remote-config-compat.js"></script>
-    <script defer src="/__/firebase/11.9.1/firebase-performance-compat.js"></script>
-    <!-- 
-      initialize the SDK after all desired features are loaded, set useEmulator to false
-      to avoid connecting the SDK to running emulators.
-    -->
-    <script defer src="/__/firebase/init.js?useEmulator=true"></script>
+        <!-- Hero section introducing the project -->
+        <section class="hero">
+            <div class="container">
+                <h2 class="hero-title">Universal Web Comments</h2>
+                <p class="hero-subtitle">
+                    Improve transparency on the web by enabling community-driven feedback. 
+                    Comment on any website—even those that disable native comments or review systems.
+                </p>
+                <div class="hero-actions">
+                    <!-- Primary action buttons -->
+                    <button class="btn btn-primary" id="get-started-btn">Get Started</button>
+                    <button class="btn btn-secondary" id="demo-btn">View Demo</button>
+                </div>
+            </div>
+        </section>
 
-    <style media="screen">
-      body { background: #ECEFF1; color: rgba(0,0,0,0.87); font-family: Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }
-      #message { background: white; max-width: 360px; margin: 100px auto 16px; padding: 32px 24px; border-radius: 3px; }
-      #message h2 { color: #ffa100; font-weight: bold; font-size: 16px; margin: 0 0 8px; }
-      #message h1 { font-size: 22px; font-weight: 300; color: rgba(0,0,0,0.6); margin: 0 0 16px;}
-      #message p { line-height: 140%; margin: 16px 0 24px; font-size: 14px; }
-      #message a { display: block; text-align: center; background: #039be5; text-transform: uppercase; text-decoration: none; color: white; padding: 16px; border-radius: 4px; }
-      #message, #message a { box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24); }
-      #load { color: rgba(0,0,0,0.4); text-align: center; font-size: 13px; }
-      @media (max-width: 600px) {
-        body, #message { margin-top: 0; background: white; box-shadow: none; }
-        body { border-top: 16px solid #ffa100; }
-      }
-    </style>
-  </head>
-  <body>
-    <div id="message">
-      <h2>Welcome</h2>
-      <h1>Firebase Hosting Setup Complete</h1>
-      <p>You're seeing this because you've successfully setup Firebase Hosting. Now it's time to go build something extraordinary!</p>
-      <a target="_blank" href="https://firebase.google.com/docs/hosting/">Open Hosting Documentation</a>
+        <!-- Features section highlighting key capabilities -->
+        <section id="features" class="features">
+            <div class="container">
+                <h3 class="section-title">Features</h3>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i data-feather="globe"></i>
+                        </div>
+                        <h4>Universal Commenting</h4>
+                        <p>Share feedback on any webpage, regardless of whether it supports native comments.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i data-feather="shield"></i>
+                        </div>
+                        <h4>Fraud Prevention</h4>
+                        <p>Expose suspicious websites by enabling users to leave honest reviews.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i data-feather="users"></i>
+                        </div>
+                        <h4>Open Participation</h4>
+                        <p>Anyone can view or post comments without censorship.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i data-feather="git-branch"></i>
+                        </div>
+                        <h4>Fully Open-Source</h4>
+                        <p>Transparent and community-driven, licensed under MIT.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- How it works section -->
+        <section id="how-it-works" class="how-it-works">
+            <div class="container">
+                <h3 class="section-title">How It Works</h3>
+                <div class="steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <p>Users install a browser extension or use the Commentator interface.</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <p>When visiting a website, they can leave or view comments tied to the domain or specific URL.</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <p>Comments are stored securely and rendered dynamically.</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <p>Others benefit from the collective feedback to make better web decisions.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Decentralization vision section -->
+        <section id="about" class="about">
+            <div class="container">
+                <h3 class="section-title">Project Goal: Decentralization</h3>
+                <p class="about-description">
+                    Our long-term vision is to make Commentator a <strong>fully decentralized public commenting system</strong> 
+                    that cannot be controlled or censored by any single entity.
+                </p>
+                <div class="objectives">
+                    <div class="objective">
+                        <div class="objective-icon">
+                            <i data-feather="database"></i>
+                        </div>
+                        <div class="objective-content">
+                            <strong>Decentralized Storage:</strong> Store comment data on IPFS or Arweave using tools like web3.storage or Bundlr.
+                        </div>
+                    </div>
+                    <div class="objective">
+                        <div class="objective-icon">
+                            <i data-feather="user-check"></i>
+                        </div>
+                        <div class="objective-content">
+                            <strong>Decentralized Identity (DID):</strong> Use Ethereum wallets (e.g., MetaMask) or identity protocols like ENS and Ceramic.
+                        </div>
+                    </div>
+                    <div class="objective">
+                        <div class="objective-icon">
+                            <i data-feather="thumbs-up"></i>
+                        </div>
+                        <div class="objective-content">
+                            <strong>Community Moderation:</strong> Implement upvote/downvote systems, and explore DAO-style moderation.
+                        </div>
+                    </div>
+                    <div class="objective">
+                        <div class="objective-icon">
+                            <i data-feather="lock"></i>
+                        </div>
+                        <div class="objective-content">
+                            <strong>Content Integrity:</strong> Let users cryptographically sign their comments for authenticity and verifiability.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Demo/placeholder section for future commenting interface -->
+        <section class="demo" id="demo-section">
+            <div class="container">
+                <h3 class="section-title">Comment Interface Preview</h3>
+                <div class="comment-interface">
+                    <!-- This will be the core commenting interface -->
+                    <div class="url-input">
+                        <label for="website-url">Enter a website URL to view or add comments:</label>
+                        <input type="url" id="website-url" placeholder="https://example.com" />
+                        <button id="load-comments-btn" class="btn btn-primary">Load Comments</button>
+                    </div>
+                    
+                    <!-- Comments display area -->
+                    <div class="comments-section" id="comments-section">
+                        <p class="placeholder-text">Comments will appear here when you load a URL</p>
+                    </div>
+                    
+                    <!-- Add comment form -->
+                    <div class="add-comment" id="add-comment-form">
+                        <h4>Add Your Comment</h4>
+                        <textarea id="comment-text" placeholder="Share your thoughts about this website..." rows="4"></textarea>
+                        <button id="submit-comment-btn" class="btn btn-primary">Submit Comment</button>
+                    </div>
+                </div>
+            </div>
+        </section>
     </div>
-    <p id="load">Firebase SDK Loading&hellip;</p>
 
+    <!-- Footer placeholder -->
+    <div id="footer-placeholder"></div>
+    
+    <!-- JavaScript - Link to external script for functionality -->
+    <script src="js/main.js"></script>
+    
+    <!-- Initialize Feather Icons -->
     <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        const loadEl = document.querySelector('#load');
-        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
-        // // The Firebase SDK is initialized and available here!
-        //
-        // firebase.auth().onAuthStateChanged(user => { });
-        // firebase.database().ref('/path/to/ref').on('value', snapshot => { });
-        // firebase.firestore().doc('/foo/bar').get().then(() => { });
-        // firebase.functions().httpsCallable('yourFunction')().then(() => { });
-        // firebase.messaging().requestPermission().then(() => { });
-        // firebase.storage().ref('/path/to/ref').getDownloadURL().then(() => { });
-        // firebase.analytics(); // call to activate
-        // firebase.analytics().logEvent('tutorial_completed');
-        // firebase.performance(); // call to activate
-        //
-        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
-
-        try {
-          let app = firebase.app();
-          let features = [
-            'auth', 
-            'database', 
-            'firestore',
-            'functions',
-            'messaging', 
-            'storage', 
-            'analytics', 
-            'remoteConfig',
-            'performance',
-          ].filter(feature => typeof app[feature] === 'function');
-          loadEl.textContent = `Firebase SDK loaded with ${features.join(', ')}`;
-        } catch (e) {
-          console.error(e);
-          loadEl.textContent = 'Error loading the Firebase SDK, check the console.';
-        }
-      });
+        feather.replace();
     </script>
-  </body>
+</body>
 </html>
