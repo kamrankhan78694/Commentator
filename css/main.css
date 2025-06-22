@@ -1312,3 +1312,52 @@ a:hover {
     color: #718096;
     line-height: 1.6;
 }
+
+/* ===== DEBUG HELP BUTTON ===== */
+.debug-help-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 50%;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+    transition: all 0.3s ease;
+    z-index: 9999;
+    backdrop-filter: blur(10px);
+}
+
+.debug-help-button:hover {
+    transform: translateY(-2px) scale(1.1);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+}
+
+.debug-help-button:active {
+    transform: translateY(0) scale(1.05);
+}
+
+.debug-help-button svg {
+    width: 24px;
+    height: 24px;
+}
+
+@media (max-width: 768px) {
+    .debug-help-button {
+        width: 48px;
+        height: 48px;
+        bottom: 15px;
+        right: 15px;
+    }
+    
+    .debug-help-button svg {
+        width: 20px;
+        height: 20px;
+    }
+}

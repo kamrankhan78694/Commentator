@@ -184,6 +184,9 @@ document.addEventListener('DOMContentLoaded', function() {
     loadHeaderAndFooter();
     initCommentInterface();
     
+    // Initialize debug help button
+    initDebugHelpButton();
+    
     // Log successful initialization
     setTimeout(() => {
         if (window.CommentatorLogger) {
@@ -336,6 +339,9 @@ function initCommentInterface() {
     // Handle "View Demo" button click
     if (demoBtn) {
         demoBtn.addEventListener('click', function() {
+            if (window.CommentatorLogger) {
+                window.CommentatorLogger.action('User clicked "View Demo" button', 'info', 'USER_INTERACTION');
+            }
             // Scroll to demo section and focus on URL input
             const demoSection = document.getElementById('demo-section');
             if (demoSection) {
@@ -352,13 +358,23 @@ function initCommentInterface() {
         loadCommentsBtn.addEventListener('click', function() {
             const url = urlInput.value.trim();
             
+            if (window.CommentatorLogger) {
+                window.CommentatorLogger.action(`User clicked "Load Comments" for URL: ${url || '(empty)'}`, 'info', 'USER_INTERACTION');
+            }
+            
             if (!url) {
+                if (window.CommentatorLogger) {
+                    window.CommentatorLogger.warning('User attempted to load comments with empty URL', 'VALIDATION');
+                }
                 showNotification('Please enter a valid URL', 'error');
                 urlInput.focus();
                 return;
             }
             
             if (!isValidUrl(url)) {
+                if (window.CommentatorLogger) {
+                    window.CommentatorLogger.warning(`User entered invalid URL: ${url}`, 'VALIDATION');
+                }
                 showNotification('Please enter a valid URL (e.g., https://example.com)', 'error');
                 urlInput.focus();
                 return;
@@ -1313,6 +1329,21 @@ function formatTimestamp(timestamp) {
     // For older dates, show actual date
     const date = new Date(timestamp);
     return date.toLocaleDateString();
+}
+
+/**
+ * Initialize debug help button functionality
+ */
+function initDebugHelpButton() {
+    const debugHelpBtn = document.getElementById('debug-help-btn');
+    if (debugHelpBtn && window.CommentatorLogger) {
+        debugHelpBtn.addEventListener('click', function() {
+            window.CommentatorLogger.toggle();
+            if (window.CommentatorLogger) {
+                window.CommentatorLogger.action('Debug panel toggled via help button', 'info', 'USER_INTERACTION');
+            }
+        });
+    }
 }
 
 /**
