@@ -200,6 +200,111 @@ a:hover {
     font-size: 14px;
 }
 
+/* ===== BREADCRUMB NAVIGATION ===== */
+.breadcrumb {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 12px 0;
+    font-size: 14px;
+}
+
+.breadcrumb-list {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.breadcrumb-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.breadcrumb-item:not(:last-child)::after {
+    content: '>';
+    color: #718096;
+    font-weight: 400;
+}
+
+.breadcrumb-link {
+    color: #4a5568;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.breadcrumb-link:hover,
+.breadcrumb-link:focus {
+    color: #3182ce;
+    text-decoration: underline;
+}
+
+.breadcrumb-current {
+    color: #2d3748;
+    font-weight: 500;
+}
+
+/* ===== ACCESSIBILITY ENHANCEMENTS ===== */
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 6px;
+    background: #3182ce;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 4px;
+    text-decoration: none;
+    z-index: 1000;
+    font-weight: 500;
+    transition: top 0.2s ease;
+}
+
+.skip-link:focus {
+    top: 6px;
+}
+
+/* Focus indicators */
+.nav a:focus,
+.btn:focus,
+.mobile-menu-toggle:focus {
+    outline: 2px solid #3182ce;
+    outline-offset: 2px;
+}
+
+/* Back to top button */
+.back-to-top {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #3182ce;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(49, 130, 206, 0.3);
+}
+
+.back-to-top.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.back-to-top:hover {
+    background: #2c5282;
+    transform: translateY(-2px);
+}
+
 /* ===== MAIN CONTENT SECTIONS ===== */
 .main {
     min-height: calc(100vh - 200px);
@@ -1348,7 +1453,40 @@ a:hover {
     height: 24px;
 }
 
+/* ===== MOBILE RESPONSIVE ENHANCEMENTS ===== */
 @media (max-width: 768px) {
+    /* Mobile breadcrumb */
+    .breadcrumb {
+        font-size: 12px;
+        padding: 8px 0;
+    }
+    
+    .breadcrumb-list {
+        flex-wrap: wrap;
+        gap: 4px;
+    }
+    
+    .breadcrumb-item:not(:last-child)::after {
+        content: '>';
+        margin: 0 4px;
+    }
+    
+    /* Mobile skip link */
+    .skip-link:focus {
+        top: 3px;
+        left: 3px;
+        font-size: 14px;
+    }
+    
+    /* Mobile back to top button */
+    .back-to-top {
+        bottom: 15px;
+        right: 15px;
+        width: 45px;
+        height: 45px;
+    }
+    
+    /* Debug help button mobile */
     .debug-help-button {
         width: 48px;
         height: 48px;
