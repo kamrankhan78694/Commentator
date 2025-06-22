@@ -467,11 +467,15 @@ async function loadCommentsForUrl(url, commentsSection) {
         commentsSection.innerHTML = `
             <div class="error-state">
                 <p>❌ Failed to load comments: ${error.message}</p>
-                <button onclick="loadCommentsForUrl('${url}', document.getElementById('comments-section'))" class="btn btn-secondary">
+                <button id="retry-button" class="btn btn-secondary">
                     Retry
                 </button>
             </div>
         `;
+        const retryButton = document.getElementById('retry-button');
+        retryButton.addEventListener('click', () => {
+            loadCommentsForUrl(url, document.getElementById('comments-section'));
+        });
     }
 }
 
