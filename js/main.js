@@ -232,8 +232,8 @@ function initNewsletterForm() {
             return;
         }
         
-        // Since this is a demo, we'll just show a success message
         // In a real implementation, this would send the email to a backend service
+        // For now, we'll just show a success message
         showNotification('Thank you for subscribing! We\'ll keep you updated on important project news.', 'success');
         emailInput.value = '';
     });
@@ -440,27 +440,7 @@ async function loadCommentsForUrl(url, commentsSection) {
     try {
         // Check if Firebase service is available
         if (typeof window.FirebaseService === 'undefined') {
-            // Show demo comments when Firebase is not available
-            const demoComments = [
-                {
-                    id: 1,
-                    author: 'Demo User',
-                    text: 'This is a demo comment! The comment system is working.',
-                    timestamp: '2 hours ago',
-                    votes: 5
-                },
-                {
-                    id: 2,
-                    author: 'Sample User',
-                    text: 'Comments are loaded successfully. You can now submit your own comment below.',
-                    timestamp: '1 hour ago',
-                    votes: 3
-                }
-            ];
-            
-            displayComments(demoComments, commentsSection);
-            showNotification('Demo comments loaded (Firebase not available)', 'info');
-            return;
+            throw new Error('Firebase service is not available. Please check your connection and try again.');
         }
         
         // Load comments from Firebase
@@ -599,68 +579,31 @@ async function submitComment(url, comment, commentsSection, commentTextarea) {
     try {
         // Check if Firebase service is available
         if (typeof window.FirebaseService === 'undefined') {
-            // Fallback to demo mode - simulate API delay
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            
-            // Create demo comment object
-            const newComment = {
-                id: Date.now(),
-                author: 'You (Demo)', 
-                text: comment,
-                timestamp: 'Just now',
-                votes: 0
-            };
-            
-            // Add to existing comments or create new list
-            const existingComments = commentsSection.querySelector('.comments-list');
-            if (existingComments) {
-                // Add to existing comments
-                const newCommentHtml = `
-                    <div class="comment new-comment">
-                        <div class="comment-header">
-                            <span class="comment-author">👤 ${newComment.author}</span>
-                            <span class="comment-timestamp">${newComment.timestamp}</span>
-                            <span class="comment-votes">👍 ${newComment.votes}</span>
-                        </div>
-                        <div class="comment-text">${newComment.text}</div>
-                    </div>
-                `;
-                existingComments.insertAdjacentHTML('beforeend', newCommentHtml);
-            } else {
-                // Create new comments list
-                displayComments([newComment], commentsSection);
-            }
-            
-            // Clear the textarea
-            commentTextarea.value = '';
-            
-            // Show success message
-            showNotification('Comment submitted successfully! (Demo mode) 🎉', 'success');
-            
-        } else {
-            // Use real Firebase API
-            await window.FirebaseService.initAuth(); // Ensure user is authenticated
-            
-            const commentData = {
-                author: 'Anonymous', // In a real app, this would be the logged-in user
-                text: comment,
-                votes: 0,
-                timestamp: new Date().toISOString()
-            };
-            
-            // Save comment to Firebase
-            const commentId = await window.FirebaseService.saveComment(url, commentData);
-            console.log('Comment saved with ID:', commentId);
-            
-            // Clear the textarea
-            commentTextarea.value = '';
-            
-            // Show success message
-            showNotification('Comment submitted successfully! 🎉', 'success');
-            
-            // The real-time listener will automatically update the UI
-            // so we don't need to manually add the comment to the display
+            throw new Error('Firebase service is not available. Please check your connection and try again.');
         }
+        
+        // Use real Firebase API
+        await window.FirebaseService.initAuth(); // Ensure user is authenticated
+        
+        const commentData = {
+            author: 'Anonymous', // In a real app, this would be the logged-in user
+            text: comment,
+            votes: 0,
+            timestamp: new Date().toISOString()
+        };
+        
+        // Save comment to Firebase
+        const commentId = await window.FirebaseService.saveComment(url, commentData);
+        console.log('Comment saved with ID:', commentId);
+        
+        // Clear the textarea
+        commentTextarea.value = '';
+        
+        // Show success message
+        showNotification('Comment submitted successfully! 🎉', 'success');
+        
+        // The real-time listener will automatically update the UI
+        // so we don't need to manually add the comment to the display
         
     } catch (error) {
         console.error('Error submitting comment:', error);
