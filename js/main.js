@@ -232,8 +232,8 @@ function initNewsletterForm() {
             return;
         }
         
-        // Since this is a demo, we'll just show a success message
         // In a real implementation, this would send the email to a backend service
+        // For now, we'll just show a success message
         showNotification('Thank you for subscribing! We\'ll keep you updated on important project news.', 'success');
         emailInput.value = '';
     });
@@ -324,19 +324,28 @@ function initCommentInterface() {
             const url = urlInput.value.trim();
             
             if (!url) {
-                alert('Please enter a valid URL');
+                showNotification('Please enter a valid URL', 'error');
                 urlInput.focus();
                 return;
             }
             
             if (!isValidUrl(url)) {
-                alert('Please enter a valid URL (e.g., https://example.com)');
+                showNotification('Please enter a valid URL (e.g., https://example.com)', 'error');
                 urlInput.focus();
                 return;
             }
             
-            // Simulate loading comments (replace with actual API call later)
-            loadCommentsForUrl(url, commentsSection);
+            // Show loading state on button
+            const originalText = loadCommentsBtn.textContent;
+            loadCommentsBtn.textContent = 'Loading...';
+            loadCommentsBtn.disabled = true;
+            
+            // Load comments with proper API integration
+            loadCommentsForUrl(url, commentsSection).finally(() => {
+                // Reset button state
+                loadCommentsBtn.textContent = originalText;
+                loadCommentsBtn.disabled = false;
+            });
         });
     }
     
@@ -347,17 +356,17 @@ function initCommentInterface() {
             const url = urlInput ? urlInput.value.trim() : '';
             
             if (!url) {
-                alert('Please load a URL first');
+                showNotification('Please load a URL first', 'error');
                 return;
             }
             
             if (!comment) {
-                alert('Please enter a comment');
+                showNotification('Please enter a comment', 'error');
                 commentText.focus();
                 return;
             }
             
-            // Simulate submitting comment (replace with actual API call later)
+            // Submit comment with real API integration
             submitComment(url, comment, commentsSection, commentText);
         });
     }
@@ -431,26 +440,7 @@ async function loadCommentsForUrl(url, commentsSection) {
     try {
         // Check if Firebase service is available
         if (typeof window.FirebaseService === 'undefined') {
-            // Show demo comments when Firebase is not available
-            const demoComments = [
-                {
-                    id: 1,
-                    author: 'Demo User',
-                    text: 'This is a demo comment! The comment system is working.',
-                    timestamp: '2 hours ago',
-                    votes: 5
-                },
-                {
-                    id: 2,
-                    author: 'Sample User',
-                    text: 'Comments are loaded successfully. You can now submit your own comment below.',
-                    timestamp: '1 hour ago',
-                    votes: 3
-                }
-            ];
-            
-            displayComments(demoComments, commentsSection);
-            return;
+            throw new Error('Firebase service is not available. Please check your connection and try again.');
         }
         
         // Load comments from Firebase
@@ -466,12 +456,19 @@ async function loadCommentsForUrl(url, commentsSection) {
         
         displayComments(formattedComments, commentsSection);
         
+        // Show success message
+        if (formattedComments.length > 0) {
+            showNotification(`Successfully loaded ${formattedComments.length} comment${formattedComments.length > 1 ? 's' : ''}`, 'success');
+        } else {
+            showNotification('No comments found for this URL. Be the first to comment!', 'info');
+        }
+        
         // Set up real-time listener for new comments
         // Unsubscribe any existing listener to avoid multiple active subscriptions
-        if (currentCommentsUnsubscribe) {
-            currentCommentsUnsubscribe();
+        if (window.currentCommentsUnsubscribe) {
+            window.currentCommentsUnsubscribe();
         }
-        const currentCommentsUnsubscribe = window.FirebaseService.subscribeToComments(url, (updatedComments) => {
+        window.currentCommentsUnsubscribe = window.FirebaseService.subscribeToComments(url, (updatedComments) => {
             const formattedUpdated = updatedComments.map(comment => ({
                 ...comment,
                 author: comment.author || 'Anonymous',
@@ -491,10 +488,16 @@ async function loadCommentsForUrl(url, commentsSection) {
                 </button>
             </div>
         `;
+        
+        // Show error notification
+        showNotification(`Failed to load comments: ${error.message}`, 'error');
+        
         const retryButton = document.getElementById('retry-button');
-        retryButton.addEventListener('click', () => {
-            loadCommentsForUrl(url, commentsSection);
-        });
+        if (retryButton) {
+            retryButton.addEventListener('click', () => {
+                loadCommentsForUrl(url, commentsSection);
+            });
+        }
     }
 }
 
@@ -560,69 +563,70 @@ function displayComments(comments, commentsSection, isNFT = false) {
 }
 
 /**
- * Simulate submitting a new comment
+ * Submit a new comment using Firebase API
  * @param {string} url - The URL the comment is for
  * @param {string} comment - The comment text
  * @param {HTMLElement} commentsSection - The comments display element
  * @param {HTMLElement} commentTextarea - The comment input element
  */
-function submitComment(url, comment, commentsSection, commentTextarea) {
+async function submitComment(url, comment, commentsSection, commentTextarea) {
     // Show submitting state
     const submitBtn = document.getElementById('submit-comment-btn');
     const originalText = submitBtn.textContent;
     submitBtn.textContent = 'Submitting...';
     submitBtn.disabled = true;
     
-    // Simulate API delay
-    setTimeout(() => {
-        // Create new comment object
-        const newComment = {
-            id: Date.now(),
-            author: 'You', // In a real app, this would be the logged-in user
+    try {
+        // Check if Firebase service is available
+        if (typeof window.FirebaseService === 'undefined') {
+            throw new Error('Firebase service is not available. Please check your connection and try again.');
+        }
+        
+        // Use real Firebase API
+        await window.FirebaseService.initAuth(); // Ensure user is authenticated
+        
+        const commentData = {
+            author: 'Anonymous', // In a real app, this would be the logged-in user
             text: comment,
-            timestamp: 'Just now',
-            votes: 0
+            votes: 0,
+            timestamp: new Date().toISOString()
         };
         
-        // Add to existing comments or create new list
-        const existingComments = commentsSection.querySelector('.comments-list');
-        if (existingComments) {
-            // Add to existing comments
-            const newCommentHtml = `
-                <div class="comment new-comment">
-                    <div class="comment-header">
-                        <span class="comment-author">👤 ${newComment.author}</span>
-                        <span class="comment-timestamp">${newComment.timestamp}</span>
-                        <span class="comment-votes">👍 ${newComment.votes}</span>
-                    </div>
-                    <div class="comment-text">${newComment.text}</div>
-                </div>
-            `;
-            existingComments.insertAdjacentHTML('beforeend', newCommentHtml);
-        } else {
-            // Create new comments list
-            displayComments([newComment], commentsSection);
-        }
+        // Save comment to Firebase
+        const commentId = await window.FirebaseService.saveComment(url, commentData);
+        console.log('Comment saved with ID:', commentId);
         
         // Clear the textarea
         commentTextarea.value = '';
         
+        // Show success message
+        showNotification('Comment submitted successfully! 🎉', 'success');
+        
+        // The real-time listener will automatically update the UI
+        // so we don't need to manually add the comment to the display
+        
+    } catch (error) {
+        console.error('Error submitting comment:', error);
+        
+        // Show error notification
+        showNotification(`Failed to submit comment: ${error.message}`, 'error');
+        
+    } finally {
         // Reset submit button
         submitBtn.textContent = originalText;
         submitBtn.disabled = false;
         
-        // Show success message
-        showNotification('Comment submitted successfully! 🎉');
-        
-        // Scroll to the new comment
-        const newCommentElement = commentsSection.querySelector('.new-comment');
-        if (newCommentElement) {
-            newCommentElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            setTimeout(() => {
-                newCommentElement.classList.remove('new-comment');
-            }, 3000);
-        }
-    }, 1000);
+        // Scroll to comments section
+        setTimeout(() => {
+            const newCommentElement = commentsSection.querySelector('.new-comment');
+            if (newCommentElement) {
+                newCommentElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                setTimeout(() => {
+                    newCommentElement.classList.remove('new-comment');
+                }, 3000);
+            }
+        }, 100);
+    }
 }
 
 /**

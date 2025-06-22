@@ -140,6 +140,5 @@ _site/
 .jekyll-cache/
 .jekyll-metadata
 
-# Bundler
-.bundle/
-vendor/
+# Test files
+test_api_integration.html
