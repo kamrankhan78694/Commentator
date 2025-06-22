@@ -127,7 +127,7 @@ function configureNavigation() {
     if (!nav) return;
     
     const currentPage = window.location.pathname;
-    const baseUrl = BASE_URL;
+    const baseUrl = getBaseUrl();
     let navItems = [];
     
     if (currentPage.includes('/docs/')) {
