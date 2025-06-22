@@ -4,166 +4,183 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Commentator - Universal Web Comments</title>
-    <meta name="description" content="Universal commenting system enabling community-driven feedback on any website">
+    <meta name="description" content="Commentator is an open-source project designed to improve transparency on the web by enabling community-driven feedback on any website.">
     
-    <!-- CSS -->
-    <link rel="stylesheet" href="css/main.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.28.0/feather.min.css">
-    
-    <!-- Feather Icons -->
+    <!-- Feather Icons for modern SVG icons -->
     <script src="https://unpkg.com/feather-icons"></script>
+    
+    <!-- CSS - Link to external stylesheet for maintainability -->
+    <link rel="stylesheet" href="css/main.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16.png">
+    <link rel="apple-touch-icon" href="assets/favicon.png">
 </head>
 <body>
+    <!-- Main container for the application -->
     <div id="app">
         <!-- Header placeholder - will be loaded dynamically -->
         <div id="header-placeholder"></div>
 
-        <!-- Hero Section -->
+        <!-- Hero section introducing the project -->
         <section class="hero">
             <div class="container">
-                <h1 class="hero-title">💬 Universal Web Comments</h1>
+                <h2 class="hero-title">Universal Web Comments</h2>
                 <p class="hero-subtitle">
-                    Enable community-driven feedback on any website with our decentralized commenting system.
+                    Improve transparency on the web by enabling community-driven feedback. 
+                    Comment on any website—even those that disable native comments or review systems.
                 </p>
                 <div class="hero-actions">
-                    <a href="#demo" class="btn btn-primary">Try Demo</a>
-                    <a href="docs/" class="btn btn-secondary">Documentation</a>
+                    <!-- Primary action buttons -->
+                    <button class="btn btn-primary" id="get-started-btn">Get Started</button>
+                    <button class="btn btn-secondary" id="demo-btn">View Demo</button>
                 </div>
             </div>
         </section>
 
-        <!-- Features Section -->
-        <section class="features">
+        <!-- Features section highlighting key capabilities -->
+        <section id="features" class="features">
             <div class="container">
-                <h2 class="section-title">🚀 Key Features</h2>
+                <h3 class="section-title">Features</h3>
                 <div class="features-grid">
                     <div class="feature-card">
                         <div class="feature-icon">
                             <i data-feather="globe"></i>
                         </div>
-                        <h3>Universal Compatibility</h3>
-                        <p>Comment on any website, regardless of native support</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i data-feather="database"></i>
-                        </div>
-                        <h3>Firebase Backend</h3>
-                        <p>Reliable real-time data storage and synchronization</p>
+                        <h4>Universal Commenting</h4>
+                        <p>Share feedback on any webpage, regardless of whether it supports native comments.</p>
                     </div>
                     <div class="feature-card">
                         <div class="feature-icon">
                             <i data-feather="shield"></i>
                         </div>
-                        <h3>Secure & Private</h3>
-                        <p>Anonymous authentication with secure data handling</p>
+                        <h4>Fraud Prevention</h4>
+                        <p>Expose suspicious websites by enabling users to leave honest reviews.</p>
                     </div>
                     <div class="feature-card">
                         <div class="feature-icon">
-                            <i data-feather="zap"></i>
+                            <i data-feather="users"></i>
                         </div>
-                        <h3>Real-time Updates</h3>
-                        <p>See new comments instantly without page refresh</p>
+                        <h4>Open Participation</h4>
+                        <p>Anyone can view or post comments without censorship.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i data-feather="git-branch"></i>
+                        </div>
+                        <h4>Fully Open-Source</h4>
+                        <p>Transparent and community-driven, licensed under MIT.</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Demo Section -->
-        <section id="demo" class="demo">
+        <!-- How it works section -->
+        <section id="how-it-works" class="how-it-works">
             <div class="container">
-                <h2 class="section-title">🎯 Try it Now</h2>
-                <div class="demo-interface">
-                    <div class="url-input-section">
-                        <label for="url-input">Enter any website URL to load or add comments:</label>
-                        <div class="input-group">
-                            <input 
-                                type="url" 
-                                id="url-input" 
-                                placeholder="https://example.com" 
-                                class="url-input"
-                            >
-                            <button id="load-comments-btn" class="btn btn-primary">
-                                <i data-feather="message-circle"></i>
-                                Load Comments
-                            </button>
-                        </div>
-                        <p class="input-help">
-                            💡 Try with any URL like GitHub repos, news articles, or documentation pages
-                        </p>
+                <h3 class="section-title">How It Works</h3>
+                <div class="steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <p>Users install a browser extension or use the Commentator interface.</p>
                     </div>
-
-                    <!-- Comments Display Section -->
-                    <div id="comments-section" class="comments-section">
-                        <div class="empty-state">
-                            <div class="empty-icon">
-                                <i data-feather="message-square"></i>
-                            </div>
-                            <p>Enter a URL above to see comments for that page</p>
-                        </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <p>When visiting a website, they can leave or view comments tied to the domain or specific URL.</p>
                     </div>
-
-                    <!-- Comment Input Section -->
-                    <div class="comment-input-section">
-                        <h3>💭 Add Your Comment</h3>
-                        <div class="comment-form">
-                            <textarea 
-                                id="comment-text" 
-                                placeholder="Share your thoughts about this website..."
-                                class="comment-textarea"
-                                rows="4"
-                            ></textarea>
-                            <div class="comment-actions">
-                                <div class="user-info">
-                                    <span id="user-status">🔄 Connecting...</span>
-                                </div>
-                                <button id="submit-comment-btn" class="btn btn-primary" disabled>
-                                    <i data-feather="send"></i>
-                                    Submit Comment
-                                </button>
-                            </div>
-                        </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <p>Comments are stored securely and rendered dynamically.</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <p>Others benefit from the collective feedback to make better web decisions.</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- How it Works Section -->
-        <section class="about">
+        <!-- Decentralization vision section -->
+        <section id="about" class="about">
             <div class="container">
-                <h2 class="section-title">🔧 How It Works</h2>
-                <div class="about-content">
-                    <div class="about-text">
-                        <h3>Simple Integration</h3>
-                        <p>
-                            Commentator provides a universal commenting system that works on any website. 
-                            Comments are stored in Firebase Realtime Database, ensuring persistence and 
-                            real-time synchronization across all users.
-                        </p>
-                        <ul>
-                            <li>🔐 Secure anonymous authentication</li>
-                            <li>📊 Real-time comment synchronization</li>
-                            <li>💾 Persistent data storage</li>
-                            <li>🌍 Universal compatibility</li>
-                        </ul>
+                <h3 class="section-title">Project Goal: Decentralization</h3>
+                <p class="about-description">
+                    Our long-term vision is to make Commentator a <strong>fully decentralized public commenting system</strong> 
+                    that cannot be controlled or censored by any single entity.
+                </p>
+                <div class="objectives">
+                    <div class="objective">
+                        <div class="objective-icon">
+                            <i data-feather="database"></i>
+                        </div>
+                        <div class="objective-content">
+                            <strong>Decentralized Storage:</strong> Store comment data on IPFS or Arweave using tools like web3.storage or Bundlr.
+                        </div>
+                    </div>
+                    <div class="objective">
+                        <div class="objective-icon">
+                            <i data-feather="user-check"></i>
+                        </div>
+                        <div class="objective-content">
+                            <strong>Decentralized Identity (DID):</strong> Use Ethereum wallets (e.g., MetaMask) or identity protocols like ENS and Ceramic.
+                        </div>
+                    </div>
+                    <div class="objective">
+                        <div class="objective-icon">
+                            <i data-feather="thumbs-up"></i>
+                        </div>
+                        <div class="objective-content">
+                            <strong>Community Moderation:</strong> Implement upvote/downvote systems, and explore DAO-style moderation.
+                        </div>
+                    </div>
+                    <div class="objective">
+                        <div class="objective-icon">
+                            <i data-feather="lock"></i>
+                        </div>
+                        <div class="objective-content">
+                            <strong>Content Integrity:</strong> Let users cryptographically sign their comments for authenticity and verifiability.
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Footer placeholder - will be loaded dynamically -->
-        <div id="footer-placeholder"></div>
+        <!-- Demo/placeholder section for future commenting interface -->
+        <section class="demo" id="demo-section">
+            <div class="container">
+                <h3 class="section-title">Comment Interface Preview</h3>
+                <div class="comment-interface">
+                    <!-- This will be the core commenting interface -->
+                    <div class="url-input">
+                        <label for="website-url">Enter a website URL to view or add comments:</label>
+                        <input type="url" id="website-url" placeholder="https://example.com" />
+                        <button id="load-comments-btn" class="btn btn-primary">Load Comments</button>
+                    </div>
+                    
+                    <!-- Comments display area -->
+                    <div class="comments-section" id="comments-section">
+                        <p class="placeholder-text">Comments will appear here when you load a URL</p>
+                    </div>
+                    
+                    <!-- Add comment form -->
+                    <div class="add-comment" id="add-comment-form">
+                        <h4>Add Your Comment</h4>
+                        <textarea id="comment-text" placeholder="Share your thoughts about this website..." rows="4"></textarea>
+                        <button id="submit-comment-btn" class="btn btn-primary">Submit Comment</button>
+                    </div>
+                </div>
+            </div>
+        </section>
     </div>
 
-    <!-- Firebase Configuration -->
-    <script type="module" src="firebase-config.js"></script>
+    <!-- Footer placeholder -->
+    <div id="footer-placeholder"></div>
     
-    <!-- Firebase Service -->
-    <script type="module" src="js/firebase-service.js"></script>
-    
-    <!-- Main JavaScript -->
+    <!-- JavaScript - Link to external script for functionality -->
     <script src="js/main.js"></script>
-
+    
     <!-- Initialize Feather Icons -->
     <script>
         feather.replace();
