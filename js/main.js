@@ -22,7 +22,7 @@ function getBaseUrl() {
     if (window.location.hostname === 'kamrankhan78694.github.io') {
         // For GitHub Pages, check if we're in a subdirectory
         if (path.includes('/docs/')) {
-            return '../Commentator/';
+            return '../';
         }
         return '/Commentator/';
     }
