@@ -1,0 +1,79 @@
+
+<!DOCTYPE html>
+<html>
+<head><title>Test</title></head>
+<body>
+    <input type="url" id="website-url" value="https://example.com" />
+    <button id="load-comments-btn">Load Comments</button>
+    <div id="comments-section"><p class="placeholder-text">Comments will appear here</p></div>
+    <textarea id="comment-text">Test comment</textarea>
+    <button id="submit-comment-btn">Submit Comment</button>
+    
+    <script>
+        window = {};
+        const originalLog = console.log;
+        let testPassed = true;
+        
+        // Mock DOM functions
+        document = {
+            getElementById: function(id) {
+                const mockElement = {
+                    value: id === 'website-url' ? 'https://example.com' : 
+                           id === 'comment-text' ? 'Test comment' : '',
+                    textContent: id === 'submit-comment-btn' ? 'Submit Comment' : '',
+                    disabled: false,
+                    innerHTML: id === 'comments-section' ? '<p class="placeholder-text">Comments will appear here</p>' : '',
+                    addEventListener: function(event, callback) {
+                        originalLog('✓ Event listener added to ' + id + ' for ' + event);
+                        // Simulate click for testing
+                        if (event === 'click' && (id === 'load-comments-btn' || id === 'submit-comment-btn')) {
+                            setTimeout(() => {
+                                originalLog('🔄 Simulating ' + event + ' on ' + id);
+                                try {
+                                    callback();
+                                    originalLog('✅ ' + id + ' click handler executed successfully');
+                                } catch (e) {
+                                    originalLog('❌ Error in ' + id + ' click handler: ' + e.message);
+                                    testPassed = false;
+                                }
+                            }, 100);
+                        }
+                    },
+                    focus: function() { originalLog('Focused ' + id); },
+                    insertAdjacentHTML: function(pos, html) { 
+                        originalLog('✓ insertAdjacentHTML called on ' + id);
+                        this.innerHTML += html; 
+                    },
+                    querySelector: function(sel) { 
+                        return sel === '.new-comment' ? { 
+                            scrollIntoView: function() {}, 
+                            classList: { remove: function() {} } 
+                        } : null; 
+                    },
+                    classList: { remove: function() {} },
+                    scrollIntoView: function() {}
+                };
+                return mockElement;
+            },
+            addEventListener: function(event, callback) {
+                if (event === 'DOMContentLoaded') {
+                    setTimeout(callback, 50);
+                }
+            }
+        };
+        
+        alert = function(msg) { originalLog('Alert: ' + msg); };
+        setTimeout = function(fn, delay) { setTimeout(fn, Math.min(delay, 100)); };
+        Date.now = function() { return 1234567890; };
+        
+        // Load the main script
+    </script>
+    <script src="js/main.js"></script>
+    <script>
+        setTimeout(() => {
+            console.log('\n=== TEST COMPLETE ===');
+            console.log(testPassed ? '🎉 ALL TESTS PASSED' : '❌ SOME TESTS FAILED');
+        }, 2000);
+    </script>
+</body>
+</html>
