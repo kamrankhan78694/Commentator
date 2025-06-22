@@ -449,10 +449,10 @@ async function loadCommentsForUrl(url, commentsSection) {
         
         // Set up real-time listener for new comments
         // Unsubscribe any existing listener to avoid multiple active subscriptions
-        if (window.currentCommentsUnsubscribe) {
-            window.currentCommentsUnsubscribe();
+        if (currentCommentsUnsubscribe) {
+            currentCommentsUnsubscribe();
         }
-        window.currentCommentsUnsubscribe = window.FirebaseService.subscribeToComments(url, (updatedComments) => {
+        const currentCommentsUnsubscribe = window.FirebaseService.subscribeToComments(url, (updatedComments) => {
             const formattedUpdated = updatedComments.map(comment => ({
                 ...comment,
                 author: comment.author || 'Anonymous',
