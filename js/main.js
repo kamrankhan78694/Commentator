@@ -21,7 +21,7 @@ function getBaseUrl() {
     // Check if we're on GitHub Pages
     if (window.location.hostname === 'kamrankhan78694.github.io') {
         // For GitHub Pages, check if we're in a subdirectory
-        if (path.includes('/docs/')) {
+        if (path.startsWith('/docs/')) {
             return '../';
         }
         return '/Commentator/';
