@@ -13,15 +13,27 @@
  */
 
 /**
- * Get the base URL for the site (handles GitHub Pages deployment)
+ * Get the base URL for the site (handles GitHub Pages deployment and subdirectories)
  */
 function getBaseUrl() {
+    const path = window.location.pathname;
+    
     // Check if we're on GitHub Pages
     if (window.location.hostname === 'kamrankhan78694.github.io') {
+        // For GitHub Pages, check if we're in a subdirectory
+        if (path.includes('/docs/')) {
+            return '../Commentator/';
+        }
         return '/Commentator/';
     }
+    
     // Local development or other deployments
-    return '/';
+    // Check if we're in a subdirectory (contains at least one folder before the file)
+    if (path.includes('/docs/')) {
+        return '../';
+    }
+    
+    return './';
 }
 
 /**
