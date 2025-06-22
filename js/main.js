@@ -92,6 +92,11 @@ async function loadHeaderAndFooter() {
         // Initialize back to top button
         initBackToTop();
         
+        // Run accessibility validation in development
+        setTimeout(() => {
+            validateAccessibility();
+        }, 1000);
+        
     } catch (error) {
         console.error('Error loading header/footer components:', error);
     }
@@ -622,6 +627,56 @@ function initBackToTop() {
     if (typeof feather !== 'undefined') {
         feather.replace();
     }
+}
+
+/**
+ * Basic accessibility validation
+ */
+function validateAccessibility() {
+    const issues = [];
+    
+    // Check for missing alt text on images
+    const images = document.querySelectorAll('img');
+    images.forEach(img => {
+        if (!img.getAttribute('alt')) {
+            issues.push(`Image missing alt text: ${img.src}`);
+        }
+    });
+    
+    // Check for proper heading hierarchy
+    const headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+    let lastLevel = 0;
+    headings.forEach(heading => {
+        const level = parseInt(heading.tagName.charAt(1));
+        if (level > lastLevel + 1) {
+            issues.push(`Heading hierarchy issue: ${heading.tagName} after h${lastLevel}`);
+        }
+        lastLevel = level;
+    });
+    
+    // Check for interactive elements without proper focus indicators
+    const interactiveElements = document.querySelectorAll('a, button, input, textarea, select');
+    interactiveElements.forEach(element => {
+        const style = window.getComputedStyle(element, ':focus');
+        if (!style.outline || style.outline === 'none') {
+            if (!style.boxShadow || !style.border) {
+                issues.push(`Interactive element may lack proper focus indicator: ${element.tagName}`);
+            }
+        }
+    });
+    
+    // Log issues in development
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        if (issues.length > 0) {
+            console.group('🔍 Accessibility Issues Found:');
+            issues.forEach(issue => console.warn(issue));
+            console.groupEnd();
+        } else {
+            console.log('✅ No accessibility issues detected');
+        }
+    }
+    
+    return issues;
 }
 
 /**
