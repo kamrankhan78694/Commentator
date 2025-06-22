@@ -161,7 +161,7 @@ window.FirebaseService = (function() {
     });
 
     // Return unsubscribe function
-    return () => off(commentsRef, 'value', unsubscribe);
+    return unsubscribe;
   }
 
   /**
