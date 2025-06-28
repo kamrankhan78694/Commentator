@@ -1,22 +1,22 @@
 /**
  * Firebase Service Module for Commentator
- * 
+ *
  * This module handles all Firebase Realtime Database operations for:
  * - Comments management
- * - User data management  
+ * - User data management
  * - Session data management
  */
 
 // Import Firebase configuration and services
-import { 
-  database, 
-  auth, 
-  ref, 
-  set, 
-  get, 
-  push, 
-  onValue, 
-  off, 
+import {
+  database,
+  auth,
+  ref,
+  set,
+  get,
+  push,
+  onValue,
+  off,
   serverTimestamp,
   signInAnonymously,
   onAuthStateChanged
@@ -24,7 +24,7 @@ import {
 
 // Firebase service object to avoid module complications
 window.FirebaseService = (function() {
-  
+
   // Authentication state
   let currentUser = null;
   let isAuthenticated = false;
@@ -83,7 +83,7 @@ window.FirebaseService = (function() {
 
     const urlHash = generateUrlHash(url);
     const commentsRef = ref(database, `comments/${urlHash}`);
-    
+
     // Add server timestamp and user ID
     const comment = {
       ...commentData,
@@ -94,7 +94,7 @@ window.FirebaseService = (function() {
 
     const newCommentRef = push(commentsRef);
     await set(newCommentRef, comment);
-    
+
     console.log('Comment saved to Firebase:', newCommentRef.key);
     return newCommentRef.key;
   }
@@ -107,7 +107,7 @@ window.FirebaseService = (function() {
   async function loadComments(url) {
     const urlHash = generateUrlHash(url);
     const commentsRef = ref(database, `comments/${urlHash}`);
-    
+
     try {
       const snapshot = await get(commentsRef);
       if (snapshot.exists()) {
@@ -117,10 +117,10 @@ window.FirebaseService = (function() {
           id: key,
           ...commentsData[key]
         }));
-        
+
         // Sort by creation time (newest first)
         comments.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-        
+
         console.log(`Loaded ${comments.length} comments for URL:`, url);
         return comments;
       } else {
@@ -142,7 +142,7 @@ window.FirebaseService = (function() {
   function subscribeToComments(url, callback) {
     const urlHash = generateUrlHash(url);
     const commentsRef = ref(database, `comments/${urlHash}`);
-    
+
     const unsubscribe = onValue(commentsRef, (snapshot) => {
       if (snapshot.exists()) {
         const commentsData = snapshot.val();
@@ -150,10 +150,10 @@ window.FirebaseService = (function() {
           id: key,
           ...commentsData[key]
         }));
-        
+
         // Sort by creation time (newest first)
         comments.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-        
+
         callback(comments);
       } else {
         callback([]);
@@ -192,13 +192,13 @@ window.FirebaseService = (function() {
    */
   async function loadUserData(userId = null) {
     const targetUserId = userId || (currentUser ? currentUser.uid : null);
-    
+
     if (!targetUserId) {
       return null;
     }
 
     const userRef = ref(database, `users/${targetUserId}`);
-    
+
     try {
       const snapshot = await get(userRef);
       if (snapshot.exists()) {
@@ -226,7 +226,7 @@ window.FirebaseService = (function() {
 
     const sessionId = `session_${currentUser.uid}_${Date.now()}`;
     const sessionRef = ref(database, `sessions/${sessionId}`);
-    
+
     const session = {
       userId: currentUser.uid,
       createdAt: serverTimestamp(),
@@ -266,13 +266,13 @@ window.FirebaseService = (function() {
 
     const sessionRef = ref(database, `sessions/${sessionId}`);
     const closedAt = serverTimestamp();
-    
+
     // Update session with closed timestamp
     const updates = {
       closedAt,
       lastActivity: closedAt
     };
-    
+
     await set(sessionRef, updates);
     console.log('Session closed:', sessionId);
   }
@@ -299,21 +299,21 @@ window.FirebaseService = (function() {
     initAuth,
     getCurrentUser,
     isUserAuthenticated,
-    
+
     // Comments
     saveComment,
     loadComments,
     subscribeToComments,
-    
+
     // Users
     saveUserData,
     loadUserData,
-    
+
     // Sessions
     createSession,
     updateSessionActivity,
     closeSession,
-    
+
     // Utilities
     generateUrlHash
   };
