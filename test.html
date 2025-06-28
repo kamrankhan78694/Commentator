@@ -15,7 +15,7 @@
     </style>
 </head>
 <body>
-    <h1>🧪 NFT Comment System Tests</h1>
+    <h1> NFT Comment System Tests</h1>
     
     <div class="test-section info">
         <h3>Test Overview</h3>
@@ -69,7 +69,7 @@
                 
                 resultDiv.innerHTML = `
                     <div class="success">
-                        <strong>✅ IPFS Upload Success!</strong><br>
+                        <strong> IPFS Upload Success!</strong><br>
                         URL: <code>${ipfsUrl}</code><br>
                         <small>Note: This is a mock URL for demo purposes</small>
                     </div>
@@ -77,7 +77,7 @@
             } catch (error) {
                 resultDiv.innerHTML = `
                     <div class="error">
-                        <strong>❌ IPFS Upload Failed:</strong><br>
+                        <strong>IPFS Upload Failed:</strong><br>
                         <code>${error.message}</code>
                     </div>
                 `;
@@ -94,7 +94,7 @@
                 'https://news.ycombinator.com/item?id=12345'
             ];
             
-            let resultsHtml = '<div class="success"><strong>✅ Thread ID Generation Results:</strong><br>';
+            let resultsHtml = '<div class="success"><strong>Thread ID Generation Results:</strong><br>';
             
             testUrls.forEach(url => {
                 const threadId = IPFSIntegration.generateThreadId(url);
@@ -111,7 +111,7 @@
             if (typeof window.ethereum !== 'undefined') {
                 resultDiv.innerHTML = `
                     <div class="success">
-                        <strong>✅ MetaMask Detected!</strong><br>
+                        <strong>MetaMask Detected!</strong><br>
                         Provider: <code>${window.ethereum.isMetaMask ? 'MetaMask' : 'Other Web3 Provider'}</code><br>
                         Network ID: <code id="network-id">Checking...</code>
                     </div>
@@ -128,7 +128,7 @@
             } else {
                 resultDiv.innerHTML = `
                     <div class="error">
-                        <strong>❌ MetaMask Not Detected</strong><br>
+                        <strong>MetaMask Not Detected</strong><br>
                         Please install MetaMask browser extension to use Web3 features.<br>
                         <a href="https://metamask.io" target="_blank">Download MetaMask</a>
                     </div>
@@ -146,7 +146,7 @@
                 'QmYhMhJTtNk8iDa3kEBRzPjHNJgKhKSgHiZUUJMJNAz9dj'
             ];
             
-            let resultsHtml = '<div class="success"><strong>✅ Hash Extraction Results:</strong><br>';
+            let resultsHtml = '<div class="success"><strong>Hash Extraction Results:</strong><br>';
             
             testUrls.forEach(url => {
                 const hash = IPFSIntegration.extractIPFSHash(url);
@@ -163,7 +163,7 @@
             if (!isConfigured) {
                 document.body.insertAdjacentHTML('afterbegin', `
                     <div class="test-section info">
-                        <h3>⚙️ Configuration Status</h3>
+                        <h3>Configuration Status</h3>
                         <p><strong>IPFS:</strong> Using mock implementation (no API key configured)</p>
                         <p><strong>Smart Contract:</strong> Using mock implementation (no contract deployed)</p>
                         <p>This is normal for demo purposes. See <code>WEB3_SETUP.md</code> for production setup.</p>
