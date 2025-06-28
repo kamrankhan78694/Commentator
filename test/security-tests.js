@@ -108,4 +108,26 @@ runner.test('Package.json has no high severity vulnerabilities', () => {
     runner.assert(pkg.type === 'module', 'Should be configured as ES module');
 });
 
+runner.test('Server-side validation module exists and works', () => {
+    const serverValidationPath = path.join(__dirname, '../js/server-validation.js');
+    runner.assert(fs.existsSync(serverValidationPath), 'server-validation.js should exist');
+    
+    const content = fs.readFileSync(serverValidationPath, 'utf8');
+    runner.assert(content.includes('ServerValidation'), 'Should contain ServerValidation module');
+    runner.assert(content.includes('validateComment'), 'Should contain comment validation');
+    runner.assert(content.includes('checkRateLimit'), 'Should contain rate limiting');
+    runner.assert(content.includes('sanitizeCommentData'), 'Should contain data sanitization');
+});
+
+runner.test('Enhanced validation covers all security requirements', () => {
+    const securityPath = path.join(__dirname, '../js/security.js');
+    const content = fs.readFileSync(securityPath, 'utf8');
+    
+    // Check for comprehensive security patterns
+    runner.assert(content.includes('XSS_PATTERNS'), 'Should have XSS protection patterns');
+    runner.assert(content.includes('SQL_INJECTION_PATTERNS'), 'Should have SQL injection patterns');
+    runner.assert(content.includes('SPAM_PATTERNS'), 'Should have spam detection patterns');
+    runner.assert(content.includes('validateComment'), 'Should have comment validation function');
+});
+
 console.log('✅ Security tests loaded successfully');

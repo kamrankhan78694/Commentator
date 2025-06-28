@@ -11,10 +11,14 @@
     "test": "node test/runner.js",
     "test:unit": "node test/unit-tests.js",
     "test:integration": "node test/integration-tests.js",
+    "test:security": "node test/security-tests.js",
+    "test:e2e": "node test/e2e-tests.js",
     "lint": "npx eslint js/",
     "lint:fix": "npx eslint js/ --fix",
     "security:audit": "npm audit",
-    "format": "npx prettier --write js/ test/"
+    "format": "npx prettier --write js/ test/",
+    "setup:hooks": "git config core.hooksPath .githooks",
+    "postinstall": "npm run setup:hooks"
   },
   "keywords": [
     "commenting",
