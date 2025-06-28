@@ -1,6 +1,7 @@
 {
   "name": "commentator",
   "version": "1.0.0",
+  "type": "module",
   "description": "🗨️ Commentator is an open-source project designed to improve transparency on the web by enabling community-driven feedback.",
   "main": "index.html",
   "scripts": {
@@ -10,10 +11,14 @@
     "test": "node test/runner.js",
     "test:unit": "node test/unit-tests.js",
     "test:integration": "node test/integration-tests.js",
-    "lint": "npx eslint js/ --ext .js",
-    "lint:fix": "npx eslint js/ --ext .js --fix",
+    "test:security": "node test/security-tests.js",
+    "test:e2e": "node test/e2e-tests.js",
+    "lint": "npx eslint js/",
+    "lint:fix": "npx eslint js/ --fix",
     "security:audit": "npm audit",
-    "format": "npx prettier --write js/ test/"
+    "format": "npx prettier --write js/ test/",
+    "setup:hooks": "git config core.hooksPath .githooks",
+    "postinstall": "npm run setup:hooks"
   },
   "keywords": [
     "commenting",
@@ -34,12 +39,12 @@
   },
   "homepage": "https://github.com/kamrankhan78694/Commentator#readme",
   "devDependencies": {
+    "@eslint/js": "^9.0.0",
     "eslint": "^8.50.0",
-    "prettier": "^3.0.0",
-    "@eslint/js": "^9.0.0"
+    "prettier": "^3.0.0"
   },
   "dependencies": {
-    "ethers": "^6.8.0",
-    "web3.storage": "^4.5.5"
+    "@web3-storage/w3up-client": "^17.3.0",
+    "ethers": "^6.8.0"
   }
 }

@@ -1,0 +1,62 @@
+#!/bin/sh
+# Pre-commit hook for Commentator
+# Runs linting, formatting, and security checks before commits
+
+echo "🔍 Running pre-commit checks..."
+
+# Check if npm is available
+if ! command -v npm >/dev/null 2>&1; then
+    echo "❌ npm is required but not installed"
+    exit 1
+fi
+
+# Run linting
+echo "📝 Running ESLint..."
+npm run lint
+if [ $? -ne 0 ]; then
+    echo "❌ Linting failed. Please fix the issues and try again."
+    echo "💡 Run 'npm run lint:fix' to auto-fix some issues"
+    exit 1
+fi
+
+# Run formatting check
+echo "🎨 Checking code formatting..."
+npm run format
+if [ $? -ne 0 ]; then
+    echo "❌ Code formatting failed. Please run 'npm run format' and try again."
+    exit 1
+fi
+
+# Run tests
+echo "🧪 Running tests..."
+npm test
+if [ $? -ne 0 ]; then
+    echo "❌ Tests failed. Please fix the failing tests and try again."
+    exit 1
+fi
+
+# Run security audit
+echo "🔒 Running security audit..."
+npm audit --audit-level=high
+if [ $? -ne 0 ]; then
+    echo "❌ Security audit found high/critical vulnerabilities."
+    echo "💡 Run 'npm audit fix' to attempt automatic fixes"
+    exit 1
+fi
+
+# Check for environment variables template
+if [ ! -f ".env.example" ]; then
+    echo "❌ .env.example file is missing"
+    exit 1
+fi
+
+# Check for hardcoded secrets (basic check)
+echo "🔍 Checking for potential secrets..."
+if git diff --cached --name-only | xargs grep -l "password\|secret\|key\|token" | grep -v ".env.example" | grep -v "test/" | head -1; then
+    echo "⚠️  Potential secrets detected in staged files. Please review."
+    echo "💡 Make sure sensitive data is in environment variables"
+    # Don't exit here, just warn
+fi
+
+echo "✅ All pre-commit checks passed!"
+exit 0
