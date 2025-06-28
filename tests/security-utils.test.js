@@ -2,6 +2,7 @@
  * Unit tests for Security Utilities
  * Tests input validation, sanitization, and security features
  */
+import DOMPurify from 'dompurify';
 
 describe('Security Utilities', () => {
   let securityUtils
@@ -22,17 +23,7 @@ describe('Security Utilities', () => {
       sanitizeHtml(input) {
         if (typeof input !== 'string') return ''
         
-        return input
-          .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-          .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '')
-          .replace(/javascript:/gi, '')
-          .replace(/\bon\w+\s*=/gi, '')
-          .replace(/&/g, '&amp;')
-          .replace(/</g, '&lt;')
-          .replace(/>/g, '&gt;')
-          .replace(/"/g, '&quot;')
-          .replace(/'/g, '&#x27;')
-          .trim()
+        return DOMPurify.sanitize(input)
       },
       
       validateComment(text) {
