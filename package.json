@@ -7,8 +7,15 @@
     "dev": "python3 -m http.server 3000",
     "start": "python3 -m http.server 8080",
     "build": "echo 'Build process not needed for static files. Files are ready for deployment.'",
-    "test": "echo 'Tests not implemented yet'",
-    "lint": "echo 'Linting not configured yet'"
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "lint": "eslint js/ --ext .js",
+    "lint:fix": "eslint js/ --ext .js --fix",
+    "security:audit": "npm audit --audit-level moderate",
+    "security:fix": "npm audit fix",
+    "validate": "npm run lint && npm run test && npm run security:audit",
+    "precommit": "npm run validate"
   },
   "keywords": [
     "commenting",
@@ -28,9 +35,21 @@
     "url": "https://github.com/kamrankhan78694/Commentator/issues"
   },
   "homepage": "https://github.com/kamrankhan78694/Commentator#readme",
-  "devDependencies": {},
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "@jest/globals": "^29.7.0",
+    "@babel/core": "^7.23.0",
+    "@babel/preset-env": "^7.23.0",
+    "babel-jest": "^29.7.0",
+    "eslint": "^8.57.0",
+    "eslint-config-standard": "^17.1.0",
+    "eslint-plugin-security": "^1.7.1",
+    "prettier": "^3.2.5",
+    "playwright": "^1.40.0"
+  },
   "dependencies": {
     "ethers": "^6.8.0",
-    "web3.storage": "^4.5.5"
+    "@web3-storage/w3up-client": "^13.0.0"
   }
 }

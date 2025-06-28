@@ -1,0 +1,38 @@
+{
+  "testEnvironment": "jsdom",
+  "setupFilesAfterEnv": ["<rootDir>/tests/setup.js"],
+  "testMatch": [
+    "<rootDir>/tests/**/*.test.js",
+    "<rootDir>/js/**/*.test.js"
+  ],
+  "collectCoverageFrom": [
+    "js/**/*.js",
+    "!js/**/*.test.js",
+    "!node_modules/**"
+  ],
+  "coverageDirectory": "coverage",
+  "coverageReporters": [
+    "text",
+    "lcov",
+    "html"
+  ],
+  "coverageThreshold": {
+    "global": {
+      "branches": 70,
+      "functions": 70,
+      "lines": 70,
+      "statements": 70
+    }
+  },
+  "moduleFileExtensions": [
+    "js",
+    "json"
+  ],
+  "transform": {
+    "^.+\\.js$": "babel-jest"
+  },
+  "transformIgnorePatterns": [
+    "node_modules/(?!(.*\\.mjs$))"
+  ],
+  "testTimeout": 10000
+}
