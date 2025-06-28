@@ -32,6 +32,7 @@ export default [
         crypto: 'readonly',
         Blob: 'readonly',
         File: 'readonly',
+        FormData: 'readonly',
         feather: 'readonly',
         ethers: 'readonly',
         scrollY: 'readonly',

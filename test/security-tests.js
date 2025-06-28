@@ -130,4 +130,46 @@ runner.test('Enhanced validation covers all security requirements', () => {
     runner.assert(content.includes('validateComment'), 'Should have comment validation function');
 });
 
+runner.test('Performance monitoring module exists and works', () => {
+    const performanceMonitorPath = path.join(__dirname, '../js/performance-monitor.js');
+    runner.assert(fs.existsSync(performanceMonitorPath), 'performance-monitor.js should exist');
+    
+    const content = fs.readFileSync(performanceMonitorPath, 'utf8');
+    runner.assert(content.includes('PerformanceMonitor'), 'Should contain PerformanceMonitor module');
+    runner.assert(content.includes('performHealthCheck'), 'Should contain health check function');
+    runner.assert(content.includes('trackMetric'), 'Should contain metric tracking');
+    runner.assert(content.includes('alertThresholds'), 'Should contain alert thresholds');
+});
+
+runner.test('Production deployment checklist exists', () => {
+    const checklistPath = path.join(__dirname, '../PRODUCTION_DEPLOYMENT_CHECKLIST.md');
+    runner.assert(fs.existsSync(checklistPath), 'PRODUCTION_DEPLOYMENT_CHECKLIST.md should exist');
+    
+    const content = fs.readFileSync(checklistPath, 'utf8');
+    runner.assert(content.includes('Security Verification'), 'Should contain security verification');
+    runner.assert(content.includes('Environment Variables'), 'Should contain environment setup');
+    runner.assert(content.includes('Rollback Procedures'), 'Should contain rollback procedures');
+});
+
+runner.test('Emergency response guide exists', () => {
+    const emergencyGuidePath = path.join(__dirname, '../EMERGENCY_RESPONSE_GUIDE.md');
+    runner.assert(fs.existsSync(emergencyGuidePath), 'EMERGENCY_RESPONSE_GUIDE.md should exist');
+    
+    const content = fs.readFileSync(emergencyGuidePath, 'utf8');
+    runner.assert(content.includes('Incident Classification'), 'Should contain incident classification');
+    runner.assert(content.includes('Security Incident Response'), 'Should contain security response');
+    runner.assert(content.includes('Recovery Procedures'), 'Should contain recovery procedures');
+});
+
+runner.test('CI/CD pipeline has production readiness features', () => {
+    const cicdPath = path.join(__dirname, '../.github/workflows/ci-cd.yml');
+    runner.assert(fs.existsSync(cicdPath), 'ci-cd.yml should exist');
+    
+    const content = fs.readFileSync(cicdPath, 'utf8');
+    runner.assert(content.includes('test:security'), 'Should run security tests');
+    runner.assert(content.includes('audit-level=high'), 'Should check for high severity vulnerabilities');
+    runner.assert(content.includes('Quality Gate'), 'Should have quality gates');
+    runner.assert(content.includes('rollback'), 'Should have rollback procedures');
+});
+
 console.log('✅ Security tests loaded successfully');

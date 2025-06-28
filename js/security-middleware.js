@@ -14,7 +14,7 @@ window.SecurityMiddleware = (function() {
       return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
     } else {
       // Fallback for older browsers
-      return Math.random().toString(36).substring(2, 15) + 
+      return Math.random().toString(36).substring(2, 15) +
              Math.random().toString(36).substring(2, 15) +
              Date.now().toString(36);
     }
@@ -51,18 +51,18 @@ window.SecurityMiddleware = (function() {
   function setSecurityHeaders() {
     // Add meta tags for security headers (these should ideally be set server-side)
     const head = document.head || document.getElementsByTagName('head')[0];
-    
+
     // Content Security Policy
     const csp = document.createElement('meta');
     csp.setAttribute('http-equiv', 'Content-Security-Policy');
-    csp.setAttribute('content', 
-      "default-src 'self' https:; " +
-      "script-src 'self' 'unsafe-inline' https://www.gstatic.com https://cdn.jsdelivr.net; " +
-      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
-      "img-src 'self' data: https:; " +
-      "connect-src 'self' https: wss:; " +
-      "font-src 'self' https://fonts.gstatic.com; " +
-      "frame-ancestors 'none';"
+    csp.setAttribute('content',
+      'default-src \'self\' https:; ' +
+      'script-src \'self\' \'unsafe-inline\' https://www.gstatic.com https://cdn.jsdelivr.net; ' +
+      'style-src \'self\' \'unsafe-inline\' https://fonts.googleapis.com; ' +
+      'img-src \'self\' data: https:; ' +
+      'connect-src \'self\' https: wss:; ' +
+      'font-src \'self\' https://fonts.gstatic.com; ' +
+      'frame-ancestors \'none\';'
     );
     head.appendChild(csp);
 
@@ -88,21 +88,21 @@ window.SecurityMiddleware = (function() {
   // Rate limiting for client-side protection
   const rateLimiter = {
     requests: new Map(),
-    
+
     isAllowed(endpoint, maxRequests = 10, windowMs = 60000) {
       const now = Date.now();
       const key = `${endpoint}_${Math.floor(now / windowMs)}`;
-      
+
       const count = this.requests.get(key) || 0;
       this.requests.set(key, count + 1);
-      
+
       // Clean old entries
       for (const [reqKey] of this.requests) {
         if (reqKey.split('_')[1] < Math.floor(now / windowMs) - 1) {
           this.requests.delete(reqKey);
         }
       }
-      
+
       return count < maxRequests;
     }
   };
@@ -142,7 +142,7 @@ window.SecurityMiddleware = (function() {
   // Initialize security middleware
   function init() {
     setSecurityHeaders();
-    
+
     // Add CSRF token to all forms
     document.addEventListener('DOMContentLoaded', () => {
       const forms = document.querySelectorAll('form');
