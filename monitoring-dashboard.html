@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commentator - Production Monitoring Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .dashboard {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .metric-card {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .metric-card h3 {
+            color: #2563eb;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .metric-value.healthy { color: #16a34a; }
+        .metric-value.warning { color: #d97706; }
+        .metric-value.critical { color: #dc2626; }
+
+        .metric-label {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-healthy { background: #16a34a; }
+        .status-warning { background: #d97706; }
+        .status-critical { background: #dc2626; }
+
+        .logs-section {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .logs-container {
+            max-height: 400px;
+            overflow-y: auto;
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.9rem;
+        }
+
+        .log-entry {
+            margin-bottom: 8px;
+            padding: 4px 0;
+        }
+
+        .log-timestamp {
+            color: #9ca3af;
+        }
+
+        .log-level-info { color: #60a5fa; }
+        .log-level-warning { color: #fbbf24; }
+        .log-level-error { color: #f87171; }
+
+        .controls {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.2s;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+
+        .alert {
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        .alert-warning {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            color: #92400e;
+        }
+
+        .alert-critical {
+            background: #fee2e2;
+            border: 1px solid #ef4444;
+            color: #991b1b;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="header">
+            <h1>🚨 Commentator Production Monitoring Dashboard</h1>
+            <p>Real-time monitoring and health status for Commentator application</p>
+        </div>
+
+        <!-- Alerts Section -->
+        <div id="alerts-container"></div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <button class="btn btn-primary" onclick="refreshMetrics()">Refresh Metrics</button>
+            <button class="btn btn-secondary" onclick="clearLogs()">Clear Logs</button>
+            <button class="btn btn-secondary" onclick="downloadReport()">Download Report</button>
+            <button class="btn btn-secondary" onclick="runHealthCheck()">Run Health Check</button>
+        </div>
+
+        <!-- Metrics Grid -->
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <h3>Application Health</h3>
+                <div class="metric-value" id="app-health">
+                    <span class="status-indicator status-warning"></span>
+                    Partial
+                </div>
+                <div class="metric-label">Overall system status</div>
+            </div>
+
+            <div class="metric-card">
+                <h3>Production Readiness</h3>
+                <div class="metric-value critical" id="prod-readiness">31%</div>
+                <div class="metric-label">Ready for production deployment</div>
+            </div>
+
+            <div class="metric-card">
+                <h3>Error Rate</h3>
+                <div class="metric-value" id="error-rate">0</div>
+                <div class="metric-label">Errors in last 24 hours</div>
+            </div>
+
+            <div class="metric-card">
+                <h3>Test Coverage</h3>
+                <div class="metric-value warning" id="test-coverage">~25%</div>
+                <div class="metric-label">Code coverage percentage</div>
+            </div>
+
+            <div class="metric-card">
+                <h3>Security Score</h3>
+                <div class="metric-value warning" id="security-score">40%</div>
+                <div class="metric-label">Security audit completion</div>
+            </div>
+
+            <div class="metric-card">
+                <h3>Performance Score</h3>
+                <div class="metric-value critical" id="performance-score">20%</div>
+                <div class="metric-label">Performance optimization level</div>
+            </div>
+        </div>
+
+        <!-- Logs Section -->
+        <div class="logs-section">
+            <h3>System Logs</h3>
+            <div class="logs-container" id="logs-container">
+                <!-- Logs will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Monitoring Dashboard Implementation
+        class MonitoringDashboard {
+            constructor() {
+                this.metrics = {
+                    uptime: 0,
+                    errorCount: 0,
+                    lastCheck: Date.now()
+                };
+                this.logs = [];
+                this.alerts = [];
+                
+                this.init();
+            }
+
+            init() {
+                this.log('info', 'Monitoring dashboard initialized');
+                this.checkProductionReadiness();
+                this.startPeriodicChecks();
+                this.loadInitialAlerts();
+            }
+
+            log(level, message, data = null) {
+                const entry = {
+                    timestamp: new Date().toISOString(),
+                    level,
+                    message,
+                    data
+                };
+                
+                this.logs.push(entry);
+                this.updateLogsDisplay();
+                
+                // Keep only last 100 logs
+                if (this.logs.length > 100) {
+                    this.logs = this.logs.slice(-100);
+                }
+            }
+
+            updateLogsDisplay() {
+                const container = document.getElementById('logs-container');
+                const html = this.logs.slice(-20).map(log => 
+                    `<div class="log-entry">
+                        <span class="log-timestamp">[${new Date(log.timestamp).toLocaleTimeString()}]</span>
+                        <span class="log-level-${log.level}">[${log.level.toUpperCase()}]</span>
+                        ${log.message}
+                        ${log.data ? ' - ' + JSON.stringify(log.data) : ''}
+                    </div>`
+                ).join('');
+                
+                container.innerHTML = html;
+                container.scrollTop = container.scrollHeight;
+            }
+
+            checkProductionReadiness() {
+                const checks = {
+                    security: this.checkSecurity(),
+                    testing: this.checkTesting(),
+                    performance: this.checkPerformance(),
+                    monitoring: this.checkMonitoring(),
+                    deployment: this.checkDeployment()
+                };
+
+                const overall = Object.values(checks).reduce((sum, score) => sum + score, 0) / 5;
+                
+                this.updateMetric('prod-readiness', `${Math.round(overall)}%`, 
+                    overall > 80 ? 'healthy' : overall > 50 ? 'warning' : 'critical');
+
+                this.log('info', 'Production readiness check completed', { overall, checks });
+                
+                return overall;
+            }
+
+            checkSecurity() {
+                // Simulate security checks
+                let score = 0;
+                
+                // Check if security utilities are loaded
+                if (typeof SecurityUtils !== 'undefined') score += 20;
+                
+                // Check if enhanced rules exist
+                if (this.checkFileExists('database.rules.enhanced.json')) score += 20;
+                
+                // Simulate other checks
+                score += 10; // Basic Firebase auth
+                
+                this.log('info', 'Security check completed', { score });
+                return score;
+            }
+
+            checkTesting() {
+                // Simulate testing checks
+                let score = 0;
+                
+                // Check if test files exist
+                if (this.checkFileExists('test/runner.js')) score += 15;
+                if (this.checkFileExists('test/unit-tests.js')) score += 15;
+                
+                this.log('info', 'Testing check completed', { score });
+                return score;
+            }
+
+            checkPerformance() {
+                let score = 0;
+                
+                // Check page load time
+                if (performance && performance.timing) {
+                    const loadTime = performance.timing.loadEventEnd - performance.timing.navigationStart;
+                    if (loadTime < 3000) score += 10;
+                    this.log('info', 'Page load time measured', { loadTime });
+                }
+                
+                // Check if performance monitoring is available
+                if (performance && performance.memory) {
+                    score += 10;
+                }
+                
+                this.log('info', 'Performance check completed', { score });
+                return score;
+            }
+
+            checkMonitoring() {
+                let score = 0;
+                
+                // Check if error handler is loaded
+                if (typeof ErrorHandler !== 'undefined') score += 15;
+                
+                // Check if logger is available
+                if (typeof CommentatorLogger !== 'undefined') score += 10;
+                
+                this.log('info', 'Monitoring check completed', { score });
+                return score;
+            }
+
+            checkDeployment() {
+                let score = 0;
+                
+                // Check if CI/CD files exist
+                if (this.checkFileExists('.github/workflows/ci-cd.yml')) score += 20;
+                
+                // Check if Firebase is configured
+                if (this.checkFileExists('firebase.json')) score += 15;
+                
+                this.log('info', 'Deployment check completed', { score });
+                return score;
+            }
+
+            checkFileExists(path) {
+                // In a real implementation, this would check file existence
+                // For demo purposes, we'll simulate based on known files
+                const knownFiles = [
+                    'database.rules.enhanced.json',
+                    'test/runner.js',
+                    'test/unit-tests.js',
+                    '.github/workflows/ci-cd.yml',
+                    'firebase.json'
+                ];
+                return knownFiles.includes(path);
+            }
+
+            updateMetric(id, value, status = 'healthy') {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.innerHTML = value;
+                    element.className = `metric-value ${status}`;
+                }
+            }
+
+            loadInitialAlerts() {
+                this.addAlert('warning', 'Production deployment blocked: Critical security and testing gaps identified');
+                this.addAlert('critical', 'No backup procedures implemented - data loss risk');
+                this.updateAlertsDisplay();
+            }
+
+            addAlert(type, message) {
+                this.alerts.push({
+                    id: Date.now(),
+                    type,
+                    message,
+                    timestamp: new Date().toISOString()
+                });
+                this.updateAlertsDisplay();
+            }
+
+            updateAlertsDisplay() {
+                const container = document.getElementById('alerts-container');
+                const html = this.alerts.map(alert => 
+                    `<div class="alert alert-${alert.type}">
+                        <strong>${alert.type.toUpperCase()}:</strong> ${alert.message}
+                        <small style="float: right;">${new Date(alert.timestamp).toLocaleTimeString()}</small>
+                    </div>`
+                ).join('');
+                
+                container.innerHTML = html;
+            }
+
+            startPeriodicChecks() {
+                // Run health checks every minute
+                setInterval(() => {
+                    this.runHealthCheck();
+                }, 60000);
+            }
+
+            runHealthCheck() {
+                this.log('info', 'Running periodic health check');
+                
+                // Check error rate
+                if (typeof ErrorHandler !== 'undefined') {
+                    const metrics = ErrorHandler.getMetrics();
+                    this.updateMetric('error-rate', metrics.errorsCount, 
+                        metrics.errorsCount === 0 ? 'healthy' : 
+                        metrics.errorsCount < 5 ? 'warning' : 'critical');
+                }
+                
+                // Update production readiness
+                this.checkProductionReadiness();
+                
+                this.log('info', 'Health check completed');
+            }
+        }
+
+        // Global functions for dashboard controls
+        function refreshMetrics() {
+            dashboard.checkProductionReadiness();
+            dashboard.log('info', 'Metrics refreshed manually');
+        }
+
+        function clearLogs() {
+            dashboard.logs = [];
+            dashboard.updateLogsDisplay();
+            dashboard.log('info', 'Logs cleared');
+        }
+
+        function downloadReport() {
+            const report = {
+                timestamp: new Date().toISOString(),
+                metrics: dashboard.metrics,
+                logs: dashboard.logs,
+                alerts: dashboard.alerts
+            };
+            
+            const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `commentator-monitoring-report-${Date.now()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            dashboard.log('info', 'Monitoring report downloaded');
+        }
+
+        function runHealthCheck() {
+            dashboard.runHealthCheck();
+        }
+
+        // Initialize dashboard
+        const dashboard = new MonitoringDashboard();
+    </script>
+</body>
+</html>

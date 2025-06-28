@@ -1,0 +1,163 @@
+{
+  "rules": {
+    "comments": {
+      "$urlHash": {
+        ".read": true,
+        ".write": "auth != null",
+        ".validate": "newData.hasChildren(['text', 'author', 'timestamp']) && newData.children().length() <= 10",
+        "$commentId": {
+          ".validate": "newData.hasChildren(['text', 'author', 'timestamp'])",
+          "text": {
+            ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 5000 && !newData.val().matches(/.*<[^>]+>.*/) && !newData.val().matches(/.*javascript:.*/) && !newData.val().matches(/.*data:.*/) && !newData.val().matches(/.*vbscript:.*/)"
+          },
+          "author": {
+            ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 100 && !newData.val().matches(/.*[<>\"'&].*/) && !newData.val().matches(/.*\\b(admin|root|system|moderator)\\b.*/)"
+          },
+          "timestamp": {
+            ".validate": "newData.isNumber() && newData.val() <= now"
+          },
+          "votes": {
+            ".validate": "newData.isNumber() && newData.val() >= -1000 && newData.val() <= 1000"
+          },
+          "nftId": {
+            ".validate": "newData.isString() && newData.val().length <= 100"
+          },
+          "ipfsUrl": {
+            ".validate": "newData.isString() && newData.val().matches(/^(https?:\\/\\/)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\\/\\w \\.-]*)*\\/?$/)"
+          },
+          "isNFT": {
+            ".validate": "newData.isBoolean()"
+          },
+          "edited": {
+            ".validate": "newData.isBoolean()"
+          },
+          "editedAt": {
+            ".validate": "newData.isNumber() && newData.val() <= now"
+          },
+          "flagged": {
+            ".validate": "newData.isBoolean()"
+          },
+          "flagCount": {
+            ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 100"
+          },
+          "$other": {
+            ".validate": "false"
+          }
+        }
+      }
+    },
+    "users": {
+      "$userId": {
+        ".read": "auth != null && (auth.uid == $userId || root.child('users').child(auth.uid).child('role').val() == 'moderator')",
+        ".write": "auth != null && auth.uid == $userId",
+        ".validate": "newData.hasChildren(['displayName', 'createdAt']) && newData.children().length() <= 15",
+        "displayName": {
+          ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 50 && !newData.val().matches(/.*[<>\"'&].*/) && !newData.val().matches(/.*\\b(admin|root|system|moderator)\\b.*/)"
+        },
+        "email": {
+          ".validate": "newData.isString() && newData.val().length <= 255 && newData.val().matches(/^[A-Za-z0-9+_.-]+@([A-Za-z0-9.-]+\\.[A-Za-z]{2,})$/")"
+        },
+        "walletAddress": {
+          ".validate": "newData.isString() && newData.val().length <= 42 && newData.val().matches(/^0x[a-fA-F0-9]{40}$/")"
+        },
+        "createdAt": {
+          ".validate": "newData.isNumber() && newData.val() <= now"
+        },
+        "lastActive": {
+          ".validate": "newData.isNumber() && newData.val() <= now"
+        },
+        "reputation": {
+          ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 10000"
+        },
+        "commentsCount": {
+          ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 100000"
+        },
+        "votesReceived": {
+          ".validate": "newData.isNumber() && newData.val() >= -10000 && newData.val() <= 10000"
+        },
+        "role": {
+          ".validate": "newData.isString() && (newData.val() == 'user' || newData.val() == 'moderator' || newData.val() == 'admin')"
+        },
+        "banned": {
+          ".validate": "newData.isBoolean()"
+        },
+        "banReason": {
+          ".validate": "newData.isString() && newData.val().length <= 500"
+        },
+        "$other": {
+          ".validate": "false"
+        }
+      }
+    },
+    "sessions": {
+      "$sessionId": {
+        ".read": "auth != null && auth.uid == data.child('userId').val()",
+        ".write": "auth != null && auth.uid == newData.child('userId').val()",
+        ".validate": "newData.hasChildren(['userId', 'createdAt']) && newData.children().length() <= 10",
+        "userId": {
+          ".validate": "newData.isString() && auth.uid == newData.val() && newData.val().length <= 128"
+        },
+        "createdAt": {
+          ".validate": "newData.isNumber() && newData.val() <= now"
+        },
+        "lastActivity": {
+          ".validate": "newData.isNumber() && newData.val() <= now"
+        },
+        "userAgent": {
+          ".validate": "newData.isString() && newData.val().length <= 500"
+        },
+        "ipAddress": {
+          ".validate": "newData.isString() && newData.val().matches(/^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$/) && newData.val().length <= 15"
+        },
+        "closedAt": {
+          ".validate": "newData.isNumber() && newData.val() <= now"
+        },
+        "$other": {
+          ".validate": "false"
+        }
+      }
+    },
+    "reports": {
+      "$reportId": {
+        ".read": "auth != null && (auth.uid == data.child('reporterId').val() || root.child('users').child(auth.uid).child('role').val() == 'moderator')",
+        ".write": "auth != null",
+        ".validate": "newData.hasChildren(['reporterId', 'contentType', 'contentId', 'reason', 'createdAt']) && newData.children().length() <= 10",
+        "reporterId": {
+          ".validate": "newData.isString() && auth.uid == newData.val()"
+        },
+        "contentType": {
+          ".validate": "newData.isString() && (newData.val() == 'comment' || newData.val() == 'user')"
+        },
+        "contentId": {
+          ".validate": "newData.isString() && newData.val().length <= 100"
+        },
+        "reason": {
+          ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 500"
+        },
+        "createdAt": {
+          ".validate": "newData.isNumber() && newData.val() <= now"
+        },
+        "status": {
+          ".validate": "newData.isString() && (newData.val() == 'pending' || newData.val() == 'reviewed' || newData.val() == 'resolved')"
+        },
+        "moderatorId": {
+          ".validate": "newData.isString() && newData.val().length <= 128"
+        },
+        "resolution": {
+          ".validate": "newData.isString() && newData.val().length <= 500"
+        },
+        "$other": {
+          ".validate": "false"
+        }
+      }
+    },
+    "analytics": {
+      ".read": "auth != null && root.child('users').child(auth.uid).child('role').val() == 'admin'",
+      ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() == 'admin'"
+    },
+    "config": {
+      ".read": true,
+      ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() == 'admin'"
+    }
+  }
+}

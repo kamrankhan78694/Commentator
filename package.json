@@ -6,9 +6,14 @@
   "scripts": {
     "dev": "python3 -m http.server 3000",
     "start": "python3 -m http.server 8080",
-    "build": "echo 'Build process not needed for static files. Files are ready for deployment.'",
-    "test": "echo 'Tests not implemented yet'",
-    "lint": "echo 'Linting not configured yet'"
+    "build": "npm run lint && npm run test",
+    "test": "node test/runner.js",
+    "test:unit": "node test/unit-tests.js",
+    "test:integration": "node test/integration-tests.js",
+    "lint": "npx eslint js/ --ext .js",
+    "lint:fix": "npx eslint js/ --ext .js --fix",
+    "security:audit": "npm audit",
+    "format": "npx prettier --write js/ test/"
   },
   "keywords": [
     "commenting",
@@ -28,7 +33,11 @@
     "url": "https://github.com/kamrankhan78694/Commentator/issues"
   },
   "homepage": "https://github.com/kamrankhan78694/Commentator#readme",
-  "devDependencies": {},
+  "devDependencies": {
+    "eslint": "^8.50.0",
+    "prettier": "^3.0.0",
+    "@eslint/js": "^9.0.0"
+  },
   "dependencies": {
     "ethers": "^6.8.0",
     "web3.storage": "^4.5.5"
