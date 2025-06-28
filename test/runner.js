@@ -3,8 +3,12 @@
  * Simple Node.js based test runner for basic validation
  */
 
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 class TestRunner {
     constructor() {
@@ -67,7 +71,7 @@ async function runAllTests() {
     for (const testFile of testFiles) {
         console.log(`\n📁 Running ${testFile}...`);
         try {
-            require(path.join(testDir, testFile));
+            await import(path.join(testDir, testFile));
         } catch (error) {
             console.error(`❌ Failed to load ${testFile}:`, error.message);
             process.exit(1);
@@ -80,10 +84,10 @@ global.TestRunner = TestRunner;
 global.runner = new TestRunner();
 
 // Run tests if this file is executed directly
-if (require.main === module) {
+if (import.meta.url === `file://${process.argv[1]}`) {
     runAllTests().then(() => {
         global.runner.run();
     }).catch(console.error);
 }
 
-module.exports = TestRunner;
+export default TestRunner;
