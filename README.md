@@ -14,6 +14,7 @@
 **Commentator** is a liberating,  open-source, scalable, and disruptive project aimed at transforming web transparency through decentralized, community-driven feedback. As the future universal protocol for web commentary, it empowers users to leave comments on any website—including those that have disabled native comments or review systems—while guaranteeing censorship resistance, verified user identities, and permanent data ownership. By enabling open dialogue everywhere, it helps users make informed decisions and steer clear of scams.
 
 **Why?** 
+
 1. 
 Commentator is a liberating, open-source platform reclaiming web transparency through decentralized, community-powered feedback.
 
