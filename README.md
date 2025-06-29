@@ -253,6 +253,320 @@ The current implementation uses a demo Firebase project suitable for development
 
 ---
 
+## 🏗️ Comprehensive Application Blueprint
+
+This section provides a comprehensive blueprint document for the Commentator webapp, covering the entire architecture from backend to frontend.
+
+### System Architecture
+
+#### High-Level Architecture
+
+```
+┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
+│                 │     │                 │     │                 │
+│  Client Side    │◄───►│  Server Side    │◄───►│   Database      │
+│  (Frontend)     │     │  (Backend)      │     │                 │
+│                 │     │                 │     │                 │
+└─────────────────┘     └─────────────────┘     └─────────────────┘
+```
+
+#### Tech Stack
+
+- **Frontend**: React.js, Redux, Styled Components
+- **Backend**: Node.js, Express.js
+- **Database**: MongoDB (NoSQL)
+- **Authentication**: JWT (JSON Web Tokens)
+- **Deployment**: Docker, AWS/Heroku
+
+### Backend Components
+
+#### Server Structure
+
+```
+src/
+├── server/
+│   ├── config/           # Configuration files
+│   ├── controllers/      # Request handlers
+│   ├── middleware/       # Custom middleware
+│   ├── models/           # Database models
+│   ├── routes/           # API routes
+│   ├── services/         # Business logic
+│   ├── utils/            # Utility functions
+│   └── app.js            # Express application
+└── index.js              # Entry point
+```
+
+#### API Endpoints
+
+##### Authentication
+
+- `POST /api/auth/register` - Register a new user
+- `POST /api/auth/login` - Authenticate user and return token
+- `GET /api/auth/me` - Get current user information
+
+##### Comments
+
+- `GET /api/comments` - Fetch all comments
+- `GET /api/comments/:id` - Fetch specific comment
+- `POST /api/comments` - Create a new comment
+- `PUT /api/comments/:id` - Update a comment
+- `DELETE /api/comments/:id` - Delete a comment
+- `POST /api/comments/:id/like` - Like a comment
+- `POST /api/comments/:id/reply` - Reply to a comment
+
+##### Users
+
+- `GET /api/users/:id` - Get user profile
+- `PUT /api/users/:id` - Update user profile
+- `GET /api/users/:id/comments` - Get all comments by a user
+
+#### Middleware
+
+1. **Authentication Middleware**: Validates JWT tokens
+2. **Error Handling Middleware**: Centralizes error handling
+3. **Logging Middleware**: Records API requests and responses
+4. **Rate Limiting Middleware**: Prevents abuse
+
+#### Database Models
+
+##### User Model
+
+```javascript
+{
+  _id: ObjectId,
+  username: String,
+  email: String,
+  password: String (hashed),
+  avatar: String (URL),
+  bio: String,
+  createdAt: Date,
+  updatedAt: Date
+}
+```
+
+##### Comment Model
+
+```javascript
+{
+  _id: ObjectId,
+  content: String,
+  author: { type: ObjectId, ref: 'User' },
+  parentId: { type: ObjectId, ref: 'Comment' }, // For replies
+  likes: [{ type: ObjectId, ref: 'User' }],
+  contentId: String, // Identifies what the comment belongs to
+  contentType: String, // Type of content (article, video, etc.)
+  createdAt: Date,
+  updatedAt: Date
+}
+```
+
+### Frontend Components
+
+#### Client Structure
+
+```
+src/
+├── assets/          # Static files
+├── components/      # Reusable UI components
+│   ├── common/      # Shared components
+│   ├── auth/        # Authentication components
+│   └── comments/    # Comment-related components
+├── hooks/           # Custom React hooks
+├── pages/           # Application pages
+├── redux/           # State management
+│   ├── actions/     # Redux actions
+│   ├── reducers/    # Redux reducers
+│   └── store.js     # Redux store
+├── services/        # API service calls
+├── styles/          # Global styles
+├── utils/           # Utility functions
+├── App.js           # Main component
+└── index.js         # Entry point
+```
+
+#### Key Components
+
+##### Comment Component
+
+The core component that displays individual comments with:
+- Author information
+- Comment content
+- Timestamp
+- Like button
+- Reply button
+- Edit/Delete options (for owner)
+
+##### CommentThread Component
+
+Displays a hierarchical thread of comments with:
+- Parent comment
+- Nested replies
+- Pagination
+- Sorting options
+
+##### CommentForm Component
+
+Form for submitting new comments or replies with:
+- Text area with rich text formatting
+- Attachment options
+- Preview functionality
+- Submit button
+
+##### UserProfile Component
+
+Displays user information and activity:
+- User details
+- Comment history
+- Liked comments
+
+#### State Management
+
+Redux store structure:
+
+```javascript
+{
+  auth: {
+    user: Object,
+    isAuthenticated: Boolean,
+    loading: Boolean,
+    error: String
+  },
+  comments: {
+    items: Array,
+    current: Object,
+    loading: Boolean,
+    error: String
+  },
+  users: {
+    profiles: Object,
+    loading: Boolean,
+    error: String
+  }
+}
+```
+
+### Data Flow
+
+#### Adding a Comment
+
+```
+┌───────────┐     ┌───────────┐     ┌───────────┐     ┌───────────┐
+│           │     │           │     │           │     │           │
+│  User     │────►│  Frontend │────►│  Backend  │────►│  Database │
+│  Action   │     │  Client   │     │  API      │     │           │
+│           │     │           │     │           │     │           │
+└───────────┘     └───────────┘     └───────────┘     └───────────┘
+      │                                                     │
+      │                ┌───────────┐                        │
+      │                │           │                        │
+      └───────────────►│  Updated  │◄───────────────────────┘
+                       │  UI       │
+                       │           │
+                       └───────────┘
+```
+
+1. User fills out comment form and submits
+2. Frontend validates input
+3. Frontend sends POST request to API
+4. Backend validates request and user authentication
+5. Backend stores comment in database
+6. Response sent back to client
+7. Frontend updates UI with new comment
+
+### Authentication Flow
+
+#### JWT Authentication Flow
+
+```
+┌─────────┐     ┌─────────────┐     ┌──────────────┐
+│         │     │             │     │              │
+│  User   │────►│  Login Form │────►│  Submit to   │
+│         │     │             │     │  Backend     │
+└─────────┘     └─────────────┘     └──────────────┘
+                                            │
+┌─────────────┐     ┌─────────────┐         ▼
+│             │     │             │    ┌──────────────┐
+│  Access     │◄────│  Store JWT  │◄───│  Receive JWT │
+│  Protected  │     │  in Storage │    │  from Server │
+│  Resources  │     │             │    │              │
+└─────────────┘     └─────────────┘    └──────────────┘
+```
+
+### Responsive Design
+
+The frontend implements a responsive design approach:
+- Mobile-first design philosophy
+- Breakpoints for different device sizes
+- Fluid layouts that adapt to screen dimensions
+- Touch-friendly interactions for mobile users
+
+### Performance Optimization
+
+#### Backend Optimizations
+
+- Database indexing for frequently queried fields
+- Caching strategies for common requests
+- Pagination to limit data transfer
+- Efficient query handling
+
+#### Frontend Optimizations
+
+- Code splitting for faster initial loading
+- Lazy loading of components and images
+- Memoization of expensive computations
+- Service worker for offline capabilities
+
+### Security Measures
+
+- HTTPS for all communications
+- Input validation and sanitization
+- Protection against XSS attacks
+- CSRF protection
+- Rate limiting to prevent brute force attempts
+- Data encryption for sensitive information
+
+### Deployment Strategy
+
+#### Development Environment
+
+- Local development with hot reloading
+- Environment variables for configuration
+- Docker containers for consistent development
+
+#### CI/CD Pipeline
+
+```
+┌───────────┐     ┌───────────┐     ┌───────────┐     ┌───────────┐
+│           │     │           │     │           │     │           │
+│  Code     │────►│  Test     │────►│  Build    │────►│  Deploy   │
+│  Commit   │     │  Suite    │     │  Process  │     │           │
+│           │     │           │     │           │     │           │
+└───────────┘     └───────────┘     └───────────┘     └───────────┘
+```
+
+- GitHub Actions for automated testing and deployment
+- Staging environment for QA testing
+- Blue-green deployment for zero downtime updates
+
+### Monitoring and Analytics
+
+- Error tracking with Sentry
+- Application performance monitoring
+- User behavior analytics
+- A/B testing framework
+
+### Future Enhancements
+
+- Real-time commenting with WebSockets
+- AI-powered content moderation
+- Advanced rich text formatting
+- Internationalization support
+- Mobile applications (React Native)
+- Extended notification system
+- Social media integration
+
+---
+
 ## 📦 Installation
 
 _Coming Soon:_ Official browser extension and embeddable script.
