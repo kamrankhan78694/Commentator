@@ -15,26 +15,19 @@
 
 **Why?** 
 
-1. 
-Commentator is a liberating, open-source platform reclaiming web transparency through decentralized, community-powered feedback.
+1. Commentator is a liberating, open-source platform reclaiming web transparency through decentralized, community-powered feedback.
 
-2. 
-Commentator sets the web free—with open-source, decentralized feedback driven by the people.
+2. Commentator sets the web free—with open-source, decentralized feedback driven by the people.
 
-3. 
-Commentator liberates the web—giving power back to the people through open, decentralized conversation.
+3. Commentator liberates the web—giving power back to the people through open, decentralized conversation.
 
-4. 
-Commentator is a liberating force against opaque algorithms—built open-source, scaled by community, and driven by transparency.
+4. Commentator is a liberating force against opaque algorithms—built open-source, scaled by community, and driven by transparency.
 
-5. 
-Commentator is a disruptive, liberating project forging a transparent web—where feedback is free and owned by everyone.
+5. Commentator is a disruptive, liberating project forging a transparent web—where feedback is free and owned by everyone.
 
-6. 
-Free the web. Own your voice. Join Commentator.
+6. Free the web. Own your voice. Join Commentator.
 
-7. 
-Commentator is the liberating voice of the open web—decentralized, uncensored, and shaped by its users.
+7. Commentator is the liberating voice of the open web—decentralized, uncensored, and shaped by its users.
 
 
 
