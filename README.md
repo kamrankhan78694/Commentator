@@ -11,7 +11,31 @@
 [![Stars](https://img.shields.io/github/stars/kamrankhan78694/Commentator.svg)](https://github.com/kamrankhan78694/Commentator/stargazers)
 [![Forks](https://img.shields.io/github/forks/kamrankhan78694/Commentator.svg)](https://github.com/kamrankhan78694/Commentator/network)
 
-**Commentator** is an open-source, scalable, and disruptive project aimed at transforming web transparency through decentralized, community-driven feedback. As the future universal protocol for web commentary, it empowers users to leave comments on any website—including those that have disabled native comments or review systems—while guaranteeing censorship resistance, verified user identities, and permanent data ownership. By enabling open dialogue everywhere, it helps users make informed decisions and steer clear of scams.
+**Commentator** is a liberating,  open-source, scalable, and disruptive project aimed at transforming web transparency through decentralized, community-driven feedback. As the future universal protocol for web commentary, it empowers users to leave comments on any website—including those that have disabled native comments or review systems—while guaranteeing censorship resistance, verified user identities, and permanent data ownership. By enabling open dialogue everywhere, it helps users make informed decisions and steer clear of scams.
+
+**Why?** 
+1. 
+Commentator is a liberating, open-source platform reclaiming web transparency through decentralized, community-powered feedback.
+
+2. 
+Commentator sets the web free—with open-source, decentralized feedback driven by the people.
+
+3. 
+Commentator liberates the web—giving power back to the people through open, decentralized conversation.
+
+4. 
+Commentator is a liberating force against opaque algorithms—built open-source, scaled by community, and driven by transparency.
+
+5. 
+Commentator is a disruptive, liberating project forging a transparent web—where feedback is free and owned by everyone.
+
+6. 
+Free the web. Own your voice. Join Commentator.
+
+7. 
+Commentator is the liberating voice of the open web—decentralized, uncensored, and shaped by its users.
+
+
 
 ## 🚀 Disruptive Vision
 
