@@ -1279,6 +1279,21 @@ a:hover {
     animation: highlightComment 3s ease-out;
 }
 
+/* Local mode comment styling */
+.comment.local-comment {
+    border-left: 4px solid #f59e0b;
+    background-color: #fffbeb;
+}
+
+.local-badge {
+    background: #f59e0b;
+    color: white;
+    font-size: 0.8em;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-weight: 500;
+}
+
 @keyframes highlightComment {
     0% {
         background-color: #c6f6d5;
@@ -2036,4 +2051,24 @@ a:hover {
         align-items: stretch;
         text-align: center;
     }
+}
+
+/* Local mode styling */
+.local-comment {
+    border-left: 4px solid #ffa500;
+    background-color: #fff8dc;
+}
+
+.local-badge {
+    background-color: #ffa500;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.8em;
+    font-weight: 500;
+}
+
+.comment.local-comment:hover {
+    box-shadow: 0 2px 8px rgba(255, 165, 0, 0.2);
+    border-left-color: #ff8c00;
 }

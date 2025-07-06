@@ -924,8 +924,12 @@ async function loadCommentsForUrl(url, commentsSection) {
   try {
     // Check if Firebase service is available
     if (typeof window.FirebaseService === 'undefined') {
+      console.log('🏠 Firebase not available, loading comments locally');
+      if (window.loadCommentsLocal) {
+        return window.loadCommentsLocal(url, commentsSection);
+      }
       throw new Error(
-        'Firebase service is not available. Please check your connection and try again.'
+        'Firebase service is not available and local fallback is not ready. Please refresh the page.'
       );
     }
 
@@ -1092,6 +1096,14 @@ async function submitComment(url, comment, commentsSection, commentTextarea) {
     commentsSection: !!commentsSection,
     commentTextarea: !!commentTextarea,
   });
+
+  // Check if Firebase is available, otherwise use local functionality
+  if (typeof window.FirebaseService === 'undefined' || !window.FirebaseService.isUserAuthenticated) {
+    console.log('🏠 Firebase not available, using local submission');
+    if (window.submitCommentLocal) {
+      return window.submitCommentLocal(url, comment, commentsSection, commentTextarea);
+    }
+  }
 
   // Show submitting state
   const submitBtn = document.getElementById('submit-comment-btn');
@@ -1743,14 +1755,25 @@ async function initFirebaseAuth() {
   try {
     console.log('🔥 Initializing Firebase authentication...');
 
-    // Check if Firebase service is available
-    if (typeof window.FirebaseService === 'undefined') {
-      console.warn('⚠️ Firebase service not available, waiting...');
+    // Check if Firebase service is available with timeout
+    let firebaseCheckCount = 0;
+    const maxFirebaseChecks = 5; // Limit to 5 attempts instead of infinite loop
+
+    while (typeof window.FirebaseService === 'undefined' && firebaseCheckCount < maxFirebaseChecks) {
+      console.warn(`⚠️ Firebase service not available, attempt ${firebaseCheckCount + 1}/${maxFirebaseChecks}...`);
       updateUserStatus('🔄 Waiting for Firebase...');
 
-      // Wait longer and try again
-      setTimeout(initFirebaseAuth, 2000);
-      return;
+      // Wait with exponential backoff
+      await new Promise(resolve => setTimeout(resolve, 1000 * (firebaseCheckCount + 1)));
+      firebaseCheckCount++;
+    }
+
+    // If Firebase is still not available after max attempts, continue without it
+    if (typeof window.FirebaseService === 'undefined') {
+      console.warn('⚠️ Firebase service unavailable after maximum attempts. Continuing with local functionality.');
+      updateUserStatus('⚠️ Firebase unavailable - using local mode');
+      enableBasicFunctionality();
+      return null;
     }
 
     console.log('✅ Firebase service found, initializing authentication...');
@@ -1967,3 +1990,134 @@ window.addEventListener('beforeunload', () => {
     window.FirebaseService.closeSession(currentSession);
   }
 });
+
+/**
+ * Enable basic functionality without Firebase
+ * This ensures the interface works even if Firebase is unavailable
+ */
+function enableBasicFunctionality() {
+  console.log('🔧 Enabling basic functionality without Firebase...');
+
+  // Enable the submit button with local functionality
+  const submitBtn = document.getElementById('submit-comment-btn');
+  if (submitBtn) {
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Submit Comment (Local Mode)';
+    console.log('✅ Submit button enabled in local mode');
+  }
+
+  // Override the comment submission function to work locally
+  window.submitCommentLocal = async function(url, comment, commentsSection, commentTextarea) {
+    console.log('📝 Local comment submission:', { url, comment: comment.substring(0, 50) + '...' });
+
+    // Show submitting state
+    const submitButton = document.getElementById('submit-comment-btn');
+    const originalText = submitButton.textContent;
+    submitButton.textContent = 'Submitting...';
+    submitButton.disabled = true;
+
+    try {
+      // Simulate submission delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // Create a mock comment entry
+      const mockComment = {
+        id: 'local_' + Date.now(),
+        author: 'Local User',
+        text: comment,
+        timestamp: new Date().toLocaleString(),
+        votes: 0,
+        isLocal: true
+      };
+
+      // Display the comment
+      displayLocalComment(mockComment, commentsSection);
+
+      // Clear the textarea
+      commentTextarea.value = '';
+
+      // Show success message
+      showNotification('Comment submitted successfully! (Local mode - not saved)', 'success');
+
+    } catch (error) {
+      console.error('❌ Error in local comment submission:', error);
+      showNotification('Failed to submit comment locally: ' + error.message, 'error');
+    } finally {
+      // Reset submit button
+      submitButton.textContent = originalText;
+      submitButton.disabled = false;
+    }
+  };
+
+  // Enable URL loading with mock data
+  window.loadCommentsLocal = async function(url, commentsSection) {
+    console.log('📂 Loading comments locally for:', url);
+
+    commentsSection.innerHTML = '<div class="loading">🔄 Loading comments...</div>';
+
+    // Simulate loading delay
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    // Create mock comments
+    const mockComments = [
+      {
+        id: 'demo_1',
+        author: 'Demo User',
+        text: 'This is a demonstration comment for ' + url + '. Firebase is not available, so this is local data.',
+        timestamp: new Date(Date.now() - 3600000).toLocaleString(),
+        votes: 5,
+        isLocal: true
+      },
+      {
+        id: 'demo_2',
+        author: 'Test User',
+        text: 'Another example comment showing the interface works even without Firebase connectivity.',
+        timestamp: new Date(Date.now() - 7200000).toLocaleString(),
+        votes: 2,
+        isLocal: true
+      }
+    ];
+
+    // Display mock comments
+    displayComments(mockComments, commentsSection, false);
+    showNotification(`Loaded ${mockComments.length} demo comments for ${url} (Local mode)`, 'info');
+  };
+
+  console.log('✅ Basic functionality enabled - buttons should now work');
+}
+
+/**
+ * Display a local comment in the UI
+ */
+function displayLocalComment(comment, commentsSection) {
+  const existingComments = commentsSection.querySelector('.comments-list');
+
+  const localCommentHtml = `
+    <div class="comment local-comment new-comment">
+      <div class="comment-header">
+        <span class="comment-author">👤 ${comment.author}</span>
+        <span class="comment-timestamp">${comment.timestamp}</span>
+        <span class="comment-votes">👍 ${comment.votes}</span>
+        <span class="local-badge">🏠 Local</span>
+      </div>
+      <div class="comment-text">${comment.text}</div>
+    </div>
+  `;
+
+  if (existingComments) {
+    existingComments.insertAdjacentHTML('afterbegin', localCommentHtml);
+  } else {
+    displayComments([comment], commentsSection, false);
+  }
+
+  // Scroll to the new comment
+  setTimeout(() => {
+    const newCommentElement = commentsSection.querySelector('.new-comment');
+    if (newCommentElement) {
+      newCommentElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setTimeout(() => {
+        newCommentElement.classList.remove('new-comment');
+      }, 3000);
+    }
+  }, 100);
+}
