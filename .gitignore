@@ -150,3 +150,84 @@ _site/
 
 # Test files
 test_api_integration.html
+
+# ==============================================
+# AI AGENT CONTEXT: TEMPORARY FILES TO DEPRIORITIZE
+# ==============================================
+
+# Test and Debug Files (temporary by nature - low priority for AI agents)
+*-test.html
+debug-*.html
+*-debug.html
+test-*.html
+quick-*.html
+automated_test.html
+debug_test.html
+button_test.html
+monitoring-dashboard.html
+environment-test*.html
+production-readiness-test.html
+comment-debug.html
+firebase-connection-test.html
+complete-system-test.html
+auth-test.html
+firebase-test.html
+logger-test.html
+
+# Status Reports and Validation (informational/historical - low priority)
+*_REPORT.md
+*_SUMMARY.md
+*_COMPLETE.md
+*_CHECKLIST.md
+*_ASSESSMENT.md
+*_AUDIT_REPORT.md
+VALIDATION_RESULTS.md
+EMERGENCY_RESPONSE_GUIDE.md
+FINAL_STATUS_REPORT.md
+BUTTON_FIX_COMPLETE_REPORT.md
+COMMENT_SUBMISSION_FIX_SUMMARY.md
+DEPLOYMENT_COMPLETE.md
+ENVIRONMENT_SETUP_SUMMARY.md
+PRODUCTION_DEPLOYMENT_CHECKLIST.md
+PRODUCTION_READINESS_ASSESSMENT.md
+SECURITY_AUDIT_REPORT.md
+DEBUG_LOGGER.md
+
+# Backup and Alternative Versions (historical - low priority)
+index-*.html
+*-backup.html
+*-original.html
+*-modern.html
+*-proper.html
+index-firebase.html
+index-inline-styles-backup.html
+
+# Utility Scripts (task-specific - low priority unless script task)
+validate-*.sh
+test-*.sh
+organize-files.sh
+
+# Archive directory (organized temporary files)
+archive/
+
+# ==============================================
+# AI AGENT GUIDANCE (EMBEDDED COMMENTS)
+# ==============================================
+
+# HIGH PRIORITY FILES for AI agents:
+# - index.html (main application interface)
+# - js/main.js (core application logic)  
+# - css/main.css (primary styling)
+# - firebase-config.js (backend configuration)
+# - config/ directory (environment settings)
+# - README.md (project documentation)
+# - ARCHITECTURE.md (technical documentation)
+# - js/error-handler.js (error management)
+# - js/logger.js (development support)
+
+# Files that indicate TEMPORARY context (deprioritize):
+# - Anything with "test", "debug", "validation" in name
+# - Files with dates or version numbers  
+# - Report and summary files
+# - Backup files with alternative names
+# - Multiple versions of the same file
