@@ -146,7 +146,11 @@ runner.test('IPFS service file exists and is readable', () => {
 });
 
 runner.test('HTML files exist and are valid', () => {
-  const htmlFiles = ['index.html', 'archive/tests/automated_test.html', 'archive/tests/debug_test.html'];
+  const htmlFiles = [
+    'index.html',
+    'archive/tests/automated_test.html',
+    'archive/tests/debug_test.html',
+  ];
 
   htmlFiles.forEach((file) => {
     const filePath = path.join(__dirname, '../', file);

@@ -1,0 +1,53 @@
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://kamrankhan78694.github.io/Commentator/sitemap.xml
+
+# High-priority crawling paths
+Allow: /docs/
+Allow: /docs/getting-started.html
+Allow: /docs/api.html
+Allow: /docs/usage.html
+Allow: /docs/security.html
+
+# Block crawling of temporary/development files
+Disallow: /archive/
+Disallow: /test/
+Disallow: /*.test.html
+Disallow: /*-test.html
+Disallow: /debug-*
+Disallow: /*-debug.html
+Disallow: /node_modules/
+Disallow: /.git/
+Disallow: /.github/
+Disallow: /scripts/
+
+# Block crawling of configuration files
+Disallow: /.env*
+Disallow: /config/runtime-config.js
+Disallow: /firebase-config.js
+Disallow: /database.rules*.json
+
+# Allow crawling of essential static assets
+Allow: /assets/
+Allow: /css/
+Allow: /js/main.js
+Allow: /js/logger.js
+Allow: /js/error-handler.js
+
+# Crawl delay (be respectful)
+Crawl-delay: 1
+
+# Specific rules for major search engines
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 1
+
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 2
+
+User-agent: Slurp
+Allow: /
+Crawl-delay: 2
