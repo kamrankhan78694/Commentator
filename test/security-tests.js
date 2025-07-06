@@ -252,7 +252,7 @@ runner.test('Performance monitoring module exists and works', () => {
 runner.test('Production deployment checklist exists', () => {
   const checklistPath = path.join(
     __dirname,
-    '../PRODUCTION_DEPLOYMENT_CHECKLIST.md'
+    '../archive/reports/PRODUCTION_DEPLOYMENT_CHECKLIST.md'
   );
   runner.assert(
     fs.existsSync(checklistPath),
@@ -277,7 +277,7 @@ runner.test('Production deployment checklist exists', () => {
 runner.test('Emergency response guide exists', () => {
   const emergencyGuidePath = path.join(
     __dirname,
-    '../EMERGENCY_RESPONSE_GUIDE.md'
+    '../archive/reports/EMERGENCY_RESPONSE_GUIDE.md'
   );
   runner.assert(
     fs.existsSync(emergencyGuidePath),
