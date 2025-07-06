@@ -34,27 +34,46 @@ window.FirebaseService = (function() {
    */
   async function initAuth() {
     return new Promise((resolve) => {
-      onAuthStateChanged(auth, (user) => {
+      // Set up authentication state listener
+      const unsubscribe = onAuthStateChanged(auth, (user) => {
         if (user) {
           currentUser = user;
           isAuthenticated = true;
-          console.log('User authenticated:', user.uid);
+          console.log('✅ User authenticated:', user.uid);
+          console.log('🔐 Authentication state: AUTHENTICATED');
+          unsubscribe(); // Clean up listener
           resolve(user);
         } else {
+          console.log('🔐 No user found, signing in anonymously...');
           // Sign in anonymously for commenting
           signInAnonymously(auth)
             .then((result) => {
               currentUser = result.user;
               isAuthenticated = true;
-              console.log('Anonymous user created:', result.user.uid);
+              console.log('✅ Anonymous user created:', result.user.uid);
+              console.log('🔐 Authentication state: AUTHENTICATED (anonymous)');
+              unsubscribe(); // Clean up listener
               resolve(result.user);
             })
             .catch((error) => {
-              console.error('Authentication failed:', error);
+              console.error('❌ Authentication failed:', error);
+              console.log('🔐 Authentication state: FAILED');
+              isAuthenticated = false;
+              currentUser = null;
+              unsubscribe(); // Clean up listener
               resolve(null);
             });
         }
       });
+      
+      // Timeout fallback after 10 seconds
+      setTimeout(() => {
+        if (!isAuthenticated) {
+          console.error('❌ Authentication timeout after 10 seconds');
+          unsubscribe();
+          resolve(null);
+        }
+      }, 10000);
     });
   }
 
@@ -77,26 +96,45 @@ window.FirebaseService = (function() {
    * @returns {Promise<string>} - The comment ID
    */
   async function saveComment(url, commentData) {
-    if (!isAuthenticated) {
-      throw new Error('User must be authenticated to save comments');
+    console.log('🔥 SaveComment called with:', { url, commentData, isAuthenticated });
+    
+    if (!isAuthenticated || !currentUser) {
+      console.error('❌ User must be authenticated to save comments');
+      console.log('🔐 Current auth state:', { isAuthenticated, currentUser: !!currentUser });
+      throw new Error('User must be authenticated to save comments. Please wait for authentication to complete.');
     }
 
-    const urlHash = generateUrlHash(url);
-    const commentsRef = ref(database, `comments/${urlHash}`);
+    try {
+      const urlHash = generateUrlHash(url);
+      console.log('🔑 Generated URL hash:', urlHash);
+      
+      const commentsRef = ref(database, `comments/${urlHash}`);
+      console.log('📍 Firebase ref path:', `comments/${urlHash}`);
 
-    // Add server timestamp and user ID
-    const comment = {
-      ...commentData,
-      timestamp: serverTimestamp(),
-      userId: currentUser.uid,
-      createdAt: Date.now()
-    };
+      // Add server timestamp and user ID
+      const comment = {
+        ...commentData,
+        timestamp: serverTimestamp(),
+        userId: currentUser.uid,
+        createdAt: Date.now()
+      };
 
-    const newCommentRef = push(commentsRef);
-    await set(newCommentRef, comment);
+      console.log('💾 Saving comment data:', comment);
+      
+      const newCommentRef = push(commentsRef);
+      await set(newCommentRef, comment);
 
-    console.log('Comment saved to Firebase:', newCommentRef.key);
-    return newCommentRef.key;
+      console.log('✅ Comment saved to Firebase successfully! ID:', newCommentRef.key);
+      return newCommentRef.key;
+    } catch (error) {
+      console.error('❌ Error saving comment to Firebase:', error);
+      console.error('📊 Error details:', {
+        code: error.code,
+        message: error.message,
+        stack: error.stack
+      });
+      throw new Error(`Failed to save comment: ${error.message}`);
+    }
   }
 
   /**
@@ -290,7 +328,27 @@ window.FirebaseService = (function() {
    * @returns {boolean} - Authentication status
    */
   function isUserAuthenticated() {
-    return isAuthenticated;
+    const result = isAuthenticated && currentUser !== null;
+    console.log('🔐 isUserAuthenticated check:', { 
+      isAuthenticated, 
+      hasCurrentUser: !!currentUser, 
+      result 
+    });
+    return result;
+  }
+
+  /**
+   * Get authentication status details for debugging
+   * @returns {Object} - Detailed authentication status
+   */
+  function getAuthStatus() {
+    return {
+      isAuthenticated,
+      hasCurrentUser: !!currentUser,
+      userId: currentUser ? currentUser.uid : null,
+      isAnonymous: currentUser ? currentUser.isAnonymous : null,
+      timestamp: Date.now()
+    };
   }
 
   // Public API
@@ -299,6 +357,7 @@ window.FirebaseService = (function() {
     initAuth,
     getCurrentUser,
     isUserAuthenticated,
+    getAuthStatus,
 
     // Comments
     saveComment,

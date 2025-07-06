@@ -206,16 +206,20 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (window.CommentatorLogger) {
     window.CommentatorLogger.info('Application initializing...', 'INIT');
     window.CommentatorLogger.action('Loading environment configuration', 'info', 'INIT');
-  }
-
-  // Wait for environment configuration to be ready
+  }  // Wait for environment configuration to be ready
+  console.log('Waiting for environment configuration...');
   await waitForEnvironmentConfig();
-  
+  console.log('Environment configuration ready');
+
   // Wait for Firebase services to be available
+  console.log('Waiting for Firebase service...');
   await waitForFirebaseService();
-  
+  console.log('Firebase service ready');
+
   // Initialize Firebase authentication first
+  console.log('Initializing Firebase authentication...');
   await initFirebaseAuth();
+  console.log('Firebase authentication complete');
 
   // Log environment info
   if (window.EnvironmentConfig && window.CommentatorLogger) {
@@ -478,6 +482,8 @@ function initCommentInterface() {
       const comment = commentText.value.trim();
       const url = urlInput ? urlInput.value.trim() : '';
 
+      console.log('Submit button clicked:', { comment: comment.length, url: url.length });
+
       if (!url) {
         showNotification('Please load a URL first', 'error');
         return;
@@ -489,6 +495,8 @@ function initCommentInterface() {
         return;
       }
 
+      console.log('Submitting comment:', { url, comment });
+      
       // Submit comment with real API integration
       submitComment(url, comment, commentsSection, commentText);
     });
@@ -946,6 +954,13 @@ function displayComments(comments, commentsSection, isNFT = false) {
  * @param {HTMLElement} commentTextarea - The comment input element
  */
 async function submitComment(url, comment, commentsSection, commentTextarea) {
+  console.log('📝 submitComment called with:', { 
+    url, 
+    comment: comment.substring(0, 50) + '...', 
+    commentsSection: !!commentsSection, 
+    commentTextarea: !!commentTextarea 
+  });
+
   // Show submitting state
   const submitBtn = document.getElementById('submit-comment-btn');
   const originalText = submitBtn.textContent;
@@ -953,24 +968,50 @@ async function submitComment(url, comment, commentsSection, commentTextarea) {
   submitBtn.disabled = true;
 
   try {
+    console.log('🔍 Checking Firebase service availability...');
     // Check if Firebase service is available
     if (typeof window.FirebaseService === 'undefined') {
-      throw new Error('Firebase service is not available. Please check your connection and try again.');
+      throw new Error('Firebase service is not available. Please refresh the page and try again.');
+    }
+    console.log('✅ Firebase service is available');
+
+    console.log('🔐 Checking authentication state...');
+    // Check authentication state first
+    if (!window.FirebaseService.isUserAuthenticated()) {
+      console.log('⚠️ User not authenticated, attempting to re-authenticate...');
+      updateUserStatus('🔄 Re-authenticating...');
+      
+      const user = await window.FirebaseService.initAuth();
+      if (!user) {
+        throw new Error('Authentication failed. Please refresh the page and try again.');
+      }
+      console.log('✅ Re-authentication successful');
+      updateUserStatus('✅ Connected anonymously');
+    } else {
+      console.log('✅ User is already authenticated');
     }
 
-    // Use real Firebase API
-    await window.FirebaseService.initAuth(); // Ensure user is authenticated
+    // Validate input data
+    if (!comment || comment.trim().length === 0) {
+      throw new Error('Comment cannot be empty');
+    }
+    
+    if (comment.length > 5000) {
+      throw new Error('Comment is too long (maximum 5000 characters)');
+    }
 
+    console.log('📊 Preparing comment data...');
     const commentData = {
       author: 'Anonymous', // In a real app, this would be the logged-in user
-      text: comment,
+      text: comment.trim(),
       votes: 0,
       timestamp: new Date().toISOString()
     };
 
-    // Save comment to Firebase
+    console.log('💾 Saving comment to Firebase...');
+    // Save comment to Firebase with detailed logging
     const commentId = await window.FirebaseService.saveComment(url, commentData);
-    console.log('Comment saved with ID:', commentId);
+    console.log('✅ Comment saved successfully with ID:', commentId);
 
     // Clear the textarea
     commentTextarea.value = '';
@@ -978,14 +1019,40 @@ async function submitComment(url, comment, commentsSection, commentTextarea) {
     // Show success message
     showNotification('Comment submitted successfully! 🎉', 'success');
 
-    // The real-time listener will automatically update the UI
-    // so we don't need to manually add the comment to the display
+    console.log('🔄 Reloading comments to show new comment...');
+    // Reload comments to show the new one
+    await loadCommentsForUrl(url, commentsSection);
 
   } catch (error) {
-    console.error('Error submitting comment:', error);
+    console.error('❌ Error submitting comment:', error);
 
-    // Show error notification
-    showNotification(`Failed to submit comment: ${error.message}`, 'error');
+    // Log detailed error information
+    console.error('📊 Detailed error info:', {
+      name: error.name,
+      message: error.message,
+      code: error.code,
+      stack: error.stack
+    });
+
+    // Show user-friendly error message
+    let errorMessage = 'Failed to submit comment. ';
+    
+    if (error.message.includes('authentication') || error.message.includes('auth')) {
+      errorMessage += 'Please refresh the page and try again.';
+    } else if (error.message.includes('network') || error.message.includes('connection')) {
+      errorMessage += 'Please check your internet connection and try again.';
+    } else if (error.message.includes('permission') || error.message.includes('denied')) {
+      errorMessage += 'Permission denied. Please refresh the page and try again.';
+    } else {
+      errorMessage += error.message;
+    }
+
+    showNotification(errorMessage, 'error');
+
+    // Log to debug logger if available
+    if (window.CommentatorLogger) {
+      window.CommentatorLogger.error(`Comment submission failed: ${error.message}`, 'COMMENTS', error);
+    }
 
   } finally {
     // Reset submit button
@@ -1513,47 +1580,103 @@ const currentCommentsUnsubscribe = null;
  */
 async function initFirebaseAuth() {
   try {
+    console.log('🔥 Initializing Firebase authentication...');
+    
     // Check if Firebase service is available
     if (typeof window.FirebaseService === 'undefined') {
-      console.warn('Firebase service not available, waiting...');
-      setTimeout(initFirebaseAuth, 1000);
+      console.warn('⚠️ Firebase service not available, waiting...');
+      updateUserStatus('🔄 Waiting for Firebase...');
+      
+      // Wait longer and try again
+      setTimeout(initFirebaseAuth, 2000);
       return;
     }
 
-    // Initialize authentication
-    const user = await window.FirebaseService.initAuth();
+    console.log('✅ Firebase service found, initializing authentication...');
+    updateUserStatus('🔄 Authenticating...');
+
+    // Initialize authentication with timeout
+    const authTimeout = new Promise((_, reject) => {
+      setTimeout(() => reject(new Error('Authentication timeout')), 15000);
+    });
+    
+    const authPromise = window.FirebaseService.initAuth();
+    
+    const user = await Promise.race([authPromise, authTimeout]);
 
     if (user) {
+      console.log('✅ Firebase authentication successful:', user.uid);
+      
       // Update user status display
       updateUserStatus('✅ Connected anonymously');
 
-      // Enable submit button
+      // Enable submit button - but only after successful auth
       const submitBtn = document.getElementById('submit-comment-btn');
       if (submitBtn) {
         submitBtn.disabled = false;
+        console.log('✅ Submit button enabled');
       }
 
-      // Create session
-      currentSession = await window.FirebaseService.createSession({
-        userAgent: navigator.userAgent,
-        referrer: document.referrer
-      });
+      // Verify authentication state
+      const isAuth = window.FirebaseService.isUserAuthenticated();
+      console.log('🔐 Authentication verification:', isAuth);
+      
+      if (!isAuth) {
+        console.error('❌ Authentication verification failed');
+        updateUserStatus('❌ Auth verification failed');
+        return;
+      }
 
-      // Set up session activity tracking
-      setInterval(() => {
-        if (currentSession) {
-          window.FirebaseService.updateSessionActivity(currentSession);
-        }
-      }, 30000); // Update every 30 seconds
+      try {
+        // Create session
+        console.log('📝 Creating user session...');
+        currentSession = await window.FirebaseService.createSession({
+          userAgent: navigator.userAgent,
+          referrer: document.referrer,
+          timestamp: Date.now()
+        });
+        
+        console.log('✅ Session created:', currentSession);
 
-      console.log('Firebase authentication initialized successfully');
+        // Set up session activity tracking
+        setInterval(() => {
+          if (currentSession && window.FirebaseService.isUserAuthenticated()) {
+            window.FirebaseService.updateSessionActivity(currentSession);
+          }
+        }, 30000); // Update every 30 seconds
+
+        console.log('🎉 Firebase authentication and session setup complete');
+        
+      } catch (sessionError) {
+        console.warn('⚠️ Session creation failed, but authentication succeeded:', sessionError);
+        // Don't fail the whole process if session creation fails
+      }
+
     } else {
+      console.error('❌ Firebase authentication failed - no user returned');
       updateUserStatus('❌ Authentication failed');
+      
+      // Keep submit button disabled
+      const submitBtn = document.getElementById('submit-comment-btn');
+      if (submitBtn) {
+        submitBtn.disabled = true;
+      }
     }
 
   } catch (error) {
-    console.error('Error initializing Firebase auth:', error);
+    console.error('❌ Error initializing Firebase auth:', error);
     updateUserStatus('❌ Connection error');
+    
+    // Keep submit button disabled on error
+    const submitBtn = document.getElementById('submit-comment-btn');
+    if (submitBtn) {
+      submitBtn.disabled = true;
+    }
+    
+    // Log detailed error info
+    if (window.CommentatorLogger) {
+      window.CommentatorLogger.error(`Firebase auth error: ${error.message}`, 'FIREBASE', error);
+    }
   }
 }
 
