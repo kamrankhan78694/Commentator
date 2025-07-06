@@ -18,6 +18,9 @@
     "test:integration": "node test/integration-tests.js",
     "test:security": "node test/security-tests.js",
     "test:e2e": "node test/e2e-tests.js",
+    "test:production-readiness": "node scripts/production-readiness-cli.js",
+    "test:production-readiness:core": "node scripts/production-readiness-cli.js --core-only",
+    "test:production-readiness:ci": "node scripts/production-readiness-cli.js --format junit --output ./test-results",
     "lint": "npx eslint js/",
     "lint:fix": "npx eslint js/ --fix",
     "security:audit": "npm audit",
@@ -49,6 +52,7 @@
     "@eslint/js": "^9.0.0",
     "dotenv": "^16.6.1",
     "eslint": "^8.50.0",
+    "playwright": "^1.40.0",
     "prettier": "^3.0.0"
   },
   "dependencies": {

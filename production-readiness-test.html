@@ -221,6 +221,18 @@
                 <button class="btn" onclick="runPerformanceTests()">Run Performance Tests</button>
                 <div class="test-results" id="performance-results"></div>
             </div>
+
+            <div class="test-section">
+                <h3>♿ Accessibility Tests</h3>
+                <button class="btn" onclick="runAccessibilityTests()">Run Accessibility Tests</button>
+                <div class="test-results" id="accessibility-results"></div>
+            </div>
+
+            <div class="test-section">
+                <h3>🌐 Web3 & Decentralization Tests</h3>
+                <button class="btn" onclick="runWeb3Tests()">Run Web3 Tests</button>
+                <div class="test-results" id="web3-results"></div>
+            </div>
         </div>
 
         <div class="test-section">
@@ -243,7 +255,47 @@
                     <div class="metric-label">Success Rate</div>
                 </div>
             </div>
-            <button class="btn" onclick="runAllTests()" style="width: 100%; margin-top: 1rem;">🚀 Run All Tests</button>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem;">
+                <button class="btn" onclick="runAllTests()" style="width: 100%;">🚀 Run All Tests</button>
+                <button class="btn" onclick="runCoreTests()" style="width: 100%; background: #f59e0b;">⚡ Run Core Tests Only</button>
+                <button class="btn" onclick="resetTests()" style="width: 100%; background: #6b7280;">🔄 Reset Tests</button>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem;">
+                <button class="btn" onclick="exportResults('json')" style="width: 100%; background: #059669;">📥 Export JSON</button>
+                <button class="btn" onclick="exportResults('junit')" style="width: 100%; background: #059669;">📥 Export JUnit XML</button>
+                <button class="btn" onclick="toggleHeadlessMode()" style="width: 100%; background: #7c3aed;" id="headless-toggle">🎭 Enable Headless Mode</button>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>📖 Documentation & Instructions</h3>
+            <div style="background: #f8fafc; padding: 1rem; border-radius: 8px; border: 1px solid #e2e8f0;">
+                <h4>🚀 Getting Started</h4>
+                <p><strong>Core Tests:</strong> Essential functionality tests (Environment, Firebase, Auth, Comments)</p>
+                <p><strong>Extended Tests:</strong> Comprehensive testing including Accessibility and Web3 features</p>
+                
+                <h4>🎯 Test Categories</h4>
+                <ul style="margin: 0.5rem 0;">
+                    <li><strong>Environment:</strong> Configuration and runtime setup validation</li>
+                    <li><strong>Firebase:</strong> Database connectivity and service functionality</li>
+                    <li><strong>Authentication:</strong> User authentication and security features</li>
+                    <li><strong>Comments:</strong> Core commenting system functionality</li>
+                    <li><strong>UI/UX:</strong> User interface and experience validation</li>
+                    <li><strong>Performance:</strong> Load testing and scalability assessment</li>
+                    <li><strong>Accessibility:</strong> WCAG 2.1 compliance and inclusive design</li>
+                    <li><strong>Web3:</strong> Decentralization features and blockchain integration</li>
+                </ul>
+                
+                <h4>🔧 CI/CD Integration</h4>
+                <p><strong>Headless Mode:</strong> Enable for automated testing environments</p>
+                <p><strong>Export Options:</strong> JSON for analysis, JUnit XML for CI/CD pipelines</p>
+                
+                <h4>📊 Success Criteria</h4>
+                <p><strong>Production Ready:</strong> 100% success rate on core tests, 80%+ on extended tests</p>
+                <p><strong>Deployment Ready:</strong> All critical blockers resolved, performance metrics within thresholds</p>
+            </div>
         </div>
     </div>
 
@@ -261,26 +313,94 @@
     <script src="config/environment.js"></script>
     <script type="module" src="firebase-config.js"></script>
     <script type="module" src="js/firebase-service.js"></script>
+    
+    <!-- Modular Test Framework -->
+    <script src="test/production-readiness/test-core.js"></script>
+    <script src="test/production-readiness/accessibility-tests.js"></script>
+    <script src="test/production-readiness/web3-tests.js"></script>
+    <script src="test/production-readiness/performance-tests.js"></script>
 
     <script>
+        // Initialize enhanced test framework
+        let testCore;
+        let accessibilityTests;
+        let web3Tests;
+        let performanceTests;
+        let isHeadlessMode = false;
+
+        // Legacy test metrics for backward compatibility
         let testMetrics = {
             total: 0,
             passed: 0,
             failed: 0
         };
 
+        // Initialize test framework when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                testCore = new ProductionTestCore();
+                accessibilityTests = new AccessibilityTests(testCore);
+                web3Tests = new Web3DecentralizationTests(testCore);
+                performanceTests = new PerformanceScalabilityTests(testCore);
+                
+                testCore.log('environment-results', 'Enhanced test framework initialized successfully', 'success', 'system');
+            } catch (error) {
+                console.error('Failed to initialize enhanced test framework:', error);
+                // Fall back to legacy framework
+                testCore = {
+                    log: log,
+                    recordTest: recordTest,
+                    generateReport: () => JSON.stringify({ legacy: true, metrics: testMetrics }),
+                    exportResults: (format) => console.log('Export not available in legacy mode'),
+                    reset: () => { testMetrics = { total: 0, passed: 0, failed: 0 }; updateMetrics(); }
+                };
+            }
+
+            const checkService = () => {
+                if (typeof window.FirebaseService !== 'undefined') {
+                    testCore.log('environment-results', 'Firebase service detected and ready for testing', 'success', 'system');
+                } else {
+                    setTimeout(checkService, 100);
+                }
+            };
+            checkService();
+        });
+
+        // Enhanced logging function that works with both frameworks
         function log(container, message, type = 'info') {
-            const timestamp = new Date().toLocaleTimeString();
-            const entry = document.createElement('div');
-            entry.className = `log-entry status-${type}`;
-            entry.textContent = `[${timestamp}] ${message}`;
-            document.getElementById(container).appendChild(entry);
-            
-            // Auto-scroll to bottom
-            const results = document.getElementById(container);
-            results.scrollTop = results.scrollHeight;
+            if (testCore && testCore.log) {
+                testCore.log(container, message, type, 'legacy');
+            } else {
+                // Fallback to original log function
+                const timestamp = new Date().toLocaleTimeString();
+                const entry = document.createElement('div');
+                entry.className = `log-entry status-${type}`;
+                entry.textContent = `[${timestamp}] ${message}`;
+                const containerEl = document.getElementById(container);
+                if (containerEl) {
+                    containerEl.appendChild(entry);
+                    containerEl.scrollTop = containerEl.scrollHeight;
+                }
+            }
         }
 
+        // Enhanced test recording that works with both frameworks
+        function recordTest(passed) {
+            if (testCore && testCore.recordTest) {
+                testCore.recordTest(passed, 'Legacy Test', 'legacy');
+            } else {
+                // Fallback to original metrics
+                testMetrics.total++;
+                if (passed) {
+                    testMetrics.passed++;
+                } else {
+                    testMetrics.failed++;
+                }
+                updateMetrics();
+            }
+        }
+
+        // Legacy metrics update function
         function updateMetrics() {
             document.getElementById('total-tests').textContent = testMetrics.total;
             document.getElementById('passed-tests').textContent = testMetrics.passed;
@@ -310,14 +430,106 @@
             }
         }
 
-        function recordTest(passed) {
-            testMetrics.total++;
-            if (passed) {
-                testMetrics.passed++;
+        // New enhanced test functions
+        async function runAccessibilityTests() {
+            if (accessibilityTests) {
+                await accessibilityTests.runAllTests('accessibility-results');
             } else {
-                testMetrics.failed++;
+                log('accessibility-results', '❌ Accessibility test framework not available', 'error');
             }
-            updateMetrics();
+        }
+
+        async function runWeb3Tests() {
+            if (web3Tests) {
+                await web3Tests.runAllTests('web3-results');
+            } else {
+                log('web3-results', '❌ Web3 test framework not available', 'error');
+            }
+        }
+
+        async function runEnhancedPerformanceTests() {
+            if (performanceTests) {
+                await performanceTests.runAllTests('performance-results');
+            } else {
+                // Fall back to legacy performance tests
+                await runPerformanceTests();
+            }
+        }
+
+        // Export functionality
+        function exportResults(format = 'json') {
+            if (testCore && testCore.exportResults) {
+                testCore.exportResults(format);
+                log('environment-results', `Results exported as ${format.toUpperCase()}`, 'success');
+            } else {
+                // Fallback export
+                const data = JSON.stringify(testMetrics, null, 2);
+                const blob = new Blob([data], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `test-results-${Date.now()}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                log('environment-results', 'Results exported (legacy format)', 'success');
+            }
+        }
+
+        // Reset functionality
+        function resetTests() {
+            if (testCore && testCore.reset) {
+                testCore.reset();
+            } else {
+                testMetrics = { total: 0, passed: 0, failed: 0 };
+                updateMetrics();
+            }
+
+            // Clear all result containers
+            ['environment-results', 'firebase-results', 'auth-results', 'comment-results', 
+             'ui-results', 'performance-results', 'accessibility-results', 'web3-results'].forEach(id => {
+                const container = document.getElementById(id);
+                if (container) container.innerHTML = '';
+            });
+
+            log('environment-results', '🔄 Test environment reset', 'info');
+        }
+
+        // Headless mode toggle
+        function toggleHeadlessMode() {
+            isHeadlessMode = !isHeadlessMode;
+            const button = document.getElementById('headless-toggle');
+            if (button) {
+                button.textContent = isHeadlessMode ? '👁️ Disable Headless Mode' : '🎭 Enable Headless Mode';
+                button.style.background = isHeadlessMode ? '#dc2626' : '#7c3aed';
+            }
+            
+            log('environment-results', `Headless mode ${isHeadlessMode ? 'enabled' : 'disabled'}`, 'info');
+        }
+
+        // Core tests runner (essential functionality only)
+        async function runCoreTests() {
+            resetTests();
+            log('environment-results', '🚀 Starting core production readiness tests...', 'info');
+
+            const coreTests = [
+                runEnvironmentTests,
+                runFirebaseTests,
+                runAuthTests,
+                runCommentTests
+            ];
+
+            for (const test of coreTests) {
+                try {
+                    await test();
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                } catch (error) {
+                    log('environment-results', `Core test error: ${error.message}`, 'error');
+                }
+            }
+
+            log('environment-results', '🎉 Core tests completed!', 'info');
         }
 
         async function runEnvironmentTests() {
@@ -675,35 +887,39 @@
 
         async function runAllTests() {
             // Reset metrics
-            testMetrics = { total: 0, passed: 0, failed: 0 };
-            updateMetrics();
+            resetTests();
 
-            // Clear all result containers
-            ['environment-results', 'firebase-results', 'auth-results', 'comment-results', 'ui-results', 'performance-results'].forEach(id => {
-                document.getElementById(id).innerHTML = '';
-            });
-
-            log('environment-results', '🚀 Starting comprehensive test suite...', 'info');
+            log('environment-results', '🚀 Starting comprehensive production readiness test suite...', 'info');
 
             // Run all tests sequentially
-            await runEnvironmentTests();
-            await new Promise(resolve => setTimeout(resolve, 500));
-            
-            await runFirebaseTests();
-            await new Promise(resolve => setTimeout(resolve, 500));
-            
-            await runAuthTests();
-            await new Promise(resolve => setTimeout(resolve, 500));
-            
-            await runCommentTests();
-            await new Promise(resolve => setTimeout(resolve, 500));
-            
-            await runUITests();
-            await new Promise(resolve => setTimeout(resolve, 500));
-            
-            await runPerformanceTests();
+            const allTests = [
+                { name: 'Environment', func: runEnvironmentTests },
+                { name: 'Firebase', func: runFirebaseTests },
+                { name: 'Authentication', func: runAuthTests },
+                { name: 'Comments', func: runCommentTests },
+                { name: 'UI/UX', func: runUITests },
+                { name: 'Performance', func: runEnhancedPerformanceTests },
+                { name: 'Accessibility', func: runAccessibilityTests },
+                { name: 'Web3', func: runWeb3Tests }
+            ];
 
-            log('performance-results', '🎉 All tests completed!', 'info');
+            for (const test of allTests) {
+                try {
+                    log('environment-results', `🔄 Running ${test.name} tests...`, 'info');
+                    await test.func();
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                } catch (error) {
+                    log('environment-results', `❌ ${test.name} test suite error: ${error.message}`, 'error');
+                }
+            }
+
+            log('environment-results', '🎉 All test suites completed!', 'info');
+            
+            // Generate final report
+            if (testCore && testCore.generateReport) {
+                const report = testCore.generateReport('json');
+                console.log('Final Test Report:', JSON.parse(report));
+            }
         }
 
         // Wait for Firebase service to load
@@ -717,6 +933,18 @@
             };
             checkService();
         });
+
+        // Expose functions for CI/CD integration
+        if (typeof window !== 'undefined') {
+            window.ProductionReadinessTest = {
+                runAllTests,
+                runCoreTests,
+                exportResults,
+                resetTests,
+                toggleHeadlessMode,
+                getTestCore: () => testCore
+            };
+        }
     </script>
 </body>
 </html>
