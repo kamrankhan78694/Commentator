@@ -199,13 +199,31 @@ function scrollToDemo() {
 }
 
 // Wait for DOM to be fully loaded before initializing
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   console.log('🗨️ Commentator interface initialized');
 
   // Log application initialization
   if (window.CommentatorLogger) {
     window.CommentatorLogger.info('Application initializing...', 'INIT');
-    window.CommentatorLogger.action('Loading header and footer components', 'info', 'INIT');
+    window.CommentatorLogger.action('Loading environment configuration', 'info', 'INIT');
+  }
+
+  // Wait for environment configuration to be ready
+  await waitForEnvironmentConfig();
+  
+  // Wait for Firebase services to be available
+  await waitForFirebaseService();
+  
+  // Initialize Firebase authentication first
+  await initFirebaseAuth();
+
+  // Log environment info
+  if (window.EnvironmentConfig && window.CommentatorLogger) {
+    const env = window.EnvironmentConfig.getEnvironment();
+    const features = window.EnvironmentConfig.getFeatures();
+    window.CommentatorLogger.info(`Environment: ${env}`, 'CONFIG');
+    window.CommentatorLogger.info(`Debug mode: ${window.EnvironmentConfig.isDebugMode()}`, 'CONFIG');
+    window.CommentatorLogger.info(`Features enabled: ${Object.keys(features).filter(k => features[k]).join(', ')}`, 'CONFIG');
   }
 
   // Initialize all functionality
@@ -223,6 +241,38 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }, 1000);
 });
+
+/**
+ * Wait for environment configuration to be available
+ */
+async function waitForEnvironmentConfig() {
+  return new Promise((resolve) => {
+    const checkConfig = () => {
+      if (typeof window.EnvironmentConfig !== 'undefined') {
+        resolve(window.EnvironmentConfig);
+      } else {
+        setTimeout(checkConfig, 100);
+      }
+    };
+    checkConfig();
+  });
+}
+
+/**
+ * Wait for Firebase service to be available
+ */
+async function waitForFirebaseService() {
+  return new Promise((resolve) => {
+    const checkService = () => {
+      if (typeof window.FirebaseService !== 'undefined') {
+        resolve(window.FirebaseService);
+      } else {
+        setTimeout(checkService, 100);
+      }
+    };
+    checkService();
+  });
+}
 
 /**
  * Initialize mobile menu functionality

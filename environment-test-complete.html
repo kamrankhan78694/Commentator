@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commentator Environment Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .test-section {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #007bff;
+        }
+        .test-passed {
+            border-left-color: #28a745;
+            background-color: #d4edda;
+        }
+        .test-failed {
+            border-left-color: #dc3545;
+            background-color: #f8d7da;
+        }
+        .test-result {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .config-display {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+        }
+        .button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        .button:hover {
+            background: #0056b3;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-success { background-color: #28a745; }
+        .status-error { background-color: #dc3545; }
+        .status-warning { background-color: #ffc107; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Commentator Environment Configuration Test</h1>
+    <p>This page tests whether your Commentator environment configuration is properly set up and working.</p>
+
+    <div id="test-results"></div>
+
+    <div class="test-section">
+        <h3>🔧 Actions</h3>
+        <button class="button" onclick="runAllTests()">🔄 Run All Tests</button>
+        <button class="button" onclick="testFirebaseConnection()">🔥 Test Firebase</button>
+        <button class="button" onclick="showFullConfig()">📋 Show Full Config</button>
+    </div>
+
+    <!-- Environment Configuration Scripts -->
+    <script src="config/environment.js"></script>
+    <script src="config/runtime-config.js"></script>
+
+    <script>
+        // Test Results Container
+        const testResults = document.getElementById('test-results');
+
+        // Test Configuration
+        const tests = [
+            {
+                name: 'Environment Configuration Loading',
+                test: () => {
+                    return typeof window.EnvironmentConfig !== 'undefined' && 
+                           window.EnvironmentConfig.getEnvironment() === 'development';
+                },
+                details: () => {
+                    if (typeof window.EnvironmentConfig === 'undefined') {
+                        return 'EnvironmentConfig not found. Check if config/environment.js is loaded.';
+                    }
+                    return `Environment: ${window.EnvironmentConfig.getEnvironment()}`;
+                }
+            },
+            {
+                name: 'Runtime Configuration Loading',
+                test: () => {
+                    return typeof window.COMMENTATOR_RUNTIME_CONFIG !== 'undefined' &&
+                           window.COMMENTATOR_RUNTIME_CONFIG.environment === 'development';
+                },
+                details: () => {
+                    if (typeof window.COMMENTATOR_RUNTIME_CONFIG === 'undefined') {
+                        return 'Runtime config not found. Check if config/runtime-config.js is loaded.';
+                    }
+                    return `Generated: ${window.COMMENTATOR_RUNTIME_CONFIG.timestamp}`;
+                }
+            },
+            {
+                name: 'Firebase Configuration',
+                test: () => {
+                    const config = window.EnvironmentConfig?.getFirebaseConfig();
+                    return config && 
+                           config.apiKey && 
+                           config.projectId && 
+                           config.authDomain &&
+                           !config.apiKey.includes('your-');
+                },
+                details: () => {
+                    const config = window.EnvironmentConfig?.getFirebaseConfig();
+                    if (!config) return 'Firebase config not available';
+                    return `Project: ${config.projectId}, API Key: ${config.apiKey.substring(0, 10)}...`;
+                }
+            },
+            {
+                name: 'Debug Mode Enabled',
+                test: () => {
+                    return window.EnvironmentConfig?.isDebugMode() === true;
+                },
+                details: () => {
+                    return `Debug mode: ${window.EnvironmentConfig?.isDebugMode()}`;
+                }
+            },
+            {
+                name: 'Feature Flags',
+                test: () => {
+                    const features = window.EnvironmentConfig?.getFeatures();
+                    return features && 
+                           features.realTimeComments === true &&
+                           features.debugLogger === true;
+                },
+                details: () => {
+                    const features = window.EnvironmentConfig?.getFeatures();
+                    if (!features) return 'Features not available';
+                    return `Enabled: ${Object.keys(features).filter(k => features[k]).join(', ')}`;
+                }
+            }
+        ];
+
+        function createTestResult(test, passed, details) {
+            const section = document.createElement('div');
+            section.className = `test-section ${passed ? 'test-passed' : 'test-failed'}`;
+            
+            const statusClass = passed ? 'status-success' : 'status-error';
+            const statusText = passed ? 'PASSED' : 'FAILED';
+            
+            section.innerHTML = `
+                <div class="test-result">
+                    <span class="status-indicator ${statusClass}"></span>
+                    ${test.name}: ${statusText}
+                </div>
+                <div>${details}</div>
+            `;
+            
+            return section;
+        }
+
+        function runAllTests() {
+            testResults.innerHTML = '<h2>🧪 Test Results</h2>';
+            
+            let passedTests = 0;
+            const totalTests = tests.length;
+
+            tests.forEach(test => {
+                try {
+                    const passed = test.test();
+                    const details = test.details();
+                    
+                    if (passed) passedTests++;
+                    
+                    const resultElement = createTestResult(test, passed, details);
+                    testResults.appendChild(resultElement);
+                } catch (error) {
+                    const resultElement = createTestResult(test, false, `Error: ${error.message}`);
+                    testResults.appendChild(resultElement);
+                }
+            });
+
+            // Summary
+            const summary = document.createElement('div');
+            summary.className = `test-section ${passedTests === totalTests ? 'test-passed' : 'test-failed'}`;
+            summary.innerHTML = `
+                <div class="test-result">
+                    📊 Summary: ${passedTests}/${totalTests} tests passed
+                </div>
+                ${passedTests === totalTests ? 
+                    '🎉 All tests passed! Your environment configuration is working correctly.' :
+                    '⚠️ Some tests failed. Check the details above and verify your configuration.'
+                }
+            `;
+            testResults.appendChild(summary);
+        }
+
+        async function testFirebaseConnection() {
+            const section = document.createElement('div');
+            section.className = 'test-section';
+            section.innerHTML = '<div class="test-result">🔥 Testing Firebase Connection...</div>';
+            testResults.appendChild(section);
+
+            try {
+                // Try to initialize Firebase
+                const firebaseConfig = window.EnvironmentConfig?.getFirebaseConfig();
+                if (!firebaseConfig) {
+                    throw new Error('Firebase configuration not available');
+                }
+
+                // Check if Firebase scripts are loaded
+                if (typeof firebase === 'undefined') {
+                    throw new Error('Firebase SDK not loaded. Firebase connection test requires Firebase scripts.');
+                }
+
+                section.className = 'test-section test-passed';
+                section.innerHTML = `
+                    <div class="test-result">
+                        <span class="status-indicator status-success"></span>
+                        Firebase Connection: READY
+                    </div>
+                    <div>Firebase configuration is valid and ready for use.</div>
+                `;
+            } catch (error) {
+                section.className = 'test-section test-failed';
+                section.innerHTML = `
+                    <div class="test-result">
+                        <span class="status-indicator status-error"></span>
+                        Firebase Connection: FAILED
+                    </div>
+                    <div>Error: ${error.message}</div>
+                `;
+            }
+        }
+
+        function showFullConfig() {
+            const section = document.createElement('div');
+            section.className = 'test-section';
+            
+            const envConfig = window.EnvironmentConfig;
+            const runtimeConfig = window.COMMENTATOR_RUNTIME_CONFIG;
+            
+            const configData = {
+                environment: envConfig?.getEnvironment(),
+                debug: envConfig?.isDebugMode(),
+                analytics: envConfig?.isAnalyticsEnabled(),
+                features: envConfig?.getFeatures(),
+                firebase: {
+                    projectId: envConfig?.getFirebaseConfig()?.projectId,
+                    authDomain: envConfig?.getFirebaseConfig()?.authDomain,
+                    hasApiKey: !!envConfig?.getFirebaseConfig()?.apiKey
+                },
+                runtime: runtimeConfig
+            };
+            
+            section.innerHTML = `
+                <div class="test-result">📋 Full Configuration</div>
+                <div class="config-display">${JSON.stringify(configData, null, 2)}</div>
+            `;
+            
+            testResults.appendChild(section);
+        }
+
+        // Auto-run tests when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(runAllTests, 1000); // Wait for configs to load
+        });
+    </script>
+</body>
+</html>

@@ -5,9 +5,14 @@
   "description": "🗨️ Commentator is an open-source project designed to improve transparency on the web by enabling community-driven feedback.",
   "main": "index.html",
   "scripts": {
-    "dev": "python3 -m http.server 3000",
-    "start": "python3 -m http.server 8080",
-    "build": "npm run lint && npm run test",
+    "dev": "npm run build:config:dev && python3 -m http.server 3000",
+    "start": "npm run build:config && python3 -m http.server 8080",
+    "build": "npm run build:config && npm run lint && npm run test",
+    "build:config": "node scripts/build-config.js build",
+    "build:config:dev": "NODE_ENV=development node scripts/build-config.js build",
+    "build:config:staging": "NODE_ENV=staging node scripts/build-config.js build",
+    "build:config:prod": "NODE_ENV=production node scripts/build-config.js build",
+    "config:validate": "node scripts/build-config.js validate",
     "test": "node test/runner.js",
     "test:unit": "node test/unit-tests.js",
     "test:integration": "node test/integration-tests.js",
@@ -18,6 +23,8 @@
     "security:audit": "npm audit",
     "format": "npx prettier --write js/ test/",
     "setup:hooks": "git config core.hooksPath .githooks",
+    "deploy:staging": "npm run build:config:staging && firebase deploy --project staging",
+    "deploy:prod": "npm run build:config:prod && firebase deploy --project production",
     "postinstall": "npm run setup:hooks"
   },
   "keywords": [
@@ -40,11 +47,13 @@
   "homepage": "https://github.com/kamrankhan78694/Commentator#readme",
   "devDependencies": {
     "@eslint/js": "^9.0.0",
+    "dotenv": "^16.6.1",
     "eslint": "^8.50.0",
     "prettier": "^3.0.0"
   },
   "dependencies": {
     "@web3-storage/w3up-client": "^17.3.0",
-    "ethers": "^6.8.0"
+    "ethers": "^6.8.0",
+    "firebase": "^10.7.1"
   }
 }
