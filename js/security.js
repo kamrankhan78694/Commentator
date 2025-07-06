@@ -3,7 +3,7 @@
  * Provides input validation, sanitization, and security checks
  */
 
-window.SecurityUtils = (function() {
+window.SecurityUtils = (function () {
   'use strict';
 
   // XSS Prevention patterns
@@ -17,12 +17,12 @@ window.SecurityUtils = (function() {
     /javascript:/gi,
     /vbscript:/gi,
     /data:text\/html/gi,
-    /on\w+\s*=/gi
+    /on\w+\s*=/gi,
   ];
 
   // SQL Injection patterns
   const SQL_INJECTION_PATTERNS = [
-    /('|(\\')|(;)|(\\;)|(\/\*)|(\\*)|(\/\*)|(\*\/)|(\bselect\b)|(\binsert\b)|(\bupdate\b)|(\bdelete\b)|(\bdrop\b)|(\bcreate\b)|(\balter\b)|(\bexec\b)|(\bunion\b)|(\bjoin\b))/gi
+    /('|(\\')|(;)|(\\;)|(\/\*)|(\\*)|(\/\*)|(\*\/)|(\bselect\b)|(\binsert\b)|(\bupdate\b)|(\bdelete\b)|(\bdrop\b)|(\bcreate\b)|(\balter\b)|(\bexec\b)|(\bunion\b)|(\bjoin\b))/gi,
   ];
 
   // Profanity and spam patterns
@@ -33,10 +33,10 @@ window.SecurityUtils = (function() {
   ];
 
   /**
-     * Sanitize text input to prevent XSS attacks
-     * @param {string} input - The input text to sanitize
-     * @returns {string} - Sanitized text
-     */
+   * Sanitize text input to prevent XSS attacks
+   * @param {string} input - The input text to sanitize
+   * @returns {string} - Sanitized text
+   */
   function sanitizeText(input) {
     if (typeof input !== 'string') {
       return '';
@@ -45,7 +45,7 @@ window.SecurityUtils = (function() {
     let sanitized = input;
 
     // Remove XSS patterns
-    XSS_PATTERNS.forEach(pattern => {
+    XSS_PATTERNS.forEach((pattern) => {
       sanitized = sanitized.replace(pattern, '');
     });
 
@@ -62,10 +62,10 @@ window.SecurityUtils = (function() {
   }
 
   /**
-     * Validate comment text
-     * @param {string} text - Comment text to validate
-     * @returns {{valid: boolean, errors: string[]}}
-     */
+   * Validate comment text
+   * @param {string} text - Comment text to validate
+   * @returns {{valid: boolean, errors: string[]}}
+   */
   function validateComment(text) {
     const errors = [];
 
@@ -87,21 +87,21 @@ window.SecurityUtils = (function() {
     }
 
     // Check for XSS patterns
-    XSS_PATTERNS.forEach(pattern => {
+    XSS_PATTERNS.forEach((pattern) => {
       if (pattern.test(text)) {
         errors.push('Comment contains potentially dangerous content');
       }
     });
 
     // Check for SQL injection patterns
-    SQL_INJECTION_PATTERNS.forEach(pattern => {
+    SQL_INJECTION_PATTERNS.forEach((pattern) => {
       if (pattern.test(text)) {
         errors.push('Comment contains invalid characters');
       }
     });
 
     // Check for spam patterns
-    SPAM_PATTERNS.forEach(pattern => {
+    SPAM_PATTERNS.forEach((pattern) => {
       if (pattern.test(text)) {
         errors.push('Comment appears to be spam');
       }
@@ -109,15 +109,15 @@ window.SecurityUtils = (function() {
 
     return {
       valid: errors.length === 0,
-      errors
+      errors,
     };
   }
 
   /**
-     * Validate author name
-     * @param {string} author - Author name to validate
-     * @returns {{valid: boolean, errors: string[]}}
-     */
+   * Validate author name
+   * @param {string} author - Author name to validate
+   * @returns {{valid: boolean, errors: string[]}}
+   */
   function validateAuthor(author) {
     const errors = [];
 
@@ -144,22 +144,30 @@ window.SecurityUtils = (function() {
     }
 
     // Check for reserved names
-    const reservedNames = ['admin', 'root', 'system', 'moderator', 'anonymous', 'null', 'undefined'];
-    if (reservedNames.some(name => author.toLowerCase().includes(name))) {
+    const reservedNames = [
+      'admin',
+      'root',
+      'system',
+      'moderator',
+      'anonymous',
+      'null',
+      'undefined',
+    ];
+    if (reservedNames.some((name) => author.toLowerCase().includes(name))) {
       errors.push('Author name contains reserved words');
     }
 
     return {
       valid: errors.length === 0,
-      errors
+      errors,
     };
   }
 
   /**
-     * Validate email address
-     * @param {string} email - Email to validate
-     * @returns {{valid: boolean, errors: string[]}}
-     */
+   * Validate email address
+   * @param {string} email - Email to validate
+   * @returns {{valid: boolean, errors: string[]}}
+   */
   function validateEmail(email) {
     const errors = [];
 
@@ -178,15 +186,15 @@ window.SecurityUtils = (function() {
 
     return {
       valid: errors.length === 0,
-      errors
+      errors,
     };
   }
 
   /**
-     * Validate wallet address (Ethereum format)
-     * @param {string} address - Wallet address to validate
-     * @returns {{valid: boolean, errors: string[]}}
-     */
+   * Validate wallet address (Ethereum format)
+   * @param {string} address - Wallet address to validate
+   * @returns {{valid: boolean, errors: string[]}}
+   */
   function validateWalletAddress(address) {
     const errors = [];
 
@@ -201,17 +209,17 @@ window.SecurityUtils = (function() {
 
     return {
       valid: errors.length === 0,
-      errors
+      errors,
     };
   }
 
   /**
-     * Rate limiting check (simple client-side implementation)
-     * @param {string} key - Unique key for rate limiting
-     * @param {number} maxRequests - Maximum requests allowed
-     * @param {number} windowMs - Time window in milliseconds
-     * @returns {boolean} - True if request is allowed
-     */
+   * Rate limiting check (simple client-side implementation)
+   * @param {string} key - Unique key for rate limiting
+   * @param {number} maxRequests - Maximum requests allowed
+   * @param {number} windowMs - Time window in milliseconds
+   * @returns {boolean} - True if request is allowed
+   */
   function checkRateLimit(key, maxRequests = 10, windowMs = 60000) {
     const now = Date.now();
     const storageKey = `rl_${key}`;
@@ -221,7 +229,9 @@ window.SecurityUtils = (function() {
       const requests = stored ? JSON.parse(stored) : [];
 
       // Filter out old requests
-      const recentRequests = requests.filter(timestamp => now - timestamp < windowMs);
+      const recentRequests = requests.filter(
+        (timestamp) => now - timestamp < windowMs
+      );
 
       if (recentRequests.length >= maxRequests) {
         return false;
@@ -239,12 +249,13 @@ window.SecurityUtils = (function() {
   }
 
   /**
-     * Generate secure random string
-     * @param {number} length - Length of random string
-     * @returns {string} - Random string
-     */
+   * Generate secure random string
+   * @param {number} length - Length of random string
+   * @returns {string} - Random string
+   */
   function generateSecureId(length = 32) {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const chars =
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let result = '';
 
     for (let i = 0; i < length; i++) {
@@ -255,10 +266,10 @@ window.SecurityUtils = (function() {
   }
 
   /**
-     * Check if content is likely spam
-     * @param {string} content - Content to check
-     * @returns {{isSpam: boolean, reasons: string[]}}
-     */
+   * Check if content is likely spam
+   * @param {string} content - Content to check
+   * @returns {{isSpam: boolean, reasons: string[]}}
+   */
   function detectSpam(content) {
     const reasons = [];
 
@@ -278,22 +289,31 @@ window.SecurityUtils = (function() {
     }
 
     // Check for spam keywords
-    const spamKeywords = ['buy now', 'click here', 'free money', 'amazing deal', 'limited time'];
+    const spamKeywords = [
+      'buy now',
+      'click here',
+      'free money',
+      'amazing deal',
+      'limited time',
+    ];
     const lowerContent = content.toLowerCase();
-    const foundSpamWords = spamKeywords.filter(keyword => lowerContent.includes(keyword));
+    const foundSpamWords = spamKeywords.filter((keyword) =>
+      lowerContent.includes(keyword)
+    );
     if (foundSpamWords.length > 0) {
       reasons.push(`Contains spam keywords: ${foundSpamWords.join(', ')}`);
     }
 
     // Check for excessive capitalization
-    const uppercaseRatio = (content.match(/[A-Z]/g) || []).length / content.length;
+    const uppercaseRatio =
+      (content.match(/[A-Z]/g) || []).length / content.length;
     if (uppercaseRatio > 0.7 && content.length > 20) {
       reasons.push('Excessive capitalization');
     }
 
     return {
       isSpam: reasons.length > 0,
-      reasons
+      reasons,
     };
   }
 
@@ -306,7 +326,7 @@ window.SecurityUtils = (function() {
     validateWalletAddress,
     checkRateLimit,
     generateSecureId,
-    detectSpam
+    detectSpam,
   };
 })();
 

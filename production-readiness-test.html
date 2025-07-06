@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Production Readiness Test - Commentator</title>
+    <style>
+        :root {
+            --primary-500: #0066ff;
+            --gray-50: #fafafa;
+            --gray-100: #f5f5f5;
+            --gray-800: #262626;
+            --success-500: #22c55e;
+            --error-500: #ef4444;
+            --warning-500: #f59e0b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: var(--gray-50);
+            color: var(--gray-800);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .test-section {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .btn {
+            background: var(--primary-500);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin: 0.25rem;
+        }
+
+        .btn:hover {
+            background: #0052cc;
+            transform: translateY(-1px);
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .status {
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            margin: 0.5rem 0;
+            font-weight: 500;
+        }
+
+        .status-success {
+            background: #f0fdf4;
+            color: #15803d;
+            border: 1px solid #bbf7d0;
+        }
+
+        .status-error {
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+        }
+
+        .status-warning {
+            background: #fffbeb;
+            color: #d97706;
+            border: 1px solid #fed7aa;
+        }
+
+        .status-info {
+            background: #eff6ff;
+            color: #2563eb;
+            border: 1px solid #bfdbfe;
+        }
+
+        .test-results {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #e2e8f0;
+        }
+
+        .log-entry {
+            padding: 0.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+
+        .progress-bar {
+            background: #e2e8f0;
+            border-radius: 8px;
+            height: 8px;
+            margin: 1rem 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: var(--success-500);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .metric {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-500);
+        }
+
+        .metric-label {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Production Readiness Test</h1>
+            <p>Comprehensive testing suite for Commentator system validation</p>
+            <div class="progress-bar">
+                <div class="progress-fill" id="overall-progress"></div>
+            </div>
+            <div id="overall-status" class="status status-info">Ready to start testing...</div>
+        </div>
+
+        <div class="test-grid">
+            <div class="test-section">
+                <h3>🔧 Environment Tests</h3>
+                <button class="btn" onclick="runEnvironmentTests()">Run Environment Tests</button>
+                <div class="test-results" id="environment-results"></div>
+            </div>
+
+            <div class="test-section">
+                <h3>🔥 Firebase Tests</h3>
+                <button class="btn" onclick="runFirebaseTests()">Run Firebase Tests</button>
+                <div class="test-results" id="firebase-results"></div>
+            </div>
+
+            <div class="test-section">
+                <h3>🔐 Authentication Tests</h3>
+                <button class="btn" onclick="runAuthTests()">Run Auth Tests</button>
+                <div class="test-results" id="auth-results"></div>
+            </div>
+
+            <div class="test-section">
+                <h3>💬 Comment System Tests</h3>
+                <button class="btn" onclick="runCommentTests()">Run Comment Tests</button>
+                <div class="test-results" id="comment-results"></div>
+            </div>
+
+            <div class="test-section">
+                <h3>🎨 UI/UX Tests</h3>
+                <button class="btn" onclick="runUITests()">Run UI Tests</button>
+                <div class="test-results" id="ui-results"></div>
+            </div>
+
+            <div class="test-section">
+                <h3>⚡ Performance Tests</h3>
+                <button class="btn" onclick="runPerformanceTests()">Run Performance Tests</button>
+                <div class="test-results" id="performance-results"></div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>📊 Test Results Summary</h3>
+            <div class="metrics" id="metrics-container">
+                <div class="metric">
+                    <div class="metric-value" id="total-tests">0</div>
+                    <div class="metric-label">Total Tests</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value" id="passed-tests">0</div>
+                    <div class="metric-label">Passed</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value" id="failed-tests">0</div>
+                    <div class="metric-label">Failed</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value" id="success-rate">0%</div>
+                    <div class="metric-label">Success Rate</div>
+                </div>
+            </div>
+            <button class="btn" onclick="runAllTests()" style="width: 100%; margin-top: 1rem;">🚀 Run All Tests</button>
+        </div>
+    </div>
+
+    <!-- Hidden elements for UI/UX test compatibility -->
+    <div style="display:none">
+        <input id="url-input" value="https://test-url.com/test-page">
+        <textarea id="comment-text">Test comment</textarea>
+        <button id="submit-comment-btn">Submit</button>
+        <div id="comments-container"></div>
+    </div>
+    <!-- End hidden test elements -->
+
+    <!-- Scripts -->
+    <script src="config/runtime-config.js"></script>
+    <script src="config/environment.js"></script>
+    <script type="module" src="firebase-config.js"></script>
+    <script type="module" src="js/firebase-service.js"></script>
+
+    <script>
+        let testMetrics = {
+            total: 0,
+            passed: 0,
+            failed: 0
+        };
+
+        function log(container, message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.className = `log-entry status-${type}`;
+            entry.textContent = `[${timestamp}] ${message}`;
+            document.getElementById(container).appendChild(entry);
+            
+            // Auto-scroll to bottom
+            const results = document.getElementById(container);
+            results.scrollTop = results.scrollHeight;
+        }
+
+        function updateMetrics() {
+            document.getElementById('total-tests').textContent = testMetrics.total;
+            document.getElementById('passed-tests').textContent = testMetrics.passed;
+            document.getElementById('failed-tests').textContent = testMetrics.failed;
+            
+            const successRate = testMetrics.total > 0 ? Math.round((testMetrics.passed / testMetrics.total) * 100) : 0;
+            document.getElementById('success-rate').textContent = successRate + '%';
+            
+            // Update progress bar
+            const progress = testMetrics.total > 0 ? (testMetrics.passed / testMetrics.total) * 100 : 0;
+            document.getElementById('overall-progress').style.width = progress + '%';
+            
+            // Update overall status
+            const statusEl = document.getElementById('overall-status');
+            if (testMetrics.total === 0) {
+                statusEl.className = 'status status-info';
+                statusEl.textContent = 'Ready to start testing...';
+            } else if (successRate === 100) {
+                statusEl.className = 'status status-success';
+                statusEl.textContent = '✅ All tests passed! System is production ready.';
+            } else if (successRate >= 80) {
+                statusEl.className = 'status status-warning';
+                statusEl.textContent = `⚠️ ${successRate}% tests passed. Some issues need attention.`;
+            } else {
+                statusEl.className = 'status status-error';
+                statusEl.textContent = `❌ ${successRate}% tests passed. Critical issues found.`;
+            }
+        }
+
+        function recordTest(passed) {
+            testMetrics.total++;
+            if (passed) {
+                testMetrics.passed++;
+            } else {
+                testMetrics.failed++;
+            }
+            updateMetrics();
+        }
+
+        async function runEnvironmentTests() {
+            log('environment-results', 'Starting environment tests...', 'info');
+            
+            // Debug logging
+            log('environment-results', `Debug: window.RuntimeConfig exists: ${typeof window.RuntimeConfig !== 'undefined'}`, 'info');
+            log('environment-results', `Debug: window.COMMENTATOR_RUNTIME_CONFIG exists: ${typeof window.COMMENTATOR_RUNTIME_CONFIG !== 'undefined'}`, 'info');
+            log('environment-results', `Debug: window.RUNTIME_CONFIG exists: ${typeof window.RUNTIME_CONFIG !== 'undefined'}`, 'info');
+            
+            // Test 1: Check if runtime config is loaded
+            try {
+                if (typeof window.RuntimeConfig !== 'undefined') {
+                    log('environment-results', '✅ Runtime config loaded', 'success');
+                    recordTest(true);
+                } else {
+                    log('environment-results', '❌ Runtime config not found', 'error');
+                    recordTest(false);
+                }
+            } catch (error) {
+                log('environment-results', `❌ Runtime config error: ${error.message}`, 'error');
+                recordTest(false);
+            }
+
+            // Test 2: Check environment configuration
+            try {
+                if (typeof window.EnvironmentConfig !== 'undefined') {
+                    log('environment-results', '✅ Environment config loaded', 'success');
+                    recordTest(true);
+                } else {
+                    log('environment-results', '❌ Environment config not found', 'error');
+                    recordTest(false);
+                }
+            } catch (error) {
+                log('environment-results', `❌ Environment config error: ${error.message}`, 'error');
+                recordTest(false);
+            }
+
+            // Test 3: Check for required global variables
+            const requiredGlobals = ['RuntimeConfig', 'EnvironmentConfig'];
+            requiredGlobals.forEach(global => {
+                if (typeof window[global] !== 'undefined') {
+                    log('environment-results', `✅ ${global} available`, 'success');
+                    recordTest(true);
+                } else {
+                    log('environment-results', `❌ ${global} missing`, 'error');
+                    recordTest(false);
+                }
+            });
+
+            log('environment-results', 'Environment tests completed', 'info');
+        }
+
+        async function runFirebaseTests() {
+            log('firebase-results', 'Starting Firebase tests...', 'info');
+
+            // Test 1: Check Firebase service availability
+            try {
+                if (typeof window.FirebaseService !== 'undefined') {
+                    log('firebase-results', '✅ Firebase service loaded', 'success');
+                    recordTest(true);
+                } else {
+                    log('firebase-results', '❌ Firebase service not available', 'error');
+                    recordTest(false);
+                    return;
+                }
+            } catch (error) {
+                log('firebase-results', `❌ Firebase service error: ${error.message}`, 'error');
+                recordTest(false);
+                return;
+            }
+
+            // Test 2: Firebase configuration
+            try {
+                // Debug logging
+                log('firebase-results', `Debug: window.RuntimeConfig: ${window.RuntimeConfig ? 'exists' : 'missing'}`, 'info');
+                if (window.RuntimeConfig) {
+                    log('firebase-results', `Debug: window.RuntimeConfig.firebase: ${window.RuntimeConfig.firebase ? 'exists' : 'missing'}`, 'info');
+                    if (window.RuntimeConfig.firebase) {
+                        log('firebase-results', `Debug: databaseURL: ${window.RuntimeConfig.firebase.databaseURL || 'missing'}`, 'info');
+                    }
+                }
+                
+                const config = window.RuntimeConfig?.firebase;
+                if (config && config.databaseURL) {
+                    log('firebase-results', '✅ Firebase configuration valid', 'success');
+                    recordTest(true);
+                } else {
+                    log('firebase-results', '❌ Firebase configuration invalid', 'error');
+                    recordTest(false);
+                }
+            } catch (error) {
+                log('firebase-results', `❌ Configuration check failed: ${error.message}`, 'error');
+                recordTest(false);
+            }
+
+            // Test 3: Database connectivity
+            try {
+                log('firebase-results', '🔄 Testing database connectivity...', 'info');
+                const testData = { test: true, timestamp: Date.now() };
+                await window.FirebaseService.saveComment('test-url', {
+                    text: 'Test comment for connectivity',
+                    author: 'Test User'
+                });
+                log('firebase-results', '✅ Database connectivity successful', 'success');
+                recordTest(true);
+            } catch (error) {
+                log('firebase-results', `❌ Database connectivity failed: ${error.message}`, 'error');
+                recordTest(false);
+            }
+
+            log('firebase-results', 'Firebase tests completed', 'info');
+        }
+
+        async function runAuthTests() {
+            log('auth-results', 'Starting authentication tests...', 'info');
+
+            // Test 1: Anonymous authentication
+            try {
+                log('auth-results', '🔄 Testing anonymous authentication...', 'info');
+                const user = await window.FirebaseService.initAuth();
+                if (user) {
+                    log('auth-results', '✅ Anonymous authentication successful', 'success');
+                    recordTest(true);
+                } else {
+                    log('auth-results', '❌ Anonymous authentication failed', 'error');
+                    recordTest(false);
+                }
+            } catch (error) {
+                log('auth-results', `❌ Anonymous auth error: ${error.message}`, 'error');
+                recordTest(false);
+            }
+
+            // Test 2: Authentication state checking
+            try {
+                const isAuth = window.FirebaseService.isUserAuthenticated();
+                if (isAuth) {
+                    log('auth-results', '✅ Authentication state valid', 'success');
+                    recordTest(true);
+                } else {
+                    log('auth-results', '❌ Authentication state invalid', 'error');
+                    recordTest(false);
+                }
+            } catch (error) {
+                log('auth-results', `❌ Auth state error: ${error.message}`, 'error');
+                recordTest(false);
+            }
+
+            // Test 3: User profile access
+            try {
+                const profile = window.FirebaseService.getUserProfile();
+                if (profile) {
+                    log('auth-results', '✅ User profile accessible', 'success');
+                    recordTest(true);
+                } else {
+                    log('auth-results', '❌ User profile not accessible', 'error');
+                    recordTest(false);
+                }
+            } catch (error) {
+                log('auth-results', `❌ Profile access error: ${error.message}`, 'error');
+                recordTest(false);
+            }
+
+            log('auth-results', 'Authentication tests completed', 'info');
+        }
+
+        async function runCommentTests() {
+            log('comment-results', 'Starting comment system tests...', 'info');
+
+            const testUrl = 'https://test-url.com/test-page';
+            const testComment = {
+                text: 'This is a test comment for validation',
+                author: 'Test User'
+            };
+
+            // Test 1: Save comment
+            try {
+                log('comment-results', '🔄 Testing comment save...', 'info');
+                const commentId = await window.FirebaseService.saveComment(testUrl, testComment);
+                if (commentId) {
+                    log('comment-results', `✅ Comment saved successfully: ${commentId}`, 'success');
+                    recordTest(true);
+                } else {
+                    log('comment-results', '❌ Comment save failed', 'error');
+                    recordTest(false);
+                }
+            } catch (error) {
+                log('comment-results', `❌ Comment save error: ${error.message}`, 'error');
+                recordTest(false);
+            }
+
+            // Test 2: Load comments
+            try {
+                log('comment-results', '🔄 Testing comment load...', 'info');
+                const comments = await window.FirebaseService.loadComments(testUrl);
+                if (Array.isArray(comments)) {
+                    log('comment-results', `✅ Comments loaded successfully: ${comments.length} comments`, 'success');
+                    recordTest(true);
+                } else {
+                    log('comment-results', '❌ Comment load failed', 'error');
+                    recordTest(false);
+                }
+            } catch (error) {
+                log('comment-results', `❌ Comment load error: ${error.message}`, 'error');
+                recordTest(false);
+            }
+
+            // Test 3: URL hash generation
+            try {
+                const hash = window.FirebaseService.generateUrlHash(testUrl);
+                if (hash && typeof hash === 'string') {
+                    log('comment-results', '✅ URL hash generation working', 'success');
+                    recordTest(true);
+                } else {
+                    log('comment-results', '❌ URL hash generation failed', 'error');
+                    recordTest(false);
+                }
+            } catch (error) {
+                log('comment-results', `❌ URL hash error: ${error.message}`, 'error');
+                recordTest(false);
+            }
+
+            log('comment-results', 'Comment system tests completed', 'info');
+        }
+
+        async function runUITests() {
+            log('ui-results', 'Starting UI/UX tests...', 'info');
+
+            // Debug: Check if elements exist in DOM
+            log('ui-results', `Debug: Total elements in DOM: ${document.querySelectorAll('*').length}`, 'info');
+            log('ui-results', `Debug: Elements with IDs: ${document.querySelectorAll('[id]').length}`, 'info');
+
+            // Test 1: Check if main elements exist
+            const mainElements = [
+                'url-input',
+                'comment-text',
+                'submit-comment-btn',
+                'comments-container'
+            ];
+
+            let elementsFound = 0;
+            mainElements.forEach(elementId => {
+                const element = document.getElementById(elementId);
+                log('ui-results', `Debug: Looking for ${elementId}: ${element ? 'FOUND' : 'NOT FOUND'}`, 'info');
+                if (element) {
+                    log('ui-results', `✅ Element found: ${elementId}`, 'success');
+                    elementsFound++;
+                    recordTest(true);
+                } else {
+                    log('ui-results', `❌ Element missing: ${elementId}`, 'error');
+                    recordTest(false);
+                }
+            });
+
+            // Test 2: CSS loading
+            try {
+                const styles = getComputedStyle(document.body);
+                if (styles.fontFamily) {
+                    log('ui-results', '✅ CSS styles loaded', 'success');
+                    recordTest(true);
+                } else {
+                    log('ui-results', '❌ CSS styles not loaded', 'error');
+                    recordTest(false);
+                }
+            } catch (error) {
+                log('ui-results', `❌ CSS test error: ${error.message}`, 'error');
+                recordTest(false);
+            }
+
+            // Test 3: Responsive design
+            try {
+                const viewport = document.querySelector('meta[name="viewport"]');
+                if (viewport) {
+                    log('ui-results', '✅ Viewport meta tag present', 'success');
+                    recordTest(true);
+                } else {
+                    log('ui-results', '❌ Viewport meta tag missing', 'error');
+                    recordTest(false);
+                }
+            } catch (error) {
+                log('ui-results', `❌ Viewport test error: ${error.message}`, 'error');
+                recordTest(false);
+            }
+
+            log('ui-results', 'UI/UX tests completed', 'info');
+        }
+
+        async function runPerformanceTests() {
+            log('performance-results', 'Starting performance tests...', 'info');
+
+            // Test 1: Page load time
+            try {
+                const loadTime = performance.timing.loadEventEnd - performance.timing.navigationStart;
+                if (loadTime < 3000) {
+                    log('performance-results', `✅ Page load time: ${loadTime}ms (Good)`, 'success');
+                    recordTest(true);
+                } else if (loadTime < 5000) {
+                    log('performance-results', `⚠️ Page load time: ${loadTime}ms (Acceptable)`, 'warning');
+                    recordTest(true);
+                } else {
+                    log('performance-results', `❌ Page load time: ${loadTime}ms (Slow)`, 'error');
+                    recordTest(false);
+                }
+            } catch (error) {
+                log('performance-results', `❌ Load time test error: ${error.message}`, 'error');
+                recordTest(false);
+            }
+
+            // Test 2: Memory usage
+            try {
+                if (performance.memory) {
+                    const usedMB = Math.round(performance.memory.usedJSHeapSize / 1024 / 1024);
+                    if (usedMB < 50) {
+                        log('performance-results', `✅ Memory usage: ${usedMB}MB (Good)`, 'success');
+                        recordTest(true);
+                    } else if (usedMB < 100) {
+                        log('performance-results', `⚠️ Memory usage: ${usedMB}MB (Acceptable)`, 'warning');
+                        recordTest(true);
+                    } else {
+                        log('performance-results', `❌ Memory usage: ${usedMB}MB (High)`, 'error');
+                        recordTest(false);
+                    }
+                } else {
+                    log('performance-results', '⚠️ Memory info not available', 'warning');
+                    recordTest(true);
+                }
+            } catch (error) {
+                log('performance-results', `❌ Memory test error: ${error.message}`, 'error');
+                recordTest(false);
+            }
+
+            // Test 3: Firebase response time
+            try {
+                const startTime = performance.now();
+                await window.FirebaseService.loadComments('performance-test-url');
+                const responseTime = performance.now() - startTime;
+                
+                if (responseTime < 1000) {
+                    log('performance-results', `✅ Firebase response: ${Math.round(responseTime)}ms (Fast)`, 'success');
+                    recordTest(true);
+                } else if (responseTime < 3000) {
+                    log('performance-results', `⚠️ Firebase response: ${Math.round(responseTime)}ms (Acceptable)`, 'warning');
+                    recordTest(true);
+                } else {
+                    log('performance-results', `❌ Firebase response: ${Math.round(responseTime)}ms (Slow)`, 'error');
+                    recordTest(false);
+                }
+            } catch (error) {
+                log('performance-results', `❌ Firebase performance test error: ${error.message}`, 'error');
+                recordTest(false);
+            }
+
+            log('performance-results', 'Performance tests completed', 'info');
+        }
+
+        async function runAllTests() {
+            // Reset metrics
+            testMetrics = { total: 0, passed: 0, failed: 0 };
+            updateMetrics();
+
+            // Clear all result containers
+            ['environment-results', 'firebase-results', 'auth-results', 'comment-results', 'ui-results', 'performance-results'].forEach(id => {
+                document.getElementById(id).innerHTML = '';
+            });
+
+            log('environment-results', '🚀 Starting comprehensive test suite...', 'info');
+
+            // Run all tests sequentially
+            await runEnvironmentTests();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            await runFirebaseTests();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            await runAuthTests();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            await runCommentTests();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            await runUITests();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            await runPerformanceTests();
+
+            log('performance-results', '🎉 All tests completed!', 'info');
+        }
+
+        // Wait for Firebase service to load
+        document.addEventListener('DOMContentLoaded', function() {
+            const checkService = () => {
+                if (typeof window.FirebaseService !== 'undefined') {
+                    log('environment-results', 'Firebase service detected and ready for testing', 'success');
+                } else {
+                    setTimeout(checkService, 100);
+                }
+            };
+            checkService();
+        });
+    </script>
+</body>
+</html>

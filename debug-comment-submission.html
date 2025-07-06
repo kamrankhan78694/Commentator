@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Comment Submission</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .test-section {
+            background: #f8f9fa;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border-left: 4px solid #007bff;
+        }
+        .log {
+            background: #000;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            height: 400px;
+            overflow-y: auto;
+            margin: 10px 0;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+        button:disabled { background: #6c757d; cursor: not-allowed; }
+        textarea, input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .status {
+            font-weight: bold;
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .status.success { background: #d4edda; color: #155724; }
+        .status.error { background: #f8d7da; color: #721c24; }
+        .status.warning { background: #fff3cd; color: #856404; }
+        .status.info { background: #d1ecf1; color: #0c5460; }
+    </style>
+</head>
+<body>
+    <h1>🐛 Comment Submission Debug Tool</h1>
+    
+    <div class="test-section">
+        <h3>System Status</h3>
+        <div id="environment-status" class="status info">🔄 Checking environment...</div>
+        <div id="firebase-status" class="status info">🔄 Checking Firebase...</div>
+        <div id="auth-status" class="status info">🔄 Checking authentication...</div>
+    </div>
+
+    <div class="test-section">
+        <h3>Manual Comment Test</h3>
+        <input type="url" id="test-url" placeholder="https://example.com" value="https://example.com" />
+        <textarea id="test-comment" placeholder="Enter your test comment here..." rows="3">This is a test comment to debug the submission functionality.</textarea>
+        <button id="manual-submit" onclick="manualSubmitTest()">🧪 Manual Submit Test</button>
+        <button id="direct-firebase-test" onclick="directFirebaseTest()">🔥 Direct Firebase Test</button>
+        <button id="check-auth" onclick="checkAuthentication()">🔐 Check Auth Status</button>
+    </div>
+
+    <div class="test-section">
+        <h3>Debug Console</h3>
+        <button onclick="clearLog()">Clear Log</button>
+        <button onclick="exportLog()">Export Log</button>
+        <div id="debug-log" class="log"></div>
+    </div>
+
+    <!-- Load environment and Firebase configuration -->
+    <script src="config/environment.js"></script>
+    <script src="config/runtime-config.js"></script>
+    <script type="module" src="firebase-config.js"></script>
+    <script type="module" src="js/firebase-service.js"></script>
+
+    <script>
+        let debugLog = document.getElementById('debug-log');
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const colors = {
+                info: '#00ffff',
+                success: '#00ff00', 
+                error: '#ff0000',
+                warning: '#ffff00'
+            };
+            
+            debugLog.innerHTML += `<div style="color: ${colors[type] || '#00ffff'}">[${timestamp}] ${message}</div>`;
+            debugLog.scrollTop = debugLog.scrollHeight;
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+
+        function updateStatus(elementId, text, type) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.textContent = text;
+                element.className = `status ${type}`;
+            }
+        }
+
+        function clearLog() {
+            debugLog.innerHTML = '';
+        }
+
+        function exportLog() {
+            const logContent = debugLog.textContent;
+            const blob = new Blob([logContent], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `comment-debug-${Date.now()}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // System status checking
+        async function checkSystemStatus() {
+            log('Starting comprehensive system check...', 'info');
+
+            // Check environment config
+            if (typeof window.EnvironmentConfig !== 'undefined') {
+                updateStatus('environment-status', '✅ Environment Config Loaded', 'success');
+                log(`Environment: ${window.EnvironmentConfig.getEnvironment()}`, 'success');
+                log(`Firebase Config: ${JSON.stringify(window.EnvironmentConfig.getFirebaseConfig(), null, 2)}`, 'info');
+            } else {
+                updateStatus('environment-status', '❌ Environment Config Missing', 'error');
+                log('Environment config not loaded', 'error');
+                return false;
+            }
+
+            // Wait for Firebase service
+            let attempts = 0;
+            while (typeof window.FirebaseService === 'undefined' && attempts < 50) {
+                log(`Waiting for Firebase service... (attempt ${attempts + 1})`, 'warning');
+                await new Promise(resolve => setTimeout(resolve, 200));
+                attempts++;
+            }
+
+            if (typeof window.FirebaseService !== 'undefined') {
+                updateStatus('firebase-status', '✅ Firebase Service Loaded', 'success');
+                log('Firebase service is available', 'success');
+                
+                // Test authentication
+                try {
+                    log('Testing Firebase authentication...', 'info');
+                    const user = await window.FirebaseService.initAuth();
+                    if (user) {
+                        updateStatus('auth-status', '✅ Authentication Successful', 'success');
+                        log(`Authenticated as: ${user.uid}`, 'success');
+                        log(`Authentication state: ${window.FirebaseService.isUserAuthenticated()}`, 'info');
+                        return true;
+                    } else {
+                        updateStatus('auth-status', '❌ Authentication Failed', 'error');
+                        log('Authentication returned null user', 'error');
+                        return false;
+                    }
+                } catch (error) {
+                    updateStatus('auth-status', '❌ Authentication Error', 'error');
+                    log(`Authentication error: ${error.message}`, 'error');
+                    log(`Stack trace: ${error.stack}`, 'error');
+                    return false;
+                }
+            } else {
+                updateStatus('firebase-status', '❌ Firebase Service Missing', 'error');
+                log('Firebase service failed to load after 10 seconds', 'error');
+                return false;
+            }
+        }
+
+        // Manual comment submission test
+        async function manualSubmitTest() {
+            log('=== MANUAL SUBMIT TEST ===', 'info');
+            
+            const url = document.getElementById('test-url').value.trim();
+            const comment = document.getElementById('test-comment').value.trim();
+            
+            if (!url || !comment) {
+                log('Error: URL or comment is empty', 'error');
+                return;
+            }
+            
+            log(`Testing submission for URL: ${url}`, 'info');
+            log(`Comment text: "${comment}"`, 'info');
+            
+            try {
+                // Step 1: Check authentication
+                log('Step 1: Checking authentication...', 'info');
+                if (!window.FirebaseService.isUserAuthenticated()) {
+                    log('User not authenticated, attempting to authenticate...', 'warning');
+                    const user = await window.FirebaseService.initAuth();
+                    if (!user) {
+                        log('Authentication failed', 'error');
+                        return;
+                    }
+                    log(`Successfully authenticated: ${user.uid}`, 'success');
+                } else {
+                    log('User already authenticated', 'success');
+                }
+                
+                // Step 2: Prepare comment data
+                log('Step 2: Preparing comment data...', 'info');
+                const commentData = {
+                    author: 'Debug Test User',
+                    text: comment,
+                    votes: 0,
+                    timestamp: new Date().toISOString()
+                };
+                log(`Comment data: ${JSON.stringify(commentData, null, 2)}`, 'info');
+                
+                // Step 3: Submit comment
+                log('Step 3: Submitting comment to Firebase...', 'info');
+                const commentId = await window.FirebaseService.saveComment(url, commentData);
+                log(`✅ Comment submitted successfully! ID: ${commentId}`, 'success');
+                
+                // Step 4: Verify by loading comments
+                log('Step 4: Verifying by loading comments...', 'info');
+                const comments = await window.FirebaseService.loadComments(url);
+                log(`Found ${comments.length} comments for this URL`, 'info');
+                
+                const newComment = comments.find(c => c.id === commentId);
+                if (newComment) {
+                    log(`✅ Verification successful! New comment found in database`, 'success');
+                    log(`Comment details: ${JSON.stringify(newComment, null, 2)}`, 'info');
+                } else {
+                    log(`⚠️ Comment submitted but not found in immediate verification`, 'warning');
+                }
+                
+            } catch (error) {
+                log(`❌ Submit test failed: ${error.message}`, 'error');
+                log(`Stack trace: ${error.stack}`, 'error');
+            }
+        }
+
+        // Direct Firebase test
+        async function directFirebaseTest() {
+            log('=== DIRECT FIREBASE TEST ===', 'info');
+            
+            try {
+                // Test Firebase database connection directly
+                log('Testing direct Firebase database connection...', 'info');
+                
+                const testRef = window.FirebaseService.generateUrlHash('https://test.direct.firebase.com');
+                log(`Generated URL hash: ${testRef}`, 'info');
+                
+                // Try to read from database
+                const comments = await window.FirebaseService.loadComments('https://test.direct.firebase.com');
+                log(`Direct database read successful. Found ${comments.length} comments.`, 'success');
+                
+            } catch (error) {
+                log(`❌ Direct Firebase test failed: ${error.message}`, 'error');
+                log(`Stack trace: ${error.stack}`, 'error');
+            }
+        }
+
+        // Check authentication status
+        async function checkAuthentication() {
+            log('=== AUTHENTICATION CHECK ===', 'info');
+            
+            try {
+                if (typeof window.FirebaseService === 'undefined') {
+                    log('Firebase service not available', 'error');
+                    return;
+                }
+                
+                log(`isUserAuthenticated(): ${window.FirebaseService.isUserAuthenticated()}`, 'info');
+                
+                const currentUser = window.FirebaseService.getCurrentUser();
+                if (currentUser) {
+                    log(`Current user: ${currentUser.uid}`, 'info');
+                    log(`User details: ${JSON.stringify({
+                        uid: currentUser.uid,
+                        isAnonymous: currentUser.isAnonymous,
+                        metadata: currentUser.metadata
+                    }, null, 2)}`, 'info');
+                } else {
+                    log('No current user found', 'warning');
+                    
+                    // Try to re-authenticate
+                    log('Attempting to re-authenticate...', 'info');
+                    const user = await window.FirebaseService.initAuth();
+                    if (user) {
+                        log(`Re-authentication successful: ${user.uid}`, 'success');
+                    } else {
+                        log('Re-authentication failed', 'error');
+                    }
+                }
+                
+            } catch (error) {
+                log(`❌ Authentication check failed: ${error.message}`, 'error');
+                log(`Stack trace: ${error.stack}`, 'error');
+            }
+        }
+
+        // Initialize on page load
+        window.addEventListener('load', async () => {
+            log('Debug page loaded', 'info');
+            log('Waiting 2 seconds for all modules to load...', 'info');
+            
+            setTimeout(async () => {
+                await checkSystemStatus();
+            }, 2000);
+        });
+
+        // Override console methods to capture all logs
+        const originalConsole = {
+            log: console.log,
+            error: console.error,
+            warn: console.warn,
+            info: console.info
+        };
+
+        console.log = function(...args) {
+            originalConsole.log.apply(console, args);
+            log(`[CONSOLE] ${args.join(' ')}`, 'info');
+        };
+
+        console.error = function(...args) {
+            originalConsole.error.apply(console, args);
+            log(`[ERROR] ${args.join(' ')}`, 'error');
+        };
+
+        console.warn = function(...args) {
+            originalConsole.warn.apply(console, args);
+            log(`[WARN] ${args.join(' ')}`, 'warning');
+        };
+    </script>
+</body>
+</html>

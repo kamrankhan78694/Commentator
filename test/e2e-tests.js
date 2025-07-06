@@ -40,13 +40,13 @@ class MockBrowser {
       removeEventListener: () => {},
       click: () => {},
       focus: () => {},
-      blur: () => {}
+      blur: () => {},
     };
     return element;
   }
 
   wait(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 }
 
@@ -107,23 +107,27 @@ const e2eRunner = new E2ETestRunner();
 // E2E Tests
 e2eRunner.test('User can navigate to comment section', async (browser) => {
   await browser.navigate('http://localhost:3000');
-  e2eRunner.assert(browser.url === 'http://localhost:3000', 'Should navigate to home page');
+  e2eRunner.assert(
+    browser.url === 'http://localhost:3000',
+    'Should navigate to home page'
+  );
 });
 
 e2eRunner.test('Comment form validation works', async (browser) => {
   const commentText = 'This is a test comment';
   const authorName = 'Test User';
-  
+
   // Simulate form submission with valid data
   const validComment = {
     text: commentText,
     author: authorName,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
-  
+
   // Mock validation (would normally call server-side validation)
   if (global.window && global.window.ServerValidation) {
-    const validation = global.window.ServerValidation.validateComment(validComment);
+    const validation =
+      global.window.ServerValidation.validateComment(validComment);
     e2eRunner.assert(validation.valid, 'Valid comment should pass validation');
   }
 });
@@ -132,14 +136,17 @@ e2eRunner.test('Security middleware protects against XSS', async (browser) => {
   const maliciousComment = {
     text: '<script>alert("XSS")</script>Malicious content',
     author: '<img src=x onerror=alert("XSS")>',
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
-  
+
   // Mock validation with malicious content
   if (global.window && global.window.ServerValidation) {
-    const validation = global.window.ServerValidation.validateComment(maliciousComment);
-    e2eRunner.assert(!validation.valid || !validation.sanitized.text.includes('<script>'), 
-      'Malicious scripts should be sanitized or rejected');
+    const validation =
+      global.window.ServerValidation.validateComment(maliciousComment);
+    e2eRunner.assert(
+      !validation.valid || !validation.sanitized.text.includes('<script>'),
+      'Malicious scripts should be sanitized or rejected'
+    );
   }
 });
 
@@ -147,31 +154,41 @@ e2eRunner.test('CSRF protection works', async (browser) => {
   // Mock CSRF token validation
   if (global.window && global.window.SecurityMiddleware) {
     const token = global.window.SecurityMiddleware.getCSRFToken();
-    e2eRunner.assert(token && token.length > 10, 'CSRF token should be generated');
-    
+    e2eRunner.assert(
+      token && token.length > 10,
+      'CSRF token should be generated'
+    );
+
     const isValid = global.window.SecurityMiddleware.validateCSRFToken(token);
     e2eRunner.assert(isValid, 'Valid CSRF token should pass validation');
-    
-    const isInvalid = global.window.SecurityMiddleware.validateCSRFToken('invalid-token');
+
+    const isInvalid =
+      global.window.SecurityMiddleware.validateCSRFToken('invalid-token');
     e2eRunner.assert(!isInvalid, 'Invalid CSRF token should fail validation');
   }
 });
 
 e2eRunner.test('Rate limiting prevents spam', async (browser) => {
   const userId = 'test-user-123';
-  
+
   if (global.window && global.window.ServerValidation) {
     // Make multiple requests rapidly
     let rateLimitHit = false;
     for (let i = 0; i < 15; i++) {
-      const result = global.window.ServerValidation.checkRateLimit(userId, 'comment_submission');
+      const result = global.window.ServerValidation.checkRateLimit(
+        userId,
+        'comment_submission'
+      );
       if (!result.allowed) {
         rateLimitHit = true;
         break;
       }
     }
-    
-    e2eRunner.assert(rateLimitHit, 'Rate limiting should activate after multiple requests');
+
+    e2eRunner.assert(
+      rateLimitHit,
+      'Rate limiting should activate after multiple requests'
+    );
   }
 });
 
@@ -179,9 +196,15 @@ e2eRunner.test('Environment configuration is secure', async (browser) => {
   // Check that sensitive config is not exposed
   const firebaseConfigPath = path.join(__dirname, '../firebase-config.js');
   const content = fs.readFileSync(firebaseConfigPath, 'utf8');
-  
-  e2eRunner.assert(content.includes('getEnvVar'), 'Should use environment variable helper');
-  e2eRunner.assert(!content.includes('hardcoded-secret'), 'Should not contain hardcoded secrets');
+
+  e2eRunner.assert(
+    content.includes('getEnvVar'),
+    'Should use environment variable helper'
+  );
+  e2eRunner.assert(
+    !content.includes('hardcoded-secret'),
+    'Should not contain hardcoded secrets'
+  );
 });
 
 e2eRunner.test('Error handling works properly', async (browser) => {
@@ -189,13 +212,20 @@ e2eRunner.test('Error handling works properly', async (browser) => {
   const invalidComment = {
     text: '', // Empty text
     author: '', // Empty author
-    timestamp: null // Invalid timestamp
+    timestamp: null, // Invalid timestamp
   };
-  
+
   if (global.window && global.window.ServerValidation) {
-    const validation = global.window.ServerValidation.validateComment(invalidComment);
-    e2eRunner.assert(!validation.valid, 'Invalid comment should fail validation');
-    e2eRunner.assert(validation.errors.length > 0, 'Should return validation errors');
+    const validation =
+      global.window.ServerValidation.validateComment(invalidComment);
+    e2eRunner.assert(
+      !validation.valid,
+      'Invalid comment should fail validation'
+    );
+    e2eRunner.assert(
+      validation.errors.length > 0,
+      'Should return validation errors'
+    );
   }
 });
 
@@ -204,9 +234,15 @@ global.window = {
   location: { hostname: 'localhost', pathname: '/test' },
   sessionStorage: {
     storage: {},
-    getItem: function(key) { return this.storage[key] || null; },
-    setItem: function(key, value) { this.storage[key] = value; },
-    removeItem: function(key) { delete this.storage[key]; }
+    getItem: function (key) {
+      return this.storage[key] || null;
+    },
+    setItem: function (key, value) {
+      this.storage[key] = value;
+    },
+    removeItem: function (key) {
+      delete this.storage[key];
+    },
   },
   crypto: {
     getRandomValues: (array) => {
@@ -214,8 +250,8 @@ global.window = {
         array[i] = Math.floor(Math.random() * 256);
       }
       return array;
-    }
-  }
+    },
+  },
 };
 
 global.document = {
@@ -223,11 +259,11 @@ global.document = {
   getElementsByTagName: () => [global.document.head],
   createElement: () => ({
     setAttribute: () => {},
-    getAttribute: () => null
+    getAttribute: () => null,
   }),
   readyState: 'complete',
   addEventListener: () => {},
-  querySelectorAll: () => []
+  querySelectorAll: () => [],
 };
 
 global.sessionStorage = global.window.sessionStorage;
@@ -237,26 +273,36 @@ global.Uint8Array = Array;
 try {
   // These would normally be loaded via script tags in the browser
   const securityUtilsPath = path.join(__dirname, '../js/security.js');
-  const securityMiddlewarePath = path.join(__dirname, '../js/security-middleware.js');
-  const serverValidationPath = path.join(__dirname, '../js/server-validation.js');
-  
+  const securityMiddlewarePath = path.join(
+    __dirname,
+    '../js/security-middleware.js'
+  );
+  const serverValidationPath = path.join(
+    __dirname,
+    '../js/server-validation.js'
+  );
+
   // Mock module loading (in real browser, these would be script tags)
   if (fs.existsSync(securityUtilsPath)) {
     // Security utilities would be loaded
-    global.window.SecurityUtils = { 
+    global.window.SecurityUtils = {
       sanitizeText: (text) => text.replace(/<script.*?>.*?<\/script>/gi, ''),
-      validateComment: (text) => ({ valid: !text.includes('<script>'), errors: [] })
+      validateComment: (text) => ({
+        valid: !text.includes('<script>'),
+        errors: [],
+      }),
     };
   }
-  
+
   if (fs.existsSync(securityMiddlewarePath)) {
     // Security middleware would be loaded
     global.window.SecurityMiddleware = {
       getCSRFToken: () => 'mock-csrf-token-' + Date.now(),
-      validateCSRFToken: (token) => token && token.startsWith('mock-csrf-token')
+      validateCSRFToken: (token) =>
+        token && token.startsWith('mock-csrf-token'),
     };
   }
-  
+
   if (fs.existsSync(serverValidationPath)) {
     // Server validation would be loaded
     global.window.ServerValidation = {
@@ -272,7 +318,7 @@ try {
         stored[key] = (stored[key] || 0) + 1;
         global.requestCounts = stored;
         return { allowed: stored[key] <= 10, retryAfter: 60 };
-      }
+      },
     };
   }
 } catch (error) {
@@ -284,7 +330,10 @@ const runner = global.runner;
 
 // Register E2E tests with main test runner
 runner.test('E2E: End-to-end testing framework works', () => {
-  runner.assert(e2eRunner instanceof E2ETestRunner, 'E2E test runner should be created');
+  runner.assert(
+    e2eRunner instanceof E2ETestRunner,
+    'E2E test runner should be created'
+  );
   runner.assert(e2eRunner.tests.length > 0, 'Should have E2E tests defined');
 });
 

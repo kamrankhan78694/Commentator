@@ -1,0 +1,82 @@
+{
+  "rules": {
+    "comments": {
+      "$urlHash": {
+        ".read": true,
+        ".write": true,
+        ".validate": "newData.hasChildren(['text', 'author', 'timestamp'])",
+        "text": {
+          ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 5000"
+        },
+        "author": {
+          ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 100"
+        },
+        "timestamp": {
+          ".validate": "newData.isNumber() || newData.isString()"
+        },
+        "votes": {
+          ".validate": "newData.isNumber()"
+        },
+        "userId": {
+          ".validate": "newData.isString()"
+        },
+        "createdAt": {
+          ".validate": "newData.isNumber()"
+        },
+        "nftId": {
+          ".validate": "newData.isString() || newData.isNumber()"
+        },
+        "ipfsUrl": {
+          ".validate": "newData.isString()"
+        },
+        "isNFT": {
+          ".validate": "newData.isBoolean()"
+        }
+      }
+    },
+    "users": {
+      "$userId": {
+        ".read": true,
+        ".write": true,
+        "displayName": {
+          ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 50"
+        },
+        "email": {
+          ".validate": "newData.isString()"
+        },
+        "walletAddress": {
+          ".validate": "newData.isString()"
+        },
+        "createdAt": {
+          ".validate": "newData.isNumber()"
+        },
+        "lastActive": {
+          ".validate": "newData.isNumber()"
+        }
+      }
+    },
+    "sessions": {
+      "$sessionId": {
+        ".read": true,
+        ".write": true,
+        "userId": {
+          ".validate": "newData.isString()"
+        },
+        "createdAt": {
+          ".validate": "newData.isNumber()"
+        },
+        "lastActivity": {
+          ".validate": "newData.isNumber()"
+        }
+      }
+    },
+    "test": {
+      ".read": true,
+      ".write": true
+    },
+    "test-operations": {
+      ".read": true,
+      ".write": true
+    }
+  }
+}

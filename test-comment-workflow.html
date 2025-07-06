@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Comment Workflow Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .result { margin: 5px 0; padding: 5px; border-radius: 3px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        .warning { background: #fff3cd; color: #856404; }
+        #status { font-size: 18px; font-weight: bold; margin-bottom: 20px; }
+    </style>
+    <script src="config/environment.js"></script>
+    <script src="config/runtime-config.js"></script>
+    <script type="module" src="firebase-config.js"></script>
+    <script type="module" src="js/firebase-service.js"></script>
+</head>
+<body>
+    <h1>🧪 Automated Comment Workflow Test</h1>
+    <div id="status">🔄 Starting test...</div>
+    <div id="results"></div>
+    
+    <script>
+        let testResults = [];
+        let testStartTime = Date.now();
+        
+        function addResult(test, status, message) {
+            const timestamp = Date.now() - testStartTime;
+            testResults.push({ test, status, message, timestamp });
+            updateDisplay();
+            console.log(`[${timestamp}ms] ${test} (${status}): ${message}`);
+        }
+        
+        function updateDisplay() {
+            const results = document.getElementById('results');
+            results.innerHTML = testResults.map(r => 
+                `<div class="result ${r.status}">
+                    <strong>[+${r.timestamp}ms] ${r.test}:</strong> ${r.message}
+                </div>`
+            ).join('');
+        }
+        
+        async function runWorkflowTest() {
+            try {
+                document.getElementById('status').textContent = '🔄 Running automated test...';
+                
+                // Test 1: Wait for Firebase service
+                addResult('Setup', 'info', 'Waiting for Firebase service...');
+                let attempts = 0;
+                while (typeof window.FirebaseService === 'undefined' && attempts < 100) {
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                    attempts++;
+                }
+                
+                if (typeof window.FirebaseService === 'undefined') {
+                    addResult('Setup', 'error', 'Firebase service failed to load after 10 seconds');
+                    document.getElementById('status').textContent = '❌ Test failed - Firebase service not available';
+                    return;
+                }
+                
+                addResult('Setup', 'success', 'Firebase service loaded successfully');
+                
+                // Test 2: Authentication
+                addResult('Auth', 'info', 'Initializing Firebase authentication...');
+                const user = await window.FirebaseService.initAuth();
+                
+                if (!user) {
+                    addResult('Auth', 'error', 'Authentication failed - no user returned');
+                    document.getElementById('status').textContent = '❌ Test failed - Authentication failed';
+                    return;
+                }
+                
+                addResult('Auth', 'success', `Authentication successful - User ID: ${user.uid.substring(0, 8)}...`);
+                
+                // Test 3: Verify authentication state
+                addResult('Auth Check', 'info', 'Verifying authentication state...');
+                const isAuth = window.FirebaseService.isUserAuthenticated();
+                const authStatus = window.FirebaseService.getAuthStatus();
+                
+                addResult('Auth Check', isAuth ? 'success' : 'error', 
+                    `Auth state: ${isAuth} | Details: ${JSON.stringify(authStatus)}`);
+                
+                if (!isAuth) {
+                    document.getElementById('status').textContent = '❌ Test failed - Authentication verification failed';
+                    return;
+                }
+                
+                // Test 4: Comment submission
+                addResult('Comment Prep', 'info', 'Preparing test comment...');
+                
+                const testUrl = `https://automated-test-${Date.now()}.example.com`;
+                const testComment = {
+                    text: `Automated test comment created at ${new Date().toISOString()}`,
+                    author: 'Automated Test Bot',
+                    votes: 0,
+                    timestamp: new Date().toISOString()
+                };
+                
+                addResult('Comment Prep', 'success', `Test URL: ${testUrl}`);
+                addResult('Comment Prep', 'success', `Comment text: "${testComment.text.substring(0, 50)}..."`);
+                
+                // Test 5: Submit comment
+                addResult('Comment Submit', 'info', 'Submitting comment to Firebase...');
+                
+                const commentId = await window.FirebaseService.saveComment(testUrl, testComment);
+                
+                if (!commentId) {
+                    addResult('Comment Submit', 'error', 'Comment submission returned no ID');
+                    document.getElementById('status').textContent = '❌ Test failed - Comment submission failed';
+                    return;
+                }
+                
+                addResult('Comment Submit', 'success', `Comment submitted successfully! ID: ${commentId}`);
+                
+                // Test 6: Verify comment was saved
+                addResult('Verification', 'info', 'Verifying comment was saved to database...');
+                
+                // Wait a moment for the database to sync
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                const comments = await window.FirebaseService.loadComments(testUrl);
+                addResult('Verification', 'info', `Found ${comments.length} comments for test URL`);
+                
+                const savedComment = comments.find(c => c.id === commentId);
+                if (savedComment) {
+                    addResult('Verification', 'success', 'Comment successfully verified in database');
+                    addResult('Verification', 'success', `Saved comment text: "${savedComment.text.substring(0, 50)}..."`);
+                    
+                    // Test 7: Final verification
+                    addResult('Final Check', 'success', '🎉 ALL TESTS PASSED!');
+                    addResult('Final Check', 'success', 'Comment submission workflow is working correctly');
+                    
+                    document.getElementById('status').textContent = '✅ Test completed successfully - Comment submission is working!';
+                    document.getElementById('status').style.color = 'green';
+                    
+                } else {
+                    addResult('Verification', 'error', 'Comment was submitted but not found in database verification');
+                    addResult('Verification', 'warning', 'This might be a timing issue or database sync delay');
+                    document.getElementById('status').textContent = '⚠️ Test partially failed - Comment submitted but verification failed';
+                    document.getElementById('status').style.color = 'orange';
+                }
+                
+            } catch (error) {
+                addResult('Error', 'error', `Test failed with exception: ${error.message}`);
+                addResult('Error', 'error', `Error details: ${error.stack}`);
+                document.getElementById('status').textContent = '❌ Test failed with error';
+                document.getElementById('status').style.color = 'red';
+                console.error('Workflow test error:', error);
+            }
+        }
+        
+        // Start test after page loads
+        window.addEventListener('load', () => {
+            addResult('Page Load', 'info', 'Test page loaded, starting test in 2 seconds...');
+            setTimeout(runWorkflowTest, 2000);
+        });
+        
+        // Log any console errors
+        window.addEventListener('error', (e) => {
+            addResult('JS Error', 'error', `JavaScript error: ${e.message} at ${e.filename}:${e.lineno}`);
+        });
+    </script>
+</body>
+</html>

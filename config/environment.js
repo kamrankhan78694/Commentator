@@ -25,16 +25,30 @@ class EnvironmentConfig {
   }
 
   loadConfig() {
+    // For browser environments, prefer the runtime config if available
+    if (typeof window !== 'undefined' && window.COMMENTATOR_RUNTIME_CONFIG) {
+      const runtimeConfig = window.COMMENTATOR_RUNTIME_CONFIG;
+      return {
+        firebase: runtimeConfig.firebase,
+        apiUrl: runtimeConfig.api.baseUrl,
+        debug: runtimeConfig.features.debug,
+        enableAnalytics: runtimeConfig.features.analytics,
+        enableEmulators: this.environment === 'development',
+        features: runtimeConfig.features
+      };
+    }
+
+    // Fallback configurations (used when runtime config is not available)
     const configs = {
       development: {
         firebase: {
           apiKey: "AIzaSyDtzBKu_0uxIv6r3PaYuIphB1jCgMqdjEk",
           authDomain: "commentator78694.firebaseapp.com",
-          databaseURL: "https://commentator78694-default-rtdb.firebaseio.com",
+          databaseURL: "https://commentator78694-default-rtdb.europe-west1.firebasedatabase.app",
           projectId: "commentator78694",
-          storageBucket: "commentator78694.appspot.com",
-          messagingSenderId: "123456789012",
-          appId: "1:123456789012:web:abcdef123456"
+          storageBucket: "commentator78694.firebasestorage.app",
+          messagingSenderId: "318788278941",
+          appId: "1:318788278941:web:c47dca1e572e3f767f9274"
         },
         apiUrl: 'http://localhost:3000/api',
         debug: true,
@@ -90,15 +104,27 @@ class EnvironmentConfig {
       }
     };
 
-    return configs[this.environment];
+    return configs[this.environment] || configs.development;
   }
 
   getEnvVar(name, defaultValue) {
     // Try different methods to get environment variables
-    return process?.env?.[name] || 
-           window?.ENV?.[name] || 
-           this.getMetaEnvVar(name) || 
-           defaultValue;
+    // Note: process.env is not available in browser, only in Node.js
+    
+    // Check if we're in a browser environment
+    if (typeof window !== 'undefined') {
+      // Browser environment - use window-based configs
+      return window?.ENV?.[name] || 
+             this.getMetaEnvVar(name) || 
+             defaultValue;
+    }
+    
+    // Node.js environment - use process.env
+    if (typeof process !== 'undefined' && process.env) {
+      return process.env[name] || defaultValue;
+    }
+    
+    return defaultValue;
   }
 
   getMetaEnvVar(name) {

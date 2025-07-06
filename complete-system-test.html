@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Comment System Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2d3748;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .test-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .test-card {
+            background: #f7fafc;
+            border-radius: 10px;
+            padding: 20px;
+            border-left: 4px solid #4299e1;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-weight: 500;
+        }
+        .success { background: #c6f6d5; color: #22543d; border-left: 4px solid #38a169; }
+        .error { background: #fed7d7; color: #742a2a; border-left: 4px solid #e53e3e; }
+        .info { background: #bee3f8; color: #2a4365; border-left: 4px solid #3182ce; }
+        .warning { background: #faf089; color: #744210; border-left: 4px solid #d69e2e; }
+        
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+        button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        button:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        
+        .comment-form {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            margin: 8px 0;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #4299e1;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+        }
+        
+        .log-container {
+            background: #1a202c;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+        .log-entry {
+            margin: 5px 0;
+            padding: 2px 0;
+        }
+        .log-success { color: #68d391; }
+        .log-error { color: #fc8181; }
+        .log-warning { color: #f6e05e; }
+        .log-info { color: #63b3ed; }
+        
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.3s;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Complete Comment System Test</h1>
+        
+        <div class="test-grid">
+            <div class="test-card">
+                <h3>🔧 System Status</h3>
+                <div id="env-status" class="status info">Environment: Loading...</div>
+                <div id="firebase-status" class="status info">Firebase: Loading...</div>
+                <div id="auth-status" class="status info">Authentication: Pending...</div>
+            </div>
+            
+            <div class="test-card">
+                <h3>📊 Test Progress</h3>
+                <div class="progress-bar">
+                    <div id="progress-fill" class="progress-fill"></div>
+                </div>
+                <div id="progress-text">Initializing tests...</div>
+                <button onclick="runAllTests()">🧪 Run All Tests</button>
+            </div>
+        </div>
+        
+        <div class="comment-form">
+            <h3>💬 Live Comment Test</h3>
+            <input type="url" id="test-url" placeholder="https://example.com" value="https://test.commentator.app">
+            <textarea id="test-comment" placeholder="Write your test comment here..." rows="3">This is a live test of the comment system with the updated Firebase configuration! 🔥</textarea>
+            <button onclick="submitTestComment()" id="submit-btn">📝 Submit Test Comment</button>
+            <button onclick="loadTestComments()">📖 Load Comments</button>
+            <button onclick="clearTestData()">🗑️ Clear Test Data</button>
+        </div>
+        
+        <div id="comments-display" style="min-height: 100px; background: #f7fafc; border-radius: 10px; padding: 20px; margin: 20px 0;">
+            <div style="text-align: center; color: #718096;">Comments will appear here...</div>
+        </div>
+        
+        <div class="log-container">
+            <div style="color: #a0aec0; margin-bottom: 10px;">🔍 System Log:</div>
+            <div id="log-output"></div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 20px;">
+            <button onclick="exportTestResults()">📤 Export Test Results</button>
+            <button onclick="clearLog()">🧹 Clear Log</button>
+        </div>
+    </div>
+
+    <!-- Load Configuration and Firebase -->
+    <script src="config/runtime-config.js"></script>
+    <script src="config/environment.js"></script>
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
+        import { getAuth, signInAnonymously, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
+        import { getDatabase, ref, set, get, push, remove } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js';
+
+        // Global state
+        let app, auth, database, currentUser = null;
+        let testResults = [];
+        let testProgress = 0;
+        
+        // Initialize Firebase
+        async function initializeFirebase() {
+            try {
+                log('🔥 Initializing Firebase with updated configuration...', 'info');
+                
+                const config = window.ENV_CONFIG ? window.ENV_CONFIG.getFirebaseConfig() : 
+                              window.COMMENTATOR_RUNTIME_CONFIG?.firebase;
+                
+                if (!config) {
+                    throw new Error('No Firebase configuration found');
+                }
+                
+                log(`📍 Database URL: ${config.databaseURL}`, 'info');
+                log(`🏗️ Project ID: ${config.projectId}`, 'info');
+                
+                app = initializeApp(config);
+                auth = getAuth(app);
+                database = getDatabase(app);
+                
+                onAuthStateChanged(auth, (user) => {
+                    currentUser = user;
+                    updateAuthStatus();
+                });
+                
+                updateStatus('firebase-status', '✅ Firebase Initialized', 'success');
+                log('✅ Firebase initialized successfully', 'success');
+                
+            } catch (error) {
+                updateStatus('firebase-status', `❌ Firebase Error: ${error.message}`, 'error');
+                log(`❌ Firebase initialization failed: ${error.message}`, 'error');
+                throw error;
+            }
+        }
+        
+        // Logging function
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logOutput = document.getElementById('log-output');
+            const entry = document.createElement('div');
+            entry.className = `log-entry log-${type}`;
+            entry.innerHTML = `<span style="color: #a0aec0;">[${timestamp}]</span> ${message}`;
+            logOutput.appendChild(entry);
+            logOutput.scrollTop = logOutput.scrollHeight;
+            
+            console.log(`[${timestamp}] ${message}`);
+        }
+        
+        // Update status display
+        function updateStatus(elementId, message, type) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.className = `status ${type}`;
+        }
+        
+        // Update authentication status
+        function updateAuthStatus() {
+            if (currentUser) {
+                updateStatus('auth-status', `✅ Authenticated (${currentUser.uid.substring(0, 8)}...)`, 'success');
+                log(`🔐 User authenticated: ${currentUser.uid}`, 'success');
+            } else {
+                updateStatus('auth-status', '⚠️ Not authenticated', 'warning');
+            }
+        }
+        
+        // Update progress
+        function updateProgress(percent, text) {
+            document.getElementById('progress-fill').style.width = percent + '%';
+            document.getElementById('progress-text').textContent = text;
+        }
+        
+        // Test functions
+        window.runAllTests = async function() {
+            testResults = [];
+            testProgress = 0;
+            
+            try {
+                updateProgress(10, 'Testing environment configuration...');
+                await testEnvironmentConfig();
+                
+                updateProgress(30, 'Testing Firebase connection...');
+                await testFirebaseConnection();
+                
+                updateProgress(50, 'Testing authentication...');
+                await testAuthentication();
+                
+                updateProgress(70, 'Testing database operations...');
+                await testDatabaseOperations();
+                
+                updateProgress(90, 'Testing comment workflow...');
+                await testCommentWorkflow();
+                
+                updateProgress(100, '✅ All tests completed successfully!');
+                log('🎉 All tests passed! Comment system is fully functional.', 'success');
+                
+            } catch (error) {
+                updateProgress(testProgress, `❌ Tests failed: ${error.message}`);
+                log(`❌ Test suite failed: ${error.message}`, 'error');
+            }
+        };
+        
+        async function testEnvironmentConfig() {
+            log('🔧 Testing environment configuration...', 'info');
+            
+            if (window.ENV_CONFIG) {
+                const env = window.ENV_CONFIG.getEnvironment();
+                const config = window.ENV_CONFIG.getFirebaseConfig();
+                
+                log(`📍 Environment: ${env}`, 'success');
+                log(`🔑 API Key: ${config.apiKey.substring(0, 20)}...`, 'success');
+                log(`🏗️ Project: ${config.projectId}`, 'success');
+                log(`🌍 Database: ${config.databaseURL}`, 'success');
+                
+                updateStatus('env-status', `✅ Environment: ${env}`, 'success');
+                testResults.push({ test: 'Environment Config', status: 'pass' });
+            } else {
+                throw new Error('Environment configuration not found');
+            }
+        }
+        
+        async function testFirebaseConnection() {
+            log('🔥 Testing Firebase connection...', 'info');
+            
+            try {
+                const testRef = ref(database, '.info/connected');
+                const snapshot = await get(testRef);
+                
+                if (snapshot.exists()) {
+                    log('✅ Firebase database connection verified', 'success');
+                    testResults.push({ test: 'Firebase Connection', status: 'pass' });
+                } else {
+                    throw new Error('Database connection check failed');
+                }
+            } catch (error) {
+                log(`❌ Firebase connection failed: ${error.message}`, 'error');
+                throw error;
+            }
+        }
+        
+        async function testAuthentication() {
+            log('🔐 Testing authentication...', 'info');
+            
+            try {
+                if (!currentUser) {
+                    await signInAnonymously(auth);
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                }
+                
+                if (currentUser) {
+                    log(`✅ Authentication successful: ${currentUser.uid}`, 'success');
+                    testResults.push({ test: 'Authentication', status: 'pass' });
+                } else {
+                    throw new Error('Authentication failed');
+                }
+            } catch (error) {
+                log(`❌ Authentication failed: ${error.message}`, 'error');
+                throw error;
+            }
+        }
+        
+        async function testDatabaseOperations() {
+            log('💾 Testing database read/write operations...', 'info');
+            
+            try {
+                const testRef = ref(database, `test-operations/${Date.now()}`);
+                const testData = {
+                    message: 'Test write operation',
+                    timestamp: Date.now(),
+                    user: currentUser.uid
+                };
+                
+                await set(testRef, testData);
+                log('✅ Database write successful', 'success');
+                
+                const snapshot = await get(testRef);
+                if (snapshot.exists() && snapshot.val().message === testData.message) {
+                    log('✅ Database read verification successful', 'success');
+                    testResults.push({ test: 'Database Operations', status: 'pass' });
+                } else {
+                    throw new Error('Database read verification failed');
+                }
+            } catch (error) {
+                log(`❌ Database operations failed: ${error.message}`, 'error');
+                throw error;
+            }
+        }
+        
+        async function testCommentWorkflow() {
+            log('💬 Testing complete comment workflow...', 'info');
+            
+            try {
+                const testUrl = 'https://workflow-test.example.com';
+                const commentData = {
+                    text: `Test comment from workflow ${Date.now()}`,
+                    author: 'Test User',
+                    timestamp: Date.now(),
+                    userId: currentUser.uid
+                };
+                
+                // Generate URL hash
+                const urlHash = btoa(testUrl).replace(/[+/=]/g, '');
+                const commentsRef = ref(database, `comments/${urlHash}`);
+                const newCommentRef = push(commentsRef);
+                
+                await set(newCommentRef, commentData);
+                log(`✅ Comment saved with ID: ${newCommentRef.key}`, 'success');
+                
+                // Verify comment was saved
+                const snapshot = await get(newCommentRef);
+                if (snapshot.exists()) {
+                    log('✅ Comment workflow verification successful', 'success');
+                    testResults.push({ test: 'Comment Workflow', status: 'pass' });
+                } else {
+                    throw new Error('Comment verification failed');
+                }
+            } catch (error) {
+                log(`❌ Comment workflow failed: ${error.message}`, 'error');
+                throw error;
+            }
+        }
+        
+        // Live comment testing functions
+        window.submitTestComment = async function() {
+            const url = document.getElementById('test-url').value;
+            const comment = document.getElementById('test-comment').value;
+            const submitBtn = document.getElementById('submit-btn');
+            
+            if (!url || !comment) {
+                log('❌ Please enter both URL and comment', 'error');
+                return;
+            }
+            
+            submitBtn.disabled = true;
+            submitBtn.textContent = '📤 Submitting...';
+            
+            try {
+                log(`💬 Submitting comment for: ${url}`, 'info');
+                
+                if (!currentUser) {
+                    await signInAnonymously(auth);
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                }
+                
+                const urlHash = btoa(url).replace(/[+/=]/g, '');
+                const commentsRef = ref(database, `comments/${urlHash}`);
+                const commentData = {
+                    text: comment,
+                    author: 'Live Test User',
+                    timestamp: Date.now(),
+                    date: new Date().toISOString(),
+                    userId: currentUser.uid,
+                    votes: 0
+                };
+                
+                const newCommentRef = push(commentsRef);
+                await set(newCommentRef, commentData);
+                
+                log(`✅ Comment submitted successfully! ID: ${newCommentRef.key}`, 'success');
+                document.getElementById('test-comment').value = '';
+                
+                // Auto-load comments to show the new one
+                await loadTestComments();
+                
+            } catch (error) {
+                log(`❌ Failed to submit comment: ${error.message}`, 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = '📝 Submit Test Comment';
+            }
+        };
+        
+        window.loadTestComments = async function() {
+            const url = document.getElementById('test-url').value;
+            const commentsDisplay = document.getElementById('comments-display');
+            
+            if (!url) {
+                log('❌ Please enter a URL to load comments', 'error');
+                return;
+            }
+            
+            try {
+                log(`📖 Loading comments for: ${url}`, 'info');
+                
+                const urlHash = btoa(url).replace(/[+/=]/g, '');
+                const commentsRef = ref(database, `comments/${urlHash}`);
+                const snapshot = await get(commentsRef);
+                
+                if (snapshot.exists()) {
+                    const commentsData = snapshot.val();
+                    const comments = Object.keys(commentsData).map(key => ({
+                        id: key,
+                        ...commentsData[key]
+                    })).sort((a, b) => b.timestamp - a.timestamp);
+                    
+                    let html = `<h4>💬 Comments for ${url} (${comments.length})</h4>`;
+                    comments.forEach(comment => {
+                        html += `
+                            <div style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin: 10px 0; background: white;">
+                                <div style="font-weight: 600; color: #2d3748;">${comment.author || 'Anonymous'}</div>
+                                <div style="color: #4a5568; margin: 8px 0;">${comment.text}</div>
+                                <div style="font-size: 12px; color: #718096;">
+                                    ${new Date(comment.timestamp).toLocaleString()} • ID: ${comment.id}
+                                </div>
+                            </div>
+                        `;
+                    });
+                    
+                    commentsDisplay.innerHTML = html;
+                    log(`✅ Loaded ${comments.length} comments`, 'success');
+                } else {
+                    commentsDisplay.innerHTML = '<div style="text-align: center; color: #718096;">No comments found for this URL</div>';
+                    log('ℹ️ No comments found for this URL', 'info');
+                }
+            } catch (error) {
+                log(`❌ Failed to load comments: ${error.message}`, 'error');
+                commentsDisplay.innerHTML = '<div style="color: #e53e3e;">Error loading comments</div>';
+            }
+        };
+        
+        window.clearTestData = async function() {
+            const url = document.getElementById('test-url').value;
+            
+            if (!url) {
+                log('❌ Please enter a URL to clear test data', 'error');
+                return;
+            }
+            
+            try {
+                const urlHash = btoa(url).replace(/[+/=]/g, '');
+                const commentsRef = ref(database, `comments/${urlHash}`);
+                await remove(commentsRef);
+                
+                log(`✅ Test data cleared for: ${url}`, 'success');
+                document.getElementById('comments-display').innerHTML = '<div style="text-align: center; color: #718096;">Test data cleared</div>';
+            } catch (error) {
+                log(`❌ Failed to clear test data: ${error.message}`, 'error');
+            }
+        };
+        
+        // Utility functions
+        window.exportTestResults = function() {
+            const results = {
+                timestamp: new Date().toISOString(),
+                environment: window.ENV_CONFIG?.getEnvironment(),
+                firebase: {
+                    projectId: window.ENV_CONFIG?.getFirebaseConfig()?.projectId,
+                    databaseURL: window.ENV_CONFIG?.getFirebaseConfig()?.databaseURL
+                },
+                testResults: testResults,
+                logs: Array.from(document.querySelectorAll('.log-entry')).map(el => el.textContent)
+            };
+            
+            const blob = new Blob([JSON.stringify(results, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `commentator-test-results-${Date.now()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            log('📤 Test results exported', 'success');
+        };
+        
+        window.clearLog = function() {
+            document.getElementById('log-output').innerHTML = '';
+        };
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', async function() {
+            log('🚀 Initializing Complete Comment System Test...', 'info');
+            
+            try {
+                await initializeFirebase();
+                log('✅ System ready for testing', 'success');
+                updateProgress(0, 'Ready to run tests');
+            } catch (error) {
+                log(`❌ Initialization failed: ${error.message}`, 'error');
+                updateProgress(0, 'Initialization failed');
+            }
+        });
+    </script>
+</body>
+</html>

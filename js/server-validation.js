@@ -4,7 +4,7 @@
  * This would typically run in a Node.js server or Firebase Cloud Functions
  */
 
-window.ServerValidation = (function() {
+window.ServerValidation = (function () {
   'use strict';
 
   // Import security utilities if available
@@ -73,15 +73,23 @@ window.ServerValidation = (function() {
 
     // Rate limiting check
     if (context.userId) {
-      const rateLimitResult = checkRateLimit(context.userId, 'comment_submission');
+      const rateLimitResult = checkRateLimit(
+        context.userId,
+        'comment_submission'
+      );
       if (!rateLimitResult.allowed) {
-        errors.push(`Rate limit exceeded. Try again in ${rateLimitResult.retryAfter} seconds`);
+        errors.push(
+          `Rate limit exceeded. Try again in ${rateLimitResult.retryAfter} seconds`
+        );
       }
     }
 
     // CSRF token validation
     if (context.csrfToken) {
-      if (!window.SecurityMiddleware || !window.SecurityMiddleware.validateCSRFToken(context.csrfToken)) {
+      if (
+        !window.SecurityMiddleware ||
+        !window.SecurityMiddleware.validateCSRFToken(context.csrfToken)
+      ) {
         errors.push('Invalid CSRF token');
       }
     }
@@ -90,7 +98,7 @@ window.ServerValidation = (function() {
       valid: errors.length === 0,
       errors,
       warnings,
-      sanitized: errors.length === 0 ? sanitizeCommentData(commentData) : null
+      sanitized: errors.length === 0 ? sanitizeCommentData(commentData) : null,
     };
   }
 
@@ -182,7 +190,7 @@ window.ServerValidation = (function() {
     let requests = stored ? JSON.parse(stored) : [];
 
     // Remove old requests outside the window
-    requests = requests.filter(timestamp => now - timestamp < windowMs);
+    requests = requests.filter((timestamp) => now - timestamp < windowMs);
 
     if (requests.length >= maxRequests) {
       const oldestRequest = Math.min(...requests);
@@ -219,7 +227,7 @@ window.ServerValidation = (function() {
 
     return {
       valid: errors.length === 0,
-      errors
+      errors,
     };
   }
 
@@ -244,7 +252,7 @@ window.ServerValidation = (function() {
 
     return {
       valid: errors.length === 0,
-      errors
+      errors,
     };
   }
 
@@ -256,11 +264,14 @@ window.ServerValidation = (function() {
     sanitizeCommentData,
     isValidURL,
     isValidEmail,
-    checkRateLimit
+    checkRateLimit,
   };
 })();
 
 // Log initialization
 if (window.CommentatorLogger) {
-  window.CommentatorLogger.info('Server validation module loaded', 'VALIDATION');
+  window.CommentatorLogger.info(
+    'Server validation module loaded',
+    'VALIDATION'
+  );
 }

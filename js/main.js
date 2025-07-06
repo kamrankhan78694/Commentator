@@ -47,7 +47,10 @@ async function loadHeaderAndFooter() {
     const headerResponse = await fetch(`${baseUrl}includes/header.html`);
     if (headerResponse.ok) {
       if (window.CommentatorLogger) {
-        window.CommentatorLogger.success('Header loaded successfully', 'COMPONENTS');
+        window.CommentatorLogger.success(
+          'Header loaded successfully',
+          'COMPONENTS'
+        );
       }
       const headerHTML = await headerResponse.text();
       const headerPlaceholder = document.getElementById('header-placeholder');
@@ -76,7 +79,10 @@ async function loadHeaderAndFooter() {
     } else {
       console.warn('Failed to load header:', headerResponse.status);
       if (window.CommentatorLogger) {
-        window.CommentatorLogger.error(`Failed to load header: ${headerResponse.status}`, 'COMPONENTS');
+        window.CommentatorLogger.error(
+          `Failed to load header: ${headerResponse.status}`,
+          'COMPONENTS'
+        );
       }
     }
 
@@ -90,7 +96,10 @@ async function loadHeaderAndFooter() {
     const footerResponse = await fetch(`${baseUrl}includes/footer.html`);
     if (footerResponse.ok) {
       if (window.CommentatorLogger) {
-        window.CommentatorLogger.success('Footer loaded successfully', 'COMPONENTS');
+        window.CommentatorLogger.success(
+          'Footer loaded successfully',
+          'COMPONENTS'
+        );
       }
       const footerHTML = await footerResponse.text();
       const footerPlaceholder = document.getElementById('footer-placeholder');
@@ -109,7 +118,10 @@ async function loadHeaderAndFooter() {
     } else {
       console.warn('Failed to load footer:', footerResponse.status);
       if (window.CommentatorLogger) {
-        window.CommentatorLogger.error(`Failed to load footer: ${footerResponse.status}`, 'COMPONENTS');
+        window.CommentatorLogger.error(
+          `Failed to load footer: ${footerResponse.status}`,
+          'COMPONENTS'
+        );
       }
     }
 
@@ -120,11 +132,14 @@ async function loadHeaderAndFooter() {
     setTimeout(() => {
       validateAccessibility();
     }, 1000);
-
   } catch (error) {
     console.error('Error loading header/footer components:', error);
     if (window.CommentatorLogger) {
-      window.CommentatorLogger.error('Error loading header/footer components', 'COMPONENTS', error);
+      window.CommentatorLogger.error(
+        'Error loading header/footer components',
+        'COMPONENTS',
+        error
+      );
     }
   }
 }
@@ -137,8 +152,10 @@ function fixFooterLinks(baseUrl) {
   if (!footer) return;
 
   // Fix internal navigation links
-  const internalLinks = footer.querySelectorAll('a[href^="index.html"], a[href^="docs/"]');
-  internalLinks.forEach(link => {
+  const internalLinks = footer.querySelectorAll(
+    'a[href^="index.html"], a[href^="docs/"]'
+  );
+  internalLinks.forEach((link) => {
     const href = link.getAttribute('href');
     if (href.startsWith('index.html') || href.startsWith('docs/')) {
       link.href = baseUrl + href;
@@ -166,7 +183,7 @@ function configureNavigation() {
       { href: `${baseUrl}docs/api.html`, text: 'API' },
       { href: `${baseUrl}docs/contributing.html`, text: 'Contributing' },
       { href: `${baseUrl}docs/faq.html`, text: 'FAQ' },
-      { href: `${baseUrl}index.html`, text: 'Home' }
+      { href: `${baseUrl}index.html`, text: 'Home' },
     ];
   } else {
     // Homepage navigation
@@ -175,28 +192,37 @@ function configureNavigation() {
       { href: '#how-it-works', text: 'How It Works' },
       { href: '#about', text: 'About' },
       { href: `${baseUrl}docs/`, text: 'Documentation' },
-      { href: 'https://github.com/kamrankhan78694/Commentator', text: 'GitHub', target: '_blank' }
+      {
+        href: 'https://github.com/kamrankhan78694/Commentator',
+        text: 'GitHub',
+        target: '_blank',
+      },
     ];
   }
 
   // Build navigation HTML
-  nav.innerHTML = navItems.map(item =>
-    `<a href="${item.href}"${item.target ? ` target="${item.target}"` : ''}>${item.text}</a>`
-  ).join('');
+  nav.innerHTML = navItems
+    .map(
+      (item) =>
+        `<a href="${item.href}"${item.target ? ` target="${item.target}"` : ''}>${item.text}</a>`
+    )
+    .join('');
 }
 
+// Note: scrollToDemo function exists but currently unused
+// Kept for potential future use
 /**
  * Scroll to demo section smoothly
  */
-function scrollToDemo() {
-  const demoSection = document.querySelector('.demo');
-  if (demoSection) {
-    demoSection.scrollIntoView({
-      behavior: 'smooth',
-      block: 'start'
-    });
-  }
-}
+// function scrollToDemo() {
+//   const demoSection = document.querySelector('.demo');
+//   if (demoSection) {
+//     demoSection.scrollIntoView({
+//       behavior: 'smooth',
+//       block: 'start'
+//     });
+//   }
+// }
 
 // Wait for DOM to be fully loaded before initializing
 document.addEventListener('DOMContentLoaded', async () => {
@@ -205,8 +231,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Log application initialization
   if (window.CommentatorLogger) {
     window.CommentatorLogger.info('Application initializing...', 'INIT');
-    window.CommentatorLogger.action('Loading environment configuration', 'info', 'INIT');
-  }  // Wait for environment configuration to be ready
+    window.CommentatorLogger.action(
+      'Loading environment configuration',
+      'info',
+      'INIT'
+    );
+  } // Wait for environment configuration to be ready
   console.log('Waiting for environment configuration...');
   await waitForEnvironmentConfig();
   console.log('Environment configuration ready');
@@ -226,8 +256,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     const env = window.EnvironmentConfig.getEnvironment();
     const features = window.EnvironmentConfig.getFeatures();
     window.CommentatorLogger.info(`Environment: ${env}`, 'CONFIG');
-    window.CommentatorLogger.info(`Debug mode: ${window.EnvironmentConfig.isDebugMode()}`, 'CONFIG');
-    window.CommentatorLogger.info(`Features enabled: ${Object.keys(features).filter(k => features[k]).join(', ')}`, 'CONFIG');
+    window.CommentatorLogger.info(
+      `Debug mode: ${window.EnvironmentConfig.isDebugMode()}`,
+      'CONFIG'
+    );
+    window.CommentatorLogger.info(
+      `Features enabled: ${Object.keys(features)
+        .filter((k) => features[k])
+        .join(', ')}`,
+      'CONFIG'
+    );
   }
 
   // Initialize all functionality
@@ -240,8 +278,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Log successful initialization
   setTimeout(() => {
     if (window.CommentatorLogger) {
-      window.CommentatorLogger.success('Application initialized successfully', 'INIT');
-      window.CommentatorLogger.info('Debug panel available - Press Ctrl+~ to toggle', 'HELP');
+      window.CommentatorLogger.success(
+        'Application initialized successfully',
+        'INIT'
+      );
+      window.CommentatorLogger.info(
+        'Debug panel available - Press Ctrl+~ to toggle',
+        'HELP'
+      );
     }
   }, 1000);
 });
@@ -303,7 +347,8 @@ function initMobileMenu() {
 
   // Close mobile menu when clicking outside
   document.addEventListener('click', (e) => {
-    const isClickInsideMenu = mobileMenuToggle.contains(e.target) || navContainer.contains(e.target);
+    const isClickInsideMenu =
+      mobileMenuToggle.contains(e.target) || navContainer.contains(e.target);
 
     if (!isClickInsideMenu && navContainer.classList.contains('active')) {
       mobileMenuToggle.classList.remove('active');
@@ -348,7 +393,10 @@ function initNewsletterForm() {
 
     // In a real implementation, this would send the email to a backend service
     // For now, we'll just show a success message
-    showNotification('Thank you for subscribing! We\'ll keep you updated on important project news.', 'success');
+    showNotification(
+      'Thank you for subscribing! We\'ll keep you updated on important project news.',
+      'success'
+    );
     emailInput.value = '';
   });
 }
@@ -369,8 +417,8 @@ function isValidEmail(email) {
 function initSmoothScrolling() {
   const navLinks = document.querySelectorAll('.nav a[href^="#"]');
 
-  navLinks.forEach(link => {
-    link.addEventListener('click', function(e) {
+  navLinks.forEach((link) => {
+    link.addEventListener('click', function (e) {
       e.preventDefault();
 
       const targetId = this.getAttribute('href').substring(1);
@@ -388,7 +436,7 @@ function initSmoothScrolling() {
 
         targetElement.scrollIntoView({
           behavior: 'smooth',
-          block: 'start'
+          block: 'start',
         });
       }
     });
@@ -422,7 +470,11 @@ function initCommentInterface() {
   if (demoBtn) {
     demoBtn.addEventListener('click', () => {
       if (window.CommentatorLogger) {
-        window.CommentatorLogger.action('User clicked "View Demo" button', 'info', 'USER_INTERACTION');
+        window.CommentatorLogger.action(
+          'User clicked "View Demo" button',
+          'info',
+          'USER_INTERACTION'
+        );
       }
       // Scroll to demo section and focus on URL input
       const demoSection = document.getElementById('demo-section');
@@ -441,12 +493,19 @@ function initCommentInterface() {
       const url = urlInput.value.trim();
 
       if (window.CommentatorLogger) {
-        window.CommentatorLogger.action(`User clicked "Load Comments" for URL: ${url || '(empty)'}`, 'info', 'USER_INTERACTION');
+        window.CommentatorLogger.action(
+          `User clicked "Load Comments" for URL: ${url || '(empty)'}`,
+          'info',
+          'USER_INTERACTION'
+        );
       }
 
       if (!url) {
         if (window.CommentatorLogger) {
-          window.CommentatorLogger.warning('User attempted to load comments with empty URL', 'VALIDATION');
+          window.CommentatorLogger.warning(
+            'User attempted to load comments with empty URL',
+            'VALIDATION'
+          );
         }
         showNotification('Please enter a valid URL', 'error');
         urlInput.focus();
@@ -455,9 +514,15 @@ function initCommentInterface() {
 
       if (!isValidUrl(url)) {
         if (window.CommentatorLogger) {
-          window.CommentatorLogger.warning(`User entered invalid URL: ${url}`, 'VALIDATION');
+          window.CommentatorLogger.warning(
+            `User entered invalid URL: ${url}`,
+            'VALIDATION'
+          );
         }
-        showNotification('Please enter a valid URL (e.g., https://example.com)', 'error');
+        showNotification(
+          'Please enter a valid URL (e.g., https://example.com)',
+          'error'
+        );
         urlInput.focus();
         return;
       }
@@ -482,7 +547,10 @@ function initCommentInterface() {
       const comment = commentText.value.trim();
       const url = urlInput ? urlInput.value.trim() : '';
 
-      console.log('Submit button clicked:', { comment: comment.length, url: url.length });
+      console.log('Submit button clicked:', {
+        comment: comment.length,
+        url: url.length,
+      });
 
       if (!url) {
         showNotification('Please load a URL first', 'error');
@@ -496,7 +564,7 @@ function initCommentInterface() {
       }
 
       console.log('Submitting comment:', { url, comment });
-      
+
       // Submit comment with real API integration
       submitComment(url, comment, commentsSection, commentText);
     });
@@ -524,15 +592,16 @@ function initNavigationHighlight() {
   window.addEventListener('scroll', () => {
     let current = '';
 
-    sections.forEach(section => {
+    sections.forEach((section) => {
       const sectionTop = section.offsetTop;
-      const sectionHeight = section.clientHeight;
-      if (scrollY >= (sectionTop - 200)) {
+      // sectionHeight calculated but not used in this context
+      section.clientHeight;
+      if (scrollY >= sectionTop - 200) {
         current = section.getAttribute('id');
       }
     });
 
-    navLinks.forEach(link => {
+    navLinks.forEach((link) => {
       link.classList.remove('active');
       if (link.getAttribute('href') === '#' + current) {
         link.classList.add('active');
@@ -560,7 +629,9 @@ function isValidUrl(string) {
  */
 async function loadBreadcrumb(baseUrl) {
   try {
-    const breadcrumbResponse = await fetch(`${baseUrl}includes/breadcrumb.html`);
+    const breadcrumbResponse = await fetch(
+      `${baseUrl}includes/breadcrumb.html`
+    );
     if (breadcrumbResponse.ok) {
       const breadcrumbHTML = await breadcrumbResponse.text();
 
@@ -569,7 +640,10 @@ async function loadBreadcrumb(baseUrl) {
       if (header) {
         const breadcrumbContainer = document.createElement('div');
         breadcrumbContainer.innerHTML = breadcrumbHTML;
-        header.parentNode.insertBefore(breadcrumbContainer.firstElementChild, header.nextSibling);
+        header.parentNode.insertBefore(
+          breadcrumbContainer.firstElementChild,
+          header.nextSibling
+        );
 
         // Generate breadcrumb items
         generateBreadcrumbItems(baseUrl);
@@ -588,37 +662,49 @@ function generateBreadcrumbItems(baseUrl) {
   if (!breadcrumbList) return;
 
   const currentPath = window.location.pathname;
-  const pathSegments = currentPath.split('/').filter(segment => segment);
+  const pathSegments = currentPath.split('/').filter((segment) => segment);
 
   // Always start with Home
   const breadcrumbItems = [
-    { name: 'Home', url: `${baseUrl}index.html`, position: 1 }
+    { name: 'Home', url: `${baseUrl}index.html`, position: 1 },
   ];
 
   // Add path-specific breadcrumbs
   if (currentPath.includes('/docs/')) {
-    breadcrumbItems.push({ name: 'Documentation', url: `${baseUrl}docs/`, position: 2 });
+    breadcrumbItems.push({
+      name: 'Documentation',
+      url: `${baseUrl}docs/`,
+      position: 2,
+    });
 
     // Add specific documentation page
     const docPage = pathSegments[pathSegments.length - 1];
     if (docPage && docPage !== 'index.html') {
-      const pageName = docPage.replace('.html', '').replace(/-/g, ' ')
-        .replace(/\b\w/g, l => l.toUpperCase());
-      breadcrumbItems.push({ name: pageName, url: '', position: 3, current: true });
+      const pageName = docPage
+        .replace('.html', '')
+        .replace(/-/g, ' ')
+        .replace(/\b\w/g, (l) => l.toUpperCase());
+      breadcrumbItems.push({
+        name: pageName,
+        url: '',
+        position: 3,
+        current: true,
+      });
     }
   }
 
   // Generate breadcrumb HTML with schema markup
-  breadcrumbList.innerHTML = breadcrumbItems.map((item, index) => {
-    if (item.current) {
-      return `
+  breadcrumbList.innerHTML = breadcrumbItems
+    .map((item) => {
+      if (item.current) {
+        return `
                 <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
                     <span class="breadcrumb-current" itemprop="name">${item.name}</span>
                     <meta itemprop="position" content="${item.position}">
                 </li>
             `;
-    } else {
-      return `
+      } else {
+        return `
                 <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
                     <a href="${item.url}" class="breadcrumb-link" itemprop="item">
                         <span itemprop="name">${item.name}</span>
@@ -626,8 +712,9 @@ function generateBreadcrumbItems(baseUrl) {
                     <meta itemprop="position" content="${item.position}">
                 </li>
             `;
-    }
-  }).join('');
+      }
+    })
+    .join('');
 }
 
 /**
@@ -635,7 +722,9 @@ function generateBreadcrumbItems(baseUrl) {
  */
 async function loadNavigationSchema(baseUrl) {
   try {
-    const schemaResponse = await fetch(`${baseUrl}includes/navigation-schema.html`);
+    const schemaResponse = await fetch(
+      `${baseUrl}includes/navigation-schema.html`
+    );
     if (schemaResponse.ok) {
       const schemaHTML = await schemaResponse.text();
 
@@ -659,24 +748,28 @@ function initKeyboardNavigation() {
   // Add keyboard support for navigation links
   const navLinks = document.querySelectorAll('.nav a');
 
-  navLinks.forEach((link, index) => {
-    link.addEventListener('keydown', function(e) {
+  navLinks.forEach((link) => {
+    link.addEventListener('keydown', function (e) {
       const links = Array.from(navLinks);
       const currentIndex = links.indexOf(this);
 
       switch (e.key) {
       case 'ArrowLeft':
-      case 'ArrowUp':
+      case 'ArrowUp': {
         e.preventDefault();
-        const prevIndex = currentIndex > 0 ? currentIndex - 1 : links.length - 1;
+        const prevIndex =
+            currentIndex > 0 ? currentIndex - 1 : links.length - 1;
         links[prevIndex].focus();
         break;
+      }
       case 'ArrowRight':
-      case 'ArrowDown':
+      case 'ArrowDown': {
         e.preventDefault();
-        const nextIndex = currentIndex < links.length - 1 ? currentIndex + 1 : 0;
+        const nextIndex =
+            currentIndex < links.length - 1 ? currentIndex + 1 : 0;
         links[nextIndex].focus();
         break;
+      }
       case 'Home':
         e.preventDefault();
         links[0].focus();
@@ -695,7 +788,11 @@ function initKeyboardNavigation() {
       const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
       const navContainer = document.getElementById('nav-container');
 
-      if (mobileMenuToggle && navContainer && navContainer.classList.contains('active')) {
+      if (
+        mobileMenuToggle &&
+        navContainer &&
+        navContainer.classList.contains('active')
+      ) {
         mobileMenuToggle.classList.remove('active');
         navContainer.classList.remove('active');
         mobileMenuToggle.setAttribute('aria-expanded', 'false');
@@ -731,7 +828,7 @@ function initBackToTop() {
   backToTopBtn.addEventListener('click', () => {
     window.scrollTo({
       top: 0,
-      behavior: 'smooth'
+      behavior: 'smooth',
     });
   });
 
@@ -752,7 +849,7 @@ function validateAccessibility() {
 
   // Check for missing alt text on images
   const images = document.querySelectorAll('img');
-  images.forEach(img => {
+  images.forEach((img) => {
     if (!img.getAttribute('alt')) {
       issues.push(`Image missing alt text: ${img.src}`);
     }
@@ -761,30 +858,39 @@ function validateAccessibility() {
   // Check for proper heading hierarchy
   const headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
   let lastLevel = 0;
-  headings.forEach(heading => {
+  headings.forEach((heading) => {
     const level = parseInt(heading.tagName.charAt(1));
     if (level > lastLevel + 1) {
-      issues.push(`Heading hierarchy issue: ${heading.tagName} after h${lastLevel}`);
+      issues.push(
+        `Heading hierarchy issue: ${heading.tagName} after h${lastLevel}`
+      );
     }
     lastLevel = level;
   });
 
   // Check for interactive elements without proper focus indicators
-  const interactiveElements = document.querySelectorAll('a, button, input, textarea, select');
-  interactiveElements.forEach(element => {
+  const interactiveElements = document.querySelectorAll(
+    'a, button, input, textarea, select'
+  );
+  interactiveElements.forEach((element) => {
     const style = window.getComputedStyle(element, ':focus');
     if (!style.outline || style.outline === 'none') {
       if (!style.boxShadow || !style.border) {
-        issues.push(`Interactive element may lack proper focus indicator: ${element.tagName}`);
+        issues.push(
+          `Interactive element may lack proper focus indicator: ${element.tagName}`
+        );
       }
     }
   });
 
   // Log issues in development
-  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+  if (
+    window.location.hostname === 'localhost' ||
+    window.location.hostname === '127.0.0.1'
+  ) {
     if (issues.length > 0) {
       console.group('🔍 Accessibility Issues Found:');
-      issues.forEach(issue => console.warn(issue));
+      issues.forEach((issue) => console.warn(issue));
       console.groupEnd();
     } else {
       console.log('✅ No accessibility issues detected');
@@ -801,7 +907,11 @@ function validateAccessibility() {
  */
 async function loadCommentsForUrl(url, commentsSection) {
   if (window.CommentatorLogger) {
-    window.CommentatorLogger.action(`Loading comments for ${url}`, 'info', 'COMMENTS');
+    window.CommentatorLogger.action(
+      `Loading comments for ${url}`,
+      'info',
+      'COMMENTS'
+    );
   }
 
   // Show loading state
@@ -814,31 +924,42 @@ async function loadCommentsForUrl(url, commentsSection) {
   try {
     // Check if Firebase service is available
     if (typeof window.FirebaseService === 'undefined') {
-      throw new Error('Firebase service is not available. Please check your connection and try again.');
+      throw new Error(
+        'Firebase service is not available. Please check your connection and try again.'
+      );
     }
 
     // Load comments from Firebase
     const comments = await window.FirebaseService.loadComments(url);
 
     if (window.CommentatorLogger) {
-      window.CommentatorLogger.success(`Loaded ${comments.length} comments for ${url}`, 'COMMENTS');
+      window.CommentatorLogger.success(
+        `Loaded ${comments.length} comments for ${url}`,
+        'COMMENTS'
+      );
     }
 
     // Format timestamps for display
-    const formattedComments = comments.map(comment => ({
+    const formattedComments = comments.map((comment) => ({
       ...comment,
       author: comment.author || 'Anonymous',
       timestamp: formatTimestamp(comment.createdAt || comment.timestamp),
-      votes: comment.votes || 0
+      votes: comment.votes || 0,
     }));
 
     displayComments(formattedComments, commentsSection);
 
     // Show success message
     if (formattedComments.length > 0) {
-      showNotification(`Successfully loaded ${formattedComments.length} comment${formattedComments.length > 1 ? 's' : ''}`, 'success');
+      showNotification(
+        `Successfully loaded ${formattedComments.length} comment${formattedComments.length > 1 ? 's' : ''}`,
+        'success'
+      );
     } else {
-      showNotification('No comments found for this URL. Be the first to comment!', 'info');
+      showNotification(
+        'No comments found for this URL. Be the first to comment!',
+        'info'
+      );
     }
 
     // Set up real-time listener for new comments
@@ -846,20 +967,24 @@ async function loadCommentsForUrl(url, commentsSection) {
     if (window.currentCommentsUnsubscribe) {
       window.currentCommentsUnsubscribe();
     }
-    window.currentCommentsUnsubscribe = window.FirebaseService.subscribeToComments(url, (updatedComments) => {
-      const formattedUpdated = updatedComments.map(comment => ({
-        ...comment,
-        author: comment.author || 'Anonymous',
-        timestamp: formatTimestamp(comment.createdAt || comment.timestamp),
-        votes: comment.votes || 0
-      }));
-      displayComments(formattedUpdated, commentsSection);
-    });
-
+    window.currentCommentsUnsubscribe =
+      window.FirebaseService.subscribeToComments(url, (updatedComments) => {
+        const formattedUpdated = updatedComments.map((comment) => ({
+          ...comment,
+          author: comment.author || 'Anonymous',
+          timestamp: formatTimestamp(comment.createdAt || comment.timestamp),
+          votes: comment.votes || 0,
+        }));
+        displayComments(formattedUpdated, commentsSection);
+      });
   } catch (error) {
     console.error('Error loading comments:', error);
     if (window.CommentatorLogger) {
-      window.CommentatorLogger.error(`Failed to load comments for ${url}: ${error.message}`, 'COMMENTS', error);
+      window.CommentatorLogger.error(
+        `Failed to load comments for ${url}: ${error.message}`,
+        'COMMENTS',
+        error
+      );
     }
     commentsSection.innerHTML = `
             <div class="error-state">
@@ -877,7 +1002,11 @@ async function loadCommentsForUrl(url, commentsSection) {
     if (retryButton) {
       retryButton.addEventListener('click', () => {
         if (window.CommentatorLogger) {
-          window.CommentatorLogger.action('Retrying comment load', 'info', 'COMMENTS');
+          window.CommentatorLogger.action(
+            'Retrying comment load',
+            'info',
+            'COMMENTS'
+          );
         }
         loadCommentsForUrl(url, commentsSection);
       });
@@ -901,13 +1030,15 @@ function displayComments(comments, commentsSection, isNFT = false) {
     return;
   }
 
-  const commentsHtml = comments.map(comment => {
-    if (comment.isNFT || isNFT) {
-      const shortAddress = comment.author.length > 10
-        ? `${comment.author.slice(0, 6)}...${comment.author.slice(-4)}`
-        : comment.author;
+  const commentsHtml = comments
+    .map((comment) => {
+      if (comment.isNFT || isNFT) {
+        const shortAddress =
+          comment.author.length > 10
+            ? `${comment.author.slice(0, 6)}...${comment.author.slice(-4)}`
+            : comment.author;
 
-      return `
+        return `
                 <div class="comment nft-comment">
                     <div class="comment-header">
                         <span class="comment-author">👤 ${shortAddress}</span>
@@ -924,8 +1055,8 @@ function displayComments(comments, commentsSection, isNFT = false) {
                     </div>
                 </div>
             `;
-    } else {
-      return `
+      } else {
+        return `
                 <div class="comment">
                     <div class="comment-header">
                         <span class="comment-author">👤 ${comment.author}</span>
@@ -935,8 +1066,9 @@ function displayComments(comments, commentsSection, isNFT = false) {
                     <div class="comment-text">${comment.text}</div>
                 </div>
             `;
-    }
-  }).join('');
+      }
+    })
+    .join('');
 
   commentsSection.innerHTML = `
         <div class="comments-list">
@@ -954,11 +1086,11 @@ function displayComments(comments, commentsSection, isNFT = false) {
  * @param {HTMLElement} commentTextarea - The comment input element
  */
 async function submitComment(url, comment, commentsSection, commentTextarea) {
-  console.log('📝 submitComment called with:', { 
-    url, 
-    comment: comment.substring(0, 50) + '...', 
-    commentsSection: !!commentsSection, 
-    commentTextarea: !!commentTextarea 
+  console.log('📝 submitComment called with:', {
+    url,
+    comment: comment.substring(0, 50) + '...',
+    commentsSection: !!commentsSection,
+    commentTextarea: !!commentTextarea,
   });
 
   // Show submitting state
@@ -971,19 +1103,25 @@ async function submitComment(url, comment, commentsSection, commentTextarea) {
     console.log('🔍 Checking Firebase service availability...');
     // Check if Firebase service is available
     if (typeof window.FirebaseService === 'undefined') {
-      throw new Error('Firebase service is not available. Please refresh the page and try again.');
+      throw new Error(
+        'Firebase service is not available. Please refresh the page and try again.'
+      );
     }
     console.log('✅ Firebase service is available');
 
     console.log('🔐 Checking authentication state...');
     // Check authentication state first
     if (!window.FirebaseService.isUserAuthenticated()) {
-      console.log('⚠️ User not authenticated, attempting to re-authenticate...');
+      console.log(
+        '⚠️ User not authenticated, attempting to re-authenticate...'
+      );
       updateUserStatus('🔄 Re-authenticating...');
-      
+
       const user = await window.FirebaseService.initAuth();
       if (!user) {
-        throw new Error('Authentication failed. Please refresh the page and try again.');
+        throw new Error(
+          'Authentication failed. Please refresh the page and try again.'
+        );
       }
       console.log('✅ Re-authentication successful');
       updateUserStatus('✅ Connected anonymously');
@@ -995,7 +1133,7 @@ async function submitComment(url, comment, commentsSection, commentTextarea) {
     if (!comment || comment.trim().length === 0) {
       throw new Error('Comment cannot be empty');
     }
-    
+
     if (comment.length > 5000) {
       throw new Error('Comment is too long (maximum 5000 characters)');
     }
@@ -1005,12 +1143,15 @@ async function submitComment(url, comment, commentsSection, commentTextarea) {
       author: 'Anonymous', // In a real app, this would be the logged-in user
       text: comment.trim(),
       votes: 0,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     console.log('💾 Saving comment to Firebase...');
     // Save comment to Firebase with detailed logging
-    const commentId = await window.FirebaseService.saveComment(url, commentData);
+    const commentId = await window.FirebaseService.saveComment(
+      url,
+      commentData
+    );
     console.log('✅ Comment saved successfully with ID:', commentId);
 
     // Clear the textarea
@@ -1022,7 +1163,6 @@ async function submitComment(url, comment, commentsSection, commentTextarea) {
     console.log('🔄 Reloading comments to show new comment...');
     // Reload comments to show the new one
     await loadCommentsForUrl(url, commentsSection);
-
   } catch (error) {
     console.error('❌ Error submitting comment:', error);
 
@@ -1031,18 +1171,28 @@ async function submitComment(url, comment, commentsSection, commentTextarea) {
       name: error.name,
       message: error.message,
       code: error.code,
-      stack: error.stack
+      stack: error.stack,
     });
 
     // Show user-friendly error message
     let errorMessage = 'Failed to submit comment. ';
-    
-    if (error.message.includes('authentication') || error.message.includes('auth')) {
+
+    if (
+      error.message.includes('authentication') ||
+      error.message.includes('auth')
+    ) {
       errorMessage += 'Please refresh the page and try again.';
-    } else if (error.message.includes('network') || error.message.includes('connection')) {
+    } else if (
+      error.message.includes('network') ||
+      error.message.includes('connection')
+    ) {
       errorMessage += 'Please check your internet connection and try again.';
-    } else if (error.message.includes('permission') || error.message.includes('denied')) {
-      errorMessage += 'Permission denied. Please refresh the page and try again.';
+    } else if (
+      error.message.includes('permission') ||
+      error.message.includes('denied')
+    ) {
+      errorMessage +=
+        'Permission denied. Please refresh the page and try again.';
     } else {
       errorMessage += error.message;
     }
@@ -1051,9 +1201,12 @@ async function submitComment(url, comment, commentsSection, commentTextarea) {
 
     // Log to debug logger if available
     if (window.CommentatorLogger) {
-      window.CommentatorLogger.error(`Comment submission failed: ${error.message}`, 'COMMENTS', error);
+      window.CommentatorLogger.error(
+        `Comment submission failed: ${error.message}`,
+        'COMMENTS',
+        error
+      );
     }
-
   } finally {
     // Reset submit button
     submitBtn.textContent = originalText;
@@ -1063,7 +1216,10 @@ async function submitComment(url, comment, commentsSection, commentTextarea) {
     setTimeout(() => {
       const newCommentElement = commentsSection.querySelector('.new-comment');
       if (newCommentElement) {
-        newCommentElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        newCommentElement.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+        });
         setTimeout(() => {
           newCommentElement.classList.remove('new-comment');
         }, 3000);
@@ -1229,22 +1385,22 @@ const CONTRACT_CONFIG = {
     'function getThreadComments(string memory threadId) public view returns (uint256[] memory)',
     'function getComment(uint256 tokenId) public view returns (tuple(address author, string threadId, string ipfsHash, uint256 timestamp))',
     'function tokenURI(uint256 tokenId) public view returns (string memory)',
-    'function totalComments() public view returns (uint256)'
+    'function totalComments() public view returns (uint256)',
   ],
   networks: {
     mumbai: {
       chainId: '0x13881', // 80001 in hex
       name: 'Polygon Mumbai',
       rpcUrl: 'https://rpc-mumbai.maticvigil.com/',
-      blockExplorer: 'https://mumbai.polygonscan.com/'
+      blockExplorer: 'https://mumbai.polygonscan.com/',
     },
     localhost: {
       chainId: '0x7a69', // 31337 in hex
       name: 'Local Hardhat',
       rpcUrl: 'http://127.0.0.1:8545',
-      blockExplorer: ''
-    }
-  }
+      blockExplorer: '',
+    },
+  },
 };
 
 // Web3 state
@@ -1254,7 +1410,7 @@ let web3State = {
   contract: null,
   userAddress: null,
   networkId: null,
-  connected: false
+  connected: false,
 };
 
 /**
@@ -1263,7 +1419,8 @@ let web3State = {
 function initWeb3() {
   const connectBtn = document.getElementById('connect-wallet-btn');
   const disconnectBtn = document.getElementById('disconnect-wallet-btn');
-  const submitBtn = document.getElementById('submit-comment-btn');
+  // submitBtn referenced but not used in this scope
+  document.getElementById('submit-comment-btn');
 
   if (connectBtn) {
     connectBtn.addEventListener('click', connectWallet);
@@ -1275,8 +1432,9 @@ function initWeb3() {
 
   // Check if already connected
   if (window.ethereum) {
-    window.ethereum.request({ method: 'eth_accounts' })
-      .then(accounts => {
+    window.ethereum
+      .request({ method: 'eth_accounts' })
+      .then((accounts) => {
         if (accounts.length > 0) {
           connectWallet();
         }
@@ -1297,7 +1455,10 @@ function initWeb3() {
 async function connectWallet() {
   try {
     if (!window.ethereum) {
-      showNotification('MetaMask not detected. Please install MetaMask.', 'error');
+      showNotification(
+        'MetaMask not detected. Please install MetaMask.',
+        'error'
+      );
       return;
     }
 
@@ -1305,7 +1466,7 @@ async function connectWallet() {
 
     // Request account access
     const accounts = await window.ethereum.request({
-      method: 'eth_requestAccounts'
+      method: 'eth_requestAccounts',
     });
 
     if (accounts.length === 0) {
@@ -1337,7 +1498,6 @@ async function connectWallet() {
     updateWalletUI();
 
     showNotification('Wallet connected successfully!', 'success');
-
   } catch (error) {
     console.error('Error connecting wallet:', error);
     showNotification(`Failed to connect wallet: ${error.message}`, 'error');
@@ -1354,7 +1514,7 @@ function disconnectWallet() {
     contract: null,
     userAddress: null,
     networkId: null,
-    connected: false
+    connected: false,
   };
 
   updateWalletUI();
@@ -1375,7 +1535,7 @@ function handleAccountsChanged(accounts) {
 /**
  * Handle chain/network changes
  */
-function handleChainChanged(chainId) {
+function handleChainChanged() {
   // Reload the page when network changes
   window.location.reload();
 }
@@ -1425,139 +1585,140 @@ function updateWalletUI() {
  */
 function getNetworkName(chainId) {
   const networks = {
-    '1': 'Ethereum Mainnet',
-    '5': 'Goerli Testnet',
-    '137': 'Polygon Mainnet',
-    '80001': 'Polygon Mumbai',
-    '31337': 'Local Hardhat'
+    1: 'Ethereum Mainnet',
+    5: 'Goerli Testnet',
+    137: 'Polygon Mainnet',
+    80001: 'Polygon Mumbai',
+    31337: 'Local Hardhat',
   };
   return networks[chainId] || `Network ${chainId}`;
 }
 
 /**
  * Modified submit comment function with NFT integration
+ * Note: Currently unused but kept for potential future NFT functionality
  */
-async function submitCommentAsNFT(url, comment, commentsSection, commentTextarea) {
-  if (!web3State.connected) {
-    showNotification('Please connect your wallet first', 'error');
-    return;
-  }
-
-  const submitBtn = document.getElementById('submit-comment-btn');
-  const originalText = submitBtn.textContent;
-
-  try {
-    // Step 1: Upload to IPFS
-    submitBtn.textContent = 'Uploading to IPFS...';
-    submitBtn.disabled = true;
-
-    const ipfsUrl = await IPFSIntegration.uploadCommentToIPFS(comment, {
-      author: web3State.userAddress,
-      url: url
-    });
-
-    console.log('Comment uploaded to IPFS:', ipfsUrl);
-
-    // Step 2: Mint NFT
-    submitBtn.textContent = 'Minting NFT...';
-
-    const threadId = IPFSIntegration.generateThreadId(url);
-    const ipfsHash = IPFSIntegration.extractIPFSHash(ipfsUrl);
-
-    let tokenId;
-    if (web3State.contract) {
-      // Real contract interaction
-      const tx = await web3State.contract.mintComment(
-        web3State.userAddress,
-        threadId,
-        ipfsHash
-      );
-
-      submitBtn.textContent = 'Confirming transaction...';
-      const receipt = await tx.wait();
-
-      // Extract token ID from events
-      const event = receipt.logs.find(log => log.topics[0] === ethers.id('CommentMinted(uint256,address,string,string,uint256)'));
-      tokenId = ethers.getBigInt(event?.topics[1] || '0').toString();
-
-    } else {
-      // Mock NFT minting for demo
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      tokenId = Date.now().toString();
-      console.log('Mock NFT minted with token ID:', tokenId);
-    }
-
-    // Step 3: Display the new NFT comment
-    const newComment = {
-      id: tokenId,
-      author: web3State.userAddress,
-      text: comment,
-      timestamp: new Date().toLocaleString(),
-      votes: 0,
-      nftId: tokenId,
-      ipfsUrl: ipfsUrl,
-      isNFT: true
-    };
-
-    displayNFTComment(newComment, commentsSection);
-
-    // Clear the textarea
-    commentTextarea.value = '';
-
-    showNotification('Comment minted as NFT successfully! 🎉', 'success');
-
-  } catch (error) {
-    console.error('Error submitting comment as NFT:', error);
-    showNotification(`Failed to submit comment: ${error.message}`, 'error');
-  } finally {
-    submitBtn.textContent = originalText;
-    submitBtn.disabled = !web3State.connected;
-  }
-}
+// async function submitCommentAsNFT(url, comment, commentsSection, commentTextarea) {
+//   if (!web3State.connected) {
+//     showNotification('Please connect your wallet first', 'error');
+//     return;
+//   }
+//
+//   const submitBtn = document.getElementById('submit-comment-btn');
+//   const originalText = submitBtn.textContent;
+//
+//   try {
+//     // Step 1: Upload to IPFS
+//     submitBtn.textContent = 'Uploading to IPFS...';
+//     submitBtn.disabled = true;
+//
+//     const ipfsUrl = await IPFSIntegration.uploadCommentToIPFS(comment, {
+//       author: web3State.userAddress,
+//       url: url
+//     });
+//
+//     console.log('Comment uploaded to IPFS:', ipfsUrl);
+//
+//     // Step 2: Mint NFT
+//     submitBtn.textContent = 'Minting NFT...';
+//
+//     const threadId = IPFSIntegration.generateThreadId(url);
+//     const ipfsHash = IPFSIntegration.extractIPFSHash(ipfsUrl);
+//
+//     let tokenId;
+//     if (web3State.contract) {
+//       // Real contract interaction
+//       const tx = await web3State.contract.mintComment(
+//         web3State.userAddress,
+//         threadId,
+//         ipfsHash
+//       );
+//
+//       submitBtn.textContent = 'Confirming transaction...';
+//       const receipt = await tx.wait();
+//
+//       // Extract token ID from events
+//       const event = receipt.logs.find(log => log.topics[0] === ethers.id('CommentMinted(uint256,address,string,string,uint256)'));
+//       tokenId = ethers.getBigInt(event?.topics[1] || '0').toString();
+//
+//     } else {
+//       // Mock NFT minting for demo
+//       await new Promise(resolve => setTimeout(resolve, 2000));
+//       tokenId = Date.now().toString();
+//       console.log('Mock NFT minted with token ID:', tokenId);
+//     }
+//
+//     // Step 3: Display the new NFT comment
+//     const newComment = {
+//       id: tokenId,
+//       author: web3State.userAddress,
+//       text: comment,
+//       timestamp: new Date().toLocaleString(),
+//       votes: 0,
+//       nftId: tokenId,
+//       ipfsUrl: ipfsUrl,
+//       isNFT: true
+//     };
+//
+//     displayNFTComment(newComment, commentsSection);
+//
+//     // Clear the textarea
+//     commentTextarea.value = '';
+//
+//     showNotification('Comment minted as NFT successfully! 🎉', 'success');
+//
+//   } catch (error) {
+//     console.error('Error submitting comment as NFT:', error);
+//     showNotification(`Failed to submit comment: ${error.message}`, 'error');
+//   } finally {
+//     submitBtn.textContent = originalText;
+//     submitBtn.disabled = !web3State.connected;
+//   }
+// }
 
 /**
  * Display NFT comment in the UI
+ * Note: Currently unused but kept for potential future NFT functionality
  */
-function displayNFTComment(comment, commentsSection) {
-  const existingComments = commentsSection.querySelector('.comments-list');
-
-  const shortAddress = comment.author.slice(0, 6) + '...' + comment.author.slice(-4);
-  const nftCommentHtml = `
-        <div class="comment nft-comment new-comment">
-            <div class="comment-header">
-                <span class="comment-author">👤 ${shortAddress}</span>
-                <span class="comment-timestamp">${comment.timestamp}</span>
-                <span class="comment-votes">👍 ${comment.votes}</span>
-                <span class="nft-badge">🖼️ NFT #${comment.nftId}</span>
-            </div>
-            <div class="comment-text">${comment.text}</div>
-            <div class="nft-info">
-                <small>
-                    <a href="${comment.ipfsUrl}" target="_blank" rel="noopener">View on IPFS</a>
-                    | Wallet: <span title="${comment.author}">${shortAddress}</span>
-                </small>
-            </div>
-        </div>
-    `;
-
-  if (existingComments) {
-    existingComments.insertAdjacentHTML('beforeend', nftCommentHtml);
-  } else {
-    displayComments([comment], commentsSection, true);
-  }
-
-  // Scroll to the new comment
-  setTimeout(() => {
-    const newCommentElement = commentsSection.querySelector('.new-comment');
-    if (newCommentElement) {
-      newCommentElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      setTimeout(() => {
-        newCommentElement.classList.remove('new-comment');
-      }, 3000);
-    }
-  }, 100);
-}
-
+// function displayNFTComment(comment, commentsSection) {
+//   const existingComments = commentsSection.querySelector('.comments-list');
+//
+//   const shortAddress = comment.author.slice(0, 6) + '...' + comment.author.slice(-4);
+//   const nftCommentHtml = `
+//         <div class="comment nft-comment new-comment">
+//             <div class="comment-header">
+//                 <span class="comment-author">👤 ${shortAddress}</span>
+//                 <span class="comment-timestamp">${comment.timestamp}</span>
+//                 <span class="comment-votes">👍 ${comment.votes}</span>
+//                 <span class="nft-badge">🖼️ NFT #${comment.nftId}</span>
+//             </div>
+//             <div class="comment-text">${comment.text}</div>
+//             <div class="nft-info">
+//                 <small>
+//                     <a href="${comment.ipfsUrl}" target="_blank" rel="noopener">View on IPFS</a>
+//                     | Wallet: <span title="${comment.author}">${shortAddress}</span>
+//                 </small>
+//             </div>
+//         </div>
+//     `;
+//
+//   if (existingComments) {
+//     existingComments.insertAdjacentHTML('beforeend', nftCommentHtml);
+//   } else {
+//     displayComments([comment], commentsSection, true);
+//   }
+//
+//   // Scroll to the new comment
+//   setTimeout(() => {
+//     const newCommentElement = commentsSection.querySelector('.new-comment');
+//     if (newCommentElement) {
+//       newCommentElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+//       setTimeout(() => {
+//         newCommentElement.classList.remove('new-comment');
+//       }, 3000);
+//     }
+//   }, 100);
+// }
 
 // Initialize Web3 when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
@@ -1581,12 +1742,12 @@ const currentCommentsUnsubscribe = null;
 async function initFirebaseAuth() {
   try {
     console.log('🔥 Initializing Firebase authentication...');
-    
+
     // Check if Firebase service is available
     if (typeof window.FirebaseService === 'undefined') {
       console.warn('⚠️ Firebase service not available, waiting...');
       updateUserStatus('🔄 Waiting for Firebase...');
-      
+
       // Wait longer and try again
       setTimeout(initFirebaseAuth, 2000);
       return;
@@ -1599,14 +1760,14 @@ async function initFirebaseAuth() {
     const authTimeout = new Promise((_, reject) => {
       setTimeout(() => reject(new Error('Authentication timeout')), 15000);
     });
-    
+
     const authPromise = window.FirebaseService.initAuth();
-    
+
     const user = await Promise.race([authPromise, authTimeout]);
 
     if (user) {
       console.log('✅ Firebase authentication successful:', user.uid);
-      
+
       // Update user status display
       updateUserStatus('✅ Connected anonymously');
 
@@ -1620,7 +1781,7 @@ async function initFirebaseAuth() {
       // Verify authentication state
       const isAuth = window.FirebaseService.isUserAuthenticated();
       console.log('🔐 Authentication verification:', isAuth);
-      
+
       if (!isAuth) {
         console.error('❌ Authentication verification failed');
         updateUserStatus('❌ Auth verification failed');
@@ -1633,9 +1794,9 @@ async function initFirebaseAuth() {
         currentSession = await window.FirebaseService.createSession({
           userAgent: navigator.userAgent,
           referrer: document.referrer,
-          timestamp: Date.now()
+          timestamp: Date.now(),
         });
-        
+
         console.log('✅ Session created:', currentSession);
 
         // Set up session activity tracking
@@ -1646,36 +1807,40 @@ async function initFirebaseAuth() {
         }, 30000); // Update every 30 seconds
 
         console.log('🎉 Firebase authentication and session setup complete');
-        
       } catch (sessionError) {
-        console.warn('⚠️ Session creation failed, but authentication succeeded:', sessionError);
+        console.warn(
+          '⚠️ Session creation failed, but authentication succeeded:',
+          sessionError
+        );
         // Don't fail the whole process if session creation fails
       }
-
     } else {
       console.error('❌ Firebase authentication failed - no user returned');
       updateUserStatus('❌ Authentication failed');
-      
+
       // Keep submit button disabled
       const submitBtn = document.getElementById('submit-comment-btn');
       if (submitBtn) {
         submitBtn.disabled = true;
       }
     }
-
   } catch (error) {
     console.error('❌ Error initializing Firebase auth:', error);
     updateUserStatus('❌ Connection error');
-    
+
     // Keep submit button disabled on error
     const submitBtn = document.getElementById('submit-comment-btn');
     if (submitBtn) {
       submitBtn.disabled = true;
     }
-    
+
     // Log detailed error info
     if (window.CommentatorLogger) {
-      window.CommentatorLogger.error(`Firebase auth error: ${error.message}`, 'FIREBASE', error);
+      window.CommentatorLogger.error(
+        `Firebase auth error: ${error.message}`,
+        'FIREBASE',
+        error
+      );
     }
   }
 }
@@ -1693,37 +1858,38 @@ function updateUserStatus(status) {
 
 /**
  * Get user display name
+ * Note: Currently unused but kept for potential future user functionality
  * @returns {Promise<string>} - User display name
  */
-async function getUserDisplayName() {
-  try {
-    const userData = await window.FirebaseService.loadUserData();
-    if (userData && userData.displayName) {
-      return userData.displayName;
-    }
-
-    // Generate a random display name for anonymous users
-    const adjectives = ['Happy', 'Smart', 'Kind', 'Friendly', 'Creative', 'Honest', 'Wise', 'Funny'];
-    const nouns = ['User', 'Commenter', 'Visitor', 'Reader', 'Member', 'Guest', 'Friend', 'Person'];
-    const randomAdjective = adjectives[Math.floor(Math.random() * adjectives.length)];
-    const randomNoun = nouns[Math.floor(Math.random() * nouns.length)];
-    const randomNumber = Math.floor(Math.random() * 1000);
-
-    const displayName = `${randomAdjective}${randomNoun}${randomNumber}`;
-
-    // Save the generated display name
-    await window.FirebaseService.saveUserData({
-      displayName,
-      createdAt: Date.now()
-    });
-
-    return displayName;
-
-  } catch (error) {
-    console.error('Error getting user display name:', error);
-    return 'Anonymous';
-  }
-}
+// async function getUserDisplayName() {
+//   try {
+//     const userData = await window.FirebaseService.loadUserData();
+//     if (userData && userData.displayName) {
+//       return userData.displayName;
+//     }
+//
+//     // Generate a random display name for anonymous users
+//     const adjectives = ['Happy', 'Smart', 'Kind', 'Friendly', 'Creative', 'Honest', 'Wise', 'Funny'];
+//     const nouns = ['User', 'Commenter', 'Visitor', 'Reader', 'Member', 'Guest', 'Friend', 'Person'];
+//     const randomAdjective = adjectives[Math.floor(Math.random() * adjectives.length)];
+//     const randomNoun = nouns[Math.floor(Math.random() * nouns.length)];
+//     const randomNumber = Math.floor(Math.random() * 1000);
+//
+//     const displayName = `${randomAdjective}${randomNoun}${randomNumber}`;
+//
+//     // Save the generated display name
+//     await window.FirebaseService.saveUserData({
+//       displayName,
+//       createdAt: Date.now()
+//     });
+//
+//     return displayName;
+//
+//   } catch (error) {
+//     console.error('Error getting user display name:', error);
+//     return 'Anonymous';
+//   }
+// }
 
 /**
  * Format timestamp for display
@@ -1777,7 +1943,11 @@ function initDebugHelpButton() {
     debugHelpBtn.addEventListener('click', () => {
       window.CommentatorLogger.toggle();
       if (window.CommentatorLogger) {
-        window.CommentatorLogger.action('Debug panel toggled via help button', 'info', 'USER_INTERACTION');
+        window.CommentatorLogger.action(
+          'Debug panel toggled via help button',
+          'info',
+          'USER_INTERACTION'
+        );
       }
     });
   }

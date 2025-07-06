@@ -23,7 +23,7 @@ class CommentatorLogger {
       y: 50,
       width: 600,
       height: 400,
-      minimized: false
+      minimized: false,
     };
 
     this.init();
@@ -122,18 +122,32 @@ class CommentatorLogger {
     header.addEventListener('mousedown', this.startDrag.bind(this));
 
     // Resize handle
-    const resizeHandle = this.panelElement.querySelector('.debug-panel-resize-handle');
+    const resizeHandle = this.panelElement.querySelector(
+      '.debug-panel-resize-handle'
+    );
     resizeHandle.addEventListener('mousedown', this.startResize.bind(this));
 
     // Control buttons
-    this.panelElement.querySelector('.debug-btn-close').addEventListener('click', () => this.hide());
-    this.panelElement.querySelector('.debug-btn-minimize').addEventListener('click', this.toggleMinimize.bind(this));
-    this.panelElement.querySelector('.debug-btn-clear').addEventListener('click', this.clearLogs.bind(this));
-    this.panelElement.querySelector('.debug-btn-copy').addEventListener('click', this.copyAllLogs.bind(this));
+    this.panelElement
+      .querySelector('.debug-btn-close')
+      .addEventListener('click', () => this.hide());
+    this.panelElement
+      .querySelector('.debug-btn-minimize')
+      .addEventListener('click', this.toggleMinimize.bind(this));
+    this.panelElement
+      .querySelector('.debug-btn-clear')
+      .addEventListener('click', this.clearLogs.bind(this));
+    this.panelElement
+      .querySelector('.debug-btn-copy')
+      .addEventListener('click', this.copyAllLogs.bind(this));
 
     // Filter and search
-    this.panelElement.querySelector('.debug-filter').addEventListener('change', this.handleFilterChange.bind(this));
-    this.panelElement.querySelector('.debug-search').addEventListener('input', this.handleSearchChange.bind(this));
+    this.panelElement
+      .querySelector('.debug-filter')
+      .addEventListener('change', this.handleFilterChange.bind(this));
+    this.panelElement
+      .querySelector('.debug-search')
+      .addEventListener('input', this.handleSearchChange.bind(this));
 
     // Global mouse events for drag and resize
     document.addEventListener('mousemove', this.handleMouseMove.bind(this));
@@ -190,8 +204,14 @@ class CommentatorLogger {
       this.panelState.y = e.clientY - this.dragStartY;
 
       // Keep panel within viewport
-      this.panelState.x = Math.max(0, Math.min(this.panelState.x, window.innerWidth - this.panelState.width));
-      this.panelState.y = Math.max(0, Math.min(this.panelState.y, window.innerHeight - 50));
+      this.panelState.x = Math.max(
+        0,
+        Math.min(this.panelState.x, window.innerWidth - this.panelState.width)
+      );
+      this.panelState.y = Math.max(
+        0,
+        Math.min(this.panelState.y, window.innerHeight - 50)
+      );
 
       this.updatePanelPosition();
     }
@@ -236,7 +256,10 @@ class CommentatorLogger {
   // Panel state management
   savePanelState() {
     try {
-      localStorage.setItem('commentator-debug-panel-state', JSON.stringify(this.panelState));
+      localStorage.setItem(
+        'commentator-debug-panel-state',
+        JSON.stringify(this.panelState)
+      );
     } catch (e) {
       // Ignore localStorage errors
     }
@@ -303,7 +326,7 @@ class CommentatorLogger {
       message,
       level,
       category,
-      details
+      details,
     };
 
     this.logs.push(logEntry);
@@ -343,7 +366,9 @@ class CommentatorLogger {
     if (!this.logContainer) return;
 
     // Remove welcome message if it exists
-    const welcomeMessage = this.logContainer.querySelector('.debug-welcome-message');
+    const welcomeMessage = this.logContainer.querySelector(
+      '.debug-welcome-message'
+    );
     if (welcomeMessage) {
       welcomeMessage.remove();
     }
@@ -387,7 +412,8 @@ class CommentatorLogger {
 
     // Filter by search term
     if (this.searchTerm) {
-      const searchableText = `${logEntry.message} ${logEntry.category} ${logEntry.level}`.toLowerCase();
+      const searchableText =
+        `${logEntry.message} ${logEntry.category} ${logEntry.level}`.toLowerCase();
       if (!searchableText.includes(this.searchTerm.toLowerCase())) {
         return false;
       }
@@ -403,14 +429,15 @@ class CommentatorLogger {
     this.logContainer.innerHTML = '';
 
     // Re-render all logs that match current filter
-    this.logs.forEach(log => {
+    this.logs.forEach((log) => {
       if (this.shouldShowLog(log)) {
         this.renderLog(log);
       }
     });
 
     if (this.logContainer.children.length === 0) {
-      this.logContainer.innerHTML = '<div class="debug-no-logs">No logs match current filter</div>';
+      this.logContainer.innerHTML =
+        '<div class="debug-no-logs">No logs match current filter</div>';
     }
   }
 
@@ -429,31 +456,39 @@ class CommentatorLogger {
   updateLogCount() {
     const countElement = this.panelElement?.querySelector('.debug-log-count');
     if (countElement) {
-      const visibleLogs = this.logs.filter(log => this.shouldShowLog(log)).length;
+      const visibleLogs = this.logs.filter((log) =>
+        this.shouldShowLog(log)
+      ).length;
       countElement.textContent = `${visibleLogs} log${visibleLogs !== 1 ? 's' : ''}`;
     }
   }
 
   clearLogs() {
     this.logs = [];
-    this.logContainer.innerHTML = '<div class="debug-welcome-message"><p>🧹 Logs cleared</p></div>';
+    this.logContainer.innerHTML =
+      '<div class="debug-welcome-message"><p>🧹 Logs cleared</p></div>';
     this.updateLogCount();
     this.log('Logs cleared', 'info', 'PANEL');
   }
 
   copyAllLogs() {
-    const visibleLogs = this.logs.filter(log => this.shouldShowLog(log));
-    const logText = visibleLogs.map(log => {
-      const time = log.timestamp.toLocaleTimeString();
-      return `[${time}] ${log.level.toUpperCase()} [${log.category}] ${log.message}${log.details ? '\n' + JSON.stringify(log.details, null, 2) : ''}`;
-    }).join('\n');
+    const visibleLogs = this.logs.filter((log) => this.shouldShowLog(log));
+    const logText = visibleLogs
+      .map((log) => {
+        const time = log.timestamp.toLocaleTimeString();
+        return `[${time}] ${log.level.toUpperCase()} [${log.category}] ${log.message}${log.details ? '\n' + JSON.stringify(log.details, null, 2) : ''}`;
+      })
+      .join('\n');
 
     if (logText) {
-      navigator.clipboard.writeText(logText).then(() => {
-        this.success('Logs copied to clipboard', 'PANEL');
-      }).catch(() => {
-        this.error('Failed to copy logs to clipboard', 'PANEL');
-      });
+      navigator.clipboard
+        .writeText(logText)
+        .then(() => {
+          this.success('Logs copied to clipboard', 'PANEL');
+        })
+        .catch(() => {
+          this.error('Failed to copy logs to clipboard', 'PANEL');
+        });
     } else {
       this.warning('No logs to copy', 'PANEL');
     }

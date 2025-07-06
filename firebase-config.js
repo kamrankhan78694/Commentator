@@ -3,10 +3,26 @@
  * Updated to use proper environment variables and security
  */
 
+// Environment variable helper for Firebase configuration
+function getEnvVar(key, defaultValue = null) {
+  // Check for browser environment variables (usually set via build process)
+  if (typeof process !== 'undefined' && process.env && process.env[key]) {
+    return process.env[key];
+  }
+  
+  // Check for window-level configuration
+  if (typeof window !== 'undefined' && window.env && window.env[key]) {
+    return window.env[key];
+  }
+  
+  // Return default value
+  return defaultValue;
+}
+
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
 import { getDatabase, ref, set, get, push, onValue, off, serverTimestamp, connectDatabaseEmulator } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js";
-import { getAuth, signInAnonymously, onAuthStateChanged, connectAuthEmulator } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
+import { getAuth, signInAnonymously, onAuthStateChanged, connectAuthEmulator, signInWithEmailAndPassword, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, updateProfile, signOut } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
 
 // Wait for environment configuration to be loaded
 function waitForEnvironmentConfig() {
@@ -52,13 +68,13 @@ async function initializeFirebaseApp() {
     const fallbackConfig = new (class {
       getFirebaseConfig() {
         return {
-          apiKey: "AIzaSyDtzBKu_0uxIv6r3PaYuIphB1jCgMqdjEk",
-          authDomain: "commentator78694.firebaseapp.com", 
-          databaseURL: "https://commentator78694-default-rtdb.firebaseio.com",
-          projectId: "commentator78694",
-          storageBucket: "commentator78694.firebasestorage.app",
-          messagingSenderId: "318788278941",
-          appId: "1:318788278941:web:c47dca1e572e3f767f9274"
+          apiKey: getEnvVar('FIREBASE_API_KEY', "AIzaSyDtzBKu_0uxIv6r3PaYuIphB1jCgMqdjEk"),
+          authDomain: getEnvVar('FIREBASE_AUTH_DOMAIN', "commentator78694.firebaseapp.com"), 
+          databaseURL: getEnvVar('FIREBASE_DATABASE_URL', "https://commentator78694-default-rtdb.firebaseio.com"),
+          projectId: getEnvVar('FIREBASE_PROJECT_ID', "commentator78694"),
+          storageBucket: getEnvVar('FIREBASE_STORAGE_BUCKET', "commentator78694.firebasestorage.app"),
+          messagingSenderId: getEnvVar('FIREBASE_MESSAGING_SENDER_ID', "318788278941"),
+          appId: getEnvVar('FIREBASE_APP_ID', "1:318788278941:web:c47dca1e572e3f767f9274")
         };
       }
       getEnvironment() { return 'development'; }
@@ -115,5 +131,11 @@ export {
   off, 
   serverTimestamp,
   signInAnonymously,
-  onAuthStateChanged
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
+  updateProfile,
+  signOut
 };

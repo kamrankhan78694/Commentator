@@ -3,7 +3,7 @@
  * Provides real-time monitoring, alerting, and performance tracking
  */
 
-window.PerformanceMonitor = (function() {
+window.PerformanceMonitor = (function () {
   'use strict';
 
   // Configuration
@@ -12,13 +12,13 @@ window.PerformanceMonitor = (function() {
     performanceThresholds: {
       pageLoadTime: 3000, // 3 seconds
       apiResponseTime: 1000, // 1 second
-      memoryUsagePercent: 80 // 80%
+      memoryUsagePercent: 80, // 80%
     },
     alertThresholds: {
       errorRate: 5, // 5% error rate
       responseTime: 2000, // 2 seconds
-      memoryUsage: 90 // 90%
-    }
+      memoryUsage: 90, // 90%
+    },
   };
 
   // Metrics storage
@@ -29,7 +29,7 @@ window.PerformanceMonitor = (function() {
     responseTime: [],
     memoryUsage: [],
     uptime: Date.now(),
-    lastHealthCheck: Date.now()
+    lastHealthCheck: Date.now(),
   };
 
   // Health check status
@@ -38,9 +38,9 @@ window.PerformanceMonitor = (function() {
     services: {
       frontend: 'healthy',
       firebase: 'unknown',
-      storage: 'healthy'
+      storage: 'healthy',
     },
-    lastCheck: Date.now()
+    lastCheck: Date.now(),
   };
 
   /**
@@ -82,7 +82,8 @@ window.PerformanceMonitor = (function() {
       }
 
       // Track other performance metrics
-      const domContentLoaded = timing.domContentLoadedEventEnd - timing.navigationStart;
+      const domContentLoaded =
+        timing.domContentLoadedEventEnd - timing.navigationStart;
       const firstByte = timing.responseStart - timing.navigationStart;
 
       trackMetric('dom_content_loaded', domContentLoaded);
@@ -108,15 +109,15 @@ window.PerformanceMonitor = (function() {
       services: {
         frontend: 'healthy',
         firebase: 'unknown',
-        storage: 'healthy'
+        storage: 'healthy',
       },
       lastCheck: startTime,
       metrics: {
         responseTime: 0,
         memoryUsage: getMemoryUsage(),
         errorRate: calculateErrorRate(),
-        uptime: startTime - metrics.uptime
-      }
+        uptime: startTime - metrics.uptime,
+      },
     };
 
     try {
@@ -130,8 +131,9 @@ window.PerformanceMonitor = (function() {
       checkStorageHealth(newHealthStatus);
 
       // Calculate overall health
-      const unhealthyServices = Object.values(newHealthStatus.services)
-        .filter(status => status !== 'healthy').length;
+      const unhealthyServices = Object.values(newHealthStatus.services).filter(
+        (status) => status !== 'healthy'
+      ).length;
 
       if (unhealthyServices === 0) {
         newHealthStatus.overall = 'healthy';
@@ -140,7 +142,6 @@ window.PerformanceMonitor = (function() {
       } else {
         newHealthStatus.overall = 'unhealthy';
       }
-
     } catch (error) {
       newHealthStatus.overall = 'unhealthy';
       log('Health check failed: ' + error.message, 'error');
@@ -158,7 +159,9 @@ window.PerformanceMonitor = (function() {
     }
 
     // Log health status
-    log(`Health check completed: ${newHealthStatus.overall} (${responseTime}ms)`);
+    log(
+      `Health check completed: ${newHealthStatus.overall} (${responseTime}ms)`
+    );
 
     return newHealthStatus;
   }
@@ -201,7 +204,7 @@ window.PerformanceMonitor = (function() {
       const testStart = Date.now();
 
       // Mock Firebase health check
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 100));
 
       const responseTime = Date.now() - testStart;
 
@@ -210,7 +213,6 @@ window.PerformanceMonitor = (function() {
       } else {
         healthStatus.services.firebase = 'healthy';
       }
-
     } catch (error) {
       healthStatus.services.firebase = 'unhealthy';
       throw error;
@@ -269,7 +271,7 @@ window.PerformanceMonitor = (function() {
     });
 
     // Track clicks
-    document.addEventListener('click', (event) => {
+    document.addEventListener('click', () => {
       trackMetric('user_click', 1);
     });
   }
@@ -283,7 +285,8 @@ window.PerformanceMonitor = (function() {
     setInterval(() => {
       const memInfo = getMemoryUsage();
       if (memInfo) {
-        const usagePercent = (memInfo.usedJSHeapSize / memInfo.jsHeapSizeLimit) * 100;
+        const usagePercent =
+          (memInfo.usedJSHeapSize / memInfo.jsHeapSizeLimit) * 100;
 
         trackMetric('memory_usage_percent', usagePercent);
 
@@ -303,7 +306,10 @@ window.PerformanceMonitor = (function() {
         usedJSHeapSize: performance.memory.usedJSHeapSize,
         totalJSHeapSize: performance.memory.totalJSHeapSize,
         jsHeapSizeLimit: performance.memory.jsHeapSizeLimit,
-        usagePercent: (performance.memory.usedJSHeapSize / performance.memory.jsHeapSizeLimit) * 100
+        usagePercent:
+          (performance.memory.usedJSHeapSize /
+            performance.memory.jsHeapSizeLimit) *
+          100,
       };
     }
     return null;
@@ -320,7 +326,7 @@ window.PerformanceMonitor = (function() {
         line: event.lineno,
         column: event.colno,
         stack: event.error ? event.error.stack : null,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
     });
 
@@ -328,7 +334,7 @@ window.PerformanceMonitor = (function() {
       trackError({
         message: 'Unhandled Promise Rejection: ' + event.reason,
         timestamp: Date.now(),
-        type: 'promise_rejection'
+        type: 'promise_rejection',
       });
     });
   }
@@ -340,8 +346,8 @@ window.PerformanceMonitor = (function() {
     metrics.errors.push(error);
 
     // Keep only recent errors (last hour)
-    const oneHourAgo = Date.now() - (60 * 60 * 1000);
-    metrics.errors = metrics.errors.filter(err => err.timestamp > oneHourAgo);
+    const oneHourAgo = Date.now() - 60 * 60 * 1000;
+    metrics.errors = metrics.errors.filter((err) => err.timestamp > oneHourAgo);
 
     trackMetric('error_count', 1);
 
@@ -355,11 +361,15 @@ window.PerformanceMonitor = (function() {
    * Calculate current error rate
    */
   function calculateErrorRate() {
-    const oneHourAgo = Date.now() - (60 * 60 * 1000);
-    const recentErrors = metrics.errors.filter(err => err.timestamp > oneHourAgo);
+    const oneHourAgo = Date.now() - 60 * 60 * 1000;
+    const recentErrors = metrics.errors.filter(
+      (err) => err.timestamp > oneHourAgo
+    );
     const totalInteractions = metrics.pageViews + metrics.commentSubmissions;
 
-    return totalInteractions > 0 ? (recentErrors.length / totalInteractions) * 100 : 0;
+    return totalInteractions > 0
+      ? (recentErrors.length / totalInteractions) * 100
+      : 0;
   }
 
   /**
@@ -369,15 +379,17 @@ window.PerformanceMonitor = (function() {
     const metric = {
       name,
       value,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
 
     // Store in appropriate array
     if (name.includes('time')) {
       metrics.responseTime.push(metric);
       // Keep only recent metrics (last hour)
-      const oneHourAgo = Date.now() - (60 * 60 * 1000);
-      metrics.responseTime = metrics.responseTime.filter(m => m.timestamp > oneHourAgo);
+      const oneHourAgo = Date.now() - 60 * 60 * 1000;
+      metrics.responseTime = metrics.responseTime.filter(
+        (m) => m.timestamp > oneHourAgo
+      );
     }
 
     // Log to analytics service (when available)
@@ -392,7 +404,7 @@ window.PerformanceMonitor = (function() {
       level,
       message,
       timestamp: Date.now(),
-      metrics: healthStatus.metrics
+      metrics: healthStatus.metrics,
     };
 
     log(`Alert [${level.toUpperCase()}]: ${message}`, level);
@@ -434,8 +446,8 @@ window.PerformanceMonitor = (function() {
         errorCount: metrics.errors.length,
         errorRate: errorRate,
         memoryUsage: memUsage,
-        lastHealthCheck: metrics.lastHealthCheck
-      }
+        lastHealthCheck: metrics.lastHealthCheck,
+      },
     };
   }
 
@@ -456,7 +468,7 @@ window.PerformanceMonitor = (function() {
     getMetrics,
     generateReport,
     trackMetric,
-    trackError
+    trackError,
   };
 })();
 

@@ -3,7 +3,7 @@
  * Provides CSRF protection and security headers
  */
 
-window.SecurityMiddleware = (function() {
+window.SecurityMiddleware = (function () {
   'use strict';
 
   // Generate a secure random token
@@ -11,12 +11,16 @@ window.SecurityMiddleware = (function() {
     if (window.crypto && window.crypto.getRandomValues) {
       const array = new Uint8Array(32);
       window.crypto.getRandomValues(array);
-      return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
+      return Array.from(array, (byte) =>
+        byte.toString(16).padStart(2, '0')
+      ).join('');
     } else {
       // Fallback for older browsers
-      return Math.random().toString(36).substring(2, 15) +
-             Math.random().toString(36).substring(2, 15) +
-             Date.now().toString(36);
+      return (
+        Math.random().toString(36).substring(2, 15) +
+        Math.random().toString(36).substring(2, 15) +
+        Date.now().toString(36)
+      );
     }
   }
 
@@ -55,14 +59,15 @@ window.SecurityMiddleware = (function() {
     // Content Security Policy
     const csp = document.createElement('meta');
     csp.setAttribute('http-equiv', 'Content-Security-Policy');
-    csp.setAttribute('content',
+    csp.setAttribute(
+      'content',
       'default-src \'self\' https:; ' +
-      'script-src \'self\' \'unsafe-inline\' https://www.gstatic.com https://cdn.jsdelivr.net; ' +
-      'style-src \'self\' \'unsafe-inline\' https://fonts.googleapis.com; ' +
-      'img-src \'self\' data: https:; ' +
-      'connect-src \'self\' https: wss:; ' +
-      'font-src \'self\' https://fonts.gstatic.com; ' +
-      'frame-ancestors \'none\';'
+        'script-src \'self\' \'unsafe-inline\' https://www.gstatic.com https://cdn.jsdelivr.net; ' +
+        'style-src \'self\' \'unsafe-inline\' https://fonts.googleapis.com; ' +
+        'img-src \'self\' data: https:; ' +
+        'connect-src \'self\' https: wss:; ' +
+        'font-src \'self\' https://fonts.gstatic.com; ' +
+        'frame-ancestors \'none\';'
     );
     head.appendChild(csp);
 
@@ -104,7 +109,7 @@ window.SecurityMiddleware = (function() {
       }
 
       return count < maxRequests;
-    }
+    },
   };
 
   // Secure request wrapper
@@ -133,7 +138,7 @@ window.SecurityMiddleware = (function() {
     options.headers = {
       'X-Requested-With': 'XMLHttpRequest',
       'X-CSRF-Token': getCSRFToken(),
-      ...options.headers
+      ...options.headers,
     };
 
     return fetch(url, options);
@@ -146,7 +151,7 @@ window.SecurityMiddleware = (function() {
     // Add CSRF token to all forms
     document.addEventListener('DOMContentLoaded', () => {
       const forms = document.querySelectorAll('form');
-      forms.forEach(form => {
+      forms.forEach((form) => {
         const csrfInput = document.createElement('input');
         csrfInput.type = 'hidden';
         csrfInput.name = 'csrf_token';
@@ -157,7 +162,10 @@ window.SecurityMiddleware = (function() {
 
     // Log security initialization
     if (window.CommentatorLogger) {
-      window.CommentatorLogger.info('Security middleware initialized', 'SECURITY');
+      window.CommentatorLogger.info(
+        'Security middleware initialized',
+        'SECURITY'
+      );
     }
   }
 
@@ -168,7 +176,7 @@ window.SecurityMiddleware = (function() {
     validateCSRFToken,
     addCSRFToken,
     secureRequest,
-    rateLimiter
+    rateLimiter,
   };
 })();
 

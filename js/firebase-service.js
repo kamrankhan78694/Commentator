@@ -16,15 +16,19 @@ import {
   get,
   push,
   onValue,
-  off,
   serverTimestamp,
   signInAnonymously,
-  onAuthStateChanged
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
+  updateProfile,
+  signOut,
 } from '../firebase-config.js';
 
 // Firebase service object to avoid module complications
-window.FirebaseService = (function() {
-
+window.FirebaseService = (function () {
   // Authentication state
   let currentUser = null;
   let isAuthenticated = false;
@@ -65,7 +69,7 @@ window.FirebaseService = (function() {
             });
         }
       });
-      
+
       // Timeout fallback after 10 seconds
       setTimeout(() => {
         if (!isAuthenticated) {
@@ -96,18 +100,27 @@ window.FirebaseService = (function() {
    * @returns {Promise<string>} - The comment ID
    */
   async function saveComment(url, commentData) {
-    console.log('🔥 SaveComment called with:', { url, commentData, isAuthenticated });
-    
+    console.log('🔥 SaveComment called with:', {
+      url,
+      commentData,
+      isAuthenticated,
+    });
+
     if (!isAuthenticated || !currentUser) {
       console.error('❌ User must be authenticated to save comments');
-      console.log('🔐 Current auth state:', { isAuthenticated, currentUser: !!currentUser });
-      throw new Error('User must be authenticated to save comments. Please wait for authentication to complete.');
+      console.log('🔐 Current auth state:', {
+        isAuthenticated,
+        currentUser: !!currentUser,
+      });
+      throw new Error(
+        'User must be authenticated to save comments. Please wait for authentication to complete.'
+      );
     }
 
     try {
       const urlHash = generateUrlHash(url);
       console.log('🔑 Generated URL hash:', urlHash);
-      
+
       const commentsRef = ref(database, `comments/${urlHash}`);
       console.log('📍 Firebase ref path:', `comments/${urlHash}`);
 
@@ -116,22 +129,25 @@ window.FirebaseService = (function() {
         ...commentData,
         timestamp: serverTimestamp(),
         userId: currentUser.uid,
-        createdAt: Date.now()
+        createdAt: Date.now(),
       };
 
       console.log('💾 Saving comment data:', comment);
-      
+
       const newCommentRef = push(commentsRef);
       await set(newCommentRef, comment);
 
-      console.log('✅ Comment saved to Firebase successfully! ID:', newCommentRef.key);
+      console.log(
+        '✅ Comment saved to Firebase successfully! ID:',
+        newCommentRef.key
+      );
       return newCommentRef.key;
     } catch (error) {
       console.error('❌ Error saving comment to Firebase:', error);
       console.error('📊 Error details:', {
         code: error.code,
         message: error.message,
-        stack: error.stack
+        stack: error.stack,
       });
       throw new Error(`Failed to save comment: ${error.message}`);
     }
@@ -151,9 +167,9 @@ window.FirebaseService = (function() {
       if (snapshot.exists()) {
         const commentsData = snapshot.val();
         // Convert to array and add IDs
-        const comments = Object.keys(commentsData).map(key => ({
+        const comments = Object.keys(commentsData).map((key) => ({
           id: key,
-          ...commentsData[key]
+          ...commentsData[key],
         }));
 
         // Sort by creation time (newest first)
@@ -184,9 +200,9 @@ window.FirebaseService = (function() {
     const unsubscribe = onValue(commentsRef, (snapshot) => {
       if (snapshot.exists()) {
         const commentsData = snapshot.val();
-        const comments = Object.keys(commentsData).map(key => ({
+        const comments = Object.keys(commentsData).map((key) => ({
           id: key,
-          ...commentsData[key]
+          ...commentsData[key],
         }));
 
         // Sort by creation time (newest first)
@@ -216,7 +232,7 @@ window.FirebaseService = (function() {
     const user = {
       ...userData,
       lastActive: serverTimestamp(),
-      updatedAt: Date.now()
+      updatedAt: Date.now(),
     };
 
     await set(userRef, user);
@@ -270,7 +286,7 @@ window.FirebaseService = (function() {
       createdAt: serverTimestamp(),
       lastActivity: serverTimestamp(),
       userAgent: navigator.userAgent,
-      ...sessionData
+      ...sessionData,
     };
 
     await set(sessionRef, session);
@@ -308,7 +324,7 @@ window.FirebaseService = (function() {
     // Update session with closed timestamp
     const updates = {
       closedAt,
-      lastActivity: closedAt
+      lastActivity: closedAt,
     };
 
     await set(sessionRef, updates);
@@ -329,10 +345,10 @@ window.FirebaseService = (function() {
    */
   function isUserAuthenticated() {
     const result = isAuthenticated && currentUser !== null;
-    console.log('🔐 isUserAuthenticated check:', { 
-      isAuthenticated, 
-      hasCurrentUser: !!currentUser, 
-      result 
+    console.log('🔐 isUserAuthenticated check:', {
+      isAuthenticated,
+      hasCurrentUser: !!currentUser,
+      result,
     });
     return result;
   }
@@ -347,7 +363,119 @@ window.FirebaseService = (function() {
       hasCurrentUser: !!currentUser,
       userId: currentUser ? currentUser.uid : null,
       isAnonymous: currentUser ? currentUser.isAnonymous : null,
-      timestamp: Date.now()
+      timestamp: Date.now(),
+    };
+  }
+
+  /**
+   * Sign in with email and password
+   * @param {string} email - User email
+   * @param {string} password - User password
+   * @returns {Promise<Object>} - User object
+   */
+  async function signInWithEmail(email, password) {
+    try {
+      console.log('🔐 Signing in with email...');
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      currentUser = userCredential.user;
+      isAuthenticated = true;
+      console.log('✅ Email sign-in successful:', currentUser.uid);
+      return currentUser;
+    } catch (error) {
+      console.error('❌ Email sign-in failed:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Create account with email and password
+   * @param {string} email - User email
+   * @param {string} password - User password
+   * @param {string} displayName - User display name
+   * @returns {Promise<Object>} - User object
+   */
+  async function createAccount(email, password, displayName) {
+    try {
+      console.log('📝 Creating account with email...');
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+
+      // Update profile with display name
+      if (displayName) {
+        await updateProfile(userCredential.user, {
+          displayName: displayName,
+        });
+      }
+
+      currentUser = userCredential.user;
+      isAuthenticated = true;
+      console.log('✅ Account created successfully:', currentUser.uid);
+      return currentUser;
+    } catch (error) {
+      console.error('❌ Account creation failed:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Sign in with Google
+   * @returns {Promise<Object>} - User object
+   */
+  async function signInWithGoogle() {
+    try {
+      console.log('🔐 Signing in with Google...');
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      currentUser = result.user;
+      isAuthenticated = true;
+      console.log('✅ Google sign-in successful:', currentUser.uid);
+      return currentUser;
+    } catch (error) {
+      console.error('❌ Google sign-in failed:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Sign out current user
+   * @returns {Promise<void>}
+   */
+  async function signOutUser() {
+    try {
+      console.log('🔐 Signing out user...');
+      await signOut(auth);
+      currentUser = null;
+      isAuthenticated = false;
+      console.log('✅ Sign out successful');
+    } catch (error) {
+      console.error('❌ Sign out failed:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get current user profile information
+   * @returns {Object|null} - User profile data
+   */
+  function getUserProfile() {
+    if (!currentUser) return null;
+
+    return {
+      uid: currentUser.uid,
+      email: currentUser.email,
+      displayName: currentUser.displayName,
+      photoURL: currentUser.photoURL,
+      isAnonymous: currentUser.isAnonymous,
+      emailVerified: currentUser.emailVerified,
+      createdAt: currentUser.metadata.creationTime,
+      lastSignIn: currentUser.metadata.lastSignInTime,
     };
   }
 
@@ -358,6 +486,11 @@ window.FirebaseService = (function() {
     getCurrentUser,
     isUserAuthenticated,
     getAuthStatus,
+    getUserProfile,
+    signInWithEmail,
+    createAccount,
+    signInWithGoogle,
+    signOutUser,
 
     // Comments
     saveComment,
@@ -374,6 +507,6 @@ window.FirebaseService = (function() {
     closeSession,
 
     // Utilities
-    generateUrlHash
+    generateUrlHash,
   };
 })();
