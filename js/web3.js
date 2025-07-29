@@ -50,8 +50,6 @@ let web3State = {
 export function initWeb3() {
   const connectBtn = document.getElementById('connect-wallet-btn');
   const disconnectBtn = document.getElementById('disconnect-wallet-btn');
-  // submitBtn referenced but not used in this scope
-  document.getElementById('submit-comment-btn');
 
   if (connectBtn) {
     connectBtn.addEventListener('click', connectWallet);
