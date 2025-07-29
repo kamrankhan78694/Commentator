@@ -521,7 +521,7 @@ class ProductionSafeConsole {
       warn: console.warn,
       error: console.error,
       info: console.info,
-      debug: console.debug
+      debug: console.debug,
     };
   }
 
@@ -530,13 +530,22 @@ class ProductionSafeConsole {
     if (typeof window !== 'undefined') {
       // Check if we're on localhost or development domain
       const hostname = window.location.hostname;
-      if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname.includes('dev')) {
+      if (
+        hostname === 'localhost' ||
+        hostname === '127.0.0.1' ||
+        hostname.includes('dev')
+      ) {
         return true;
       }
     }
 
     // Check for NODE_ENV if available (injected by build process)
-    if (typeof globalThis !== 'undefined' && globalThis.process && globalThis.process.env && globalThis.process.env.NODE_ENV) {
+    if (
+      typeof globalThis !== 'undefined' &&
+      globalThis.process &&
+      globalThis.process.env &&
+      globalThis.process.env.NODE_ENV
+    ) {
       return globalThis.process.env.NODE_ENV === 'development';
     }
 
@@ -573,7 +582,11 @@ class ProductionSafeConsole {
       // In production, log errors but with less detail
       this.originalConsole.error('An error occurred');
       if (window.CommentatorLogger) {
-        window.CommentatorLogger.log('Error occurred (details hidden in production)', 'error', 'SYSTEM');
+        window.CommentatorLogger.log(
+          'Error occurred (details hidden in production)',
+          'error',
+          'SYSTEM'
+        );
       }
     }
   }

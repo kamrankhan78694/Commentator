@@ -79,7 +79,10 @@ async function loadHeaderAndFooter() {
     } else {
       // Use production-safe console
       if (window.CommentatorConsole) {
-        window.CommentatorConsole.warn('Failed to load header:', headerResponse.status);
+        window.CommentatorConsole.warn(
+          'Failed to load header:',
+          headerResponse.status
+        );
       } else {
         console.warn('Failed to load header:', headerResponse.status);
       }
@@ -123,7 +126,10 @@ async function loadHeaderAndFooter() {
     } else {
       // Use production-safe console
       if (window.CommentatorConsole) {
-        window.CommentatorConsole.warn('Failed to load footer:', footerResponse.status);
+        window.CommentatorConsole.warn(
+          'Failed to load footer:',
+          footerResponse.status
+        );
       } else {
         console.warn('Failed to load footer:', footerResponse.status);
       }
@@ -145,7 +151,10 @@ async function loadHeaderAndFooter() {
   } catch (error) {
     // Use production-safe console
     if (window.CommentatorConsole) {
-      window.CommentatorConsole.error('Error loading header/footer components:', error);
+      window.CommentatorConsole.error(
+        'Error loading header/footer components:',
+        error
+      );
     } else {
       console.error('Error loading header/footer components:', error);
     }
@@ -434,7 +443,7 @@ function initNewsletterForm() {
     // In a real implementation, this would send the email to a backend service
     // For now, we'll just show a success message
     showNotification(
-      'Thank you for subscribing! We\'ll keep you updated on important project news.',
+      "Thank you for subscribing! We'll keep you updated on important project news.",
       'success'
     );
     emailInput.value = '';
@@ -794,30 +803,30 @@ function initKeyboardNavigation() {
       const currentIndex = links.indexOf(this);
 
       switch (e.key) {
-      case 'ArrowLeft':
-      case 'ArrowUp': {
-        e.preventDefault();
-        const prevIndex =
+        case 'ArrowLeft':
+        case 'ArrowUp': {
+          e.preventDefault();
+          const prevIndex =
             currentIndex > 0 ? currentIndex - 1 : links.length - 1;
-        links[prevIndex].focus();
-        break;
-      }
-      case 'ArrowRight':
-      case 'ArrowDown': {
-        e.preventDefault();
-        const nextIndex =
+          links[prevIndex].focus();
+          break;
+        }
+        case 'ArrowRight':
+        case 'ArrowDown': {
+          e.preventDefault();
+          const nextIndex =
             currentIndex < links.length - 1 ? currentIndex + 1 : 0;
-        links[nextIndex].focus();
-        break;
-      }
-      case 'Home':
-        e.preventDefault();
-        links[0].focus();
-        break;
-      case 'End':
-        e.preventDefault();
-        links[links.length - 1].focus();
-        break;
+          links[nextIndex].focus();
+          break;
+        }
+        case 'Home':
+          e.preventDefault();
+          links[0].focus();
+          break;
+        case 'End':
+          e.preventDefault();
+          links[links.length - 1].focus();
+          break;
       }
     });
   });
@@ -1302,18 +1311,18 @@ function showNotification(message, type = 'success') {
   // Set colors based on type
   let backgroundColor, textColor;
   switch (type) {
-  case 'error':
-    backgroundColor = '#e53e3e';
-    textColor = 'white';
-    break;
-  case 'info':
-    backgroundColor = '#3182ce';
-    textColor = 'white';
-    break;
-  case 'success':
-  default:
-    backgroundColor = '#38a169';
-    textColor = 'white';
+    case 'error':
+      backgroundColor = '#e53e3e';
+      textColor = 'white';
+      break;
+    case 'info':
+      backgroundColor = '#3182ce';
+      textColor = 'white';
+      break;
+    case 'success':
+    default:
+      backgroundColor = '#38a169';
+      textColor = 'white';
   }
 
   notification.style.cssText = `
