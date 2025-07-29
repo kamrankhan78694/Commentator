@@ -512,6 +512,107 @@ class CommentatorLogger {
 // Create global logger instance
 window.CommentatorLogger = new CommentatorLogger();
 
+// Production-safe console wrapper
+class ProductionSafeConsole {
+  constructor() {
+    this.isDevelopment = this.detectEnvironment();
+    this.originalConsole = {
+      log: console.log,
+      warn: console.warn,
+      error: console.error,
+      info: console.info,
+      debug: console.debug,
+    };
+  }
+
+  detectEnvironment() {
+    // Check multiple sources for environment detection
+    if (typeof window !== 'undefined') {
+      // Check if we're on localhost or development domain
+      const hostname = window.location.hostname;
+      if (
+        hostname === 'localhost' ||
+        hostname === '127.0.0.1' ||
+        hostname.includes('dev')
+      ) {
+        return true;
+      }
+    }
+
+    // Check for NODE_ENV if available (injected by build process)
+    if (
+      typeof globalThis !== 'undefined' &&
+      globalThis.process &&
+      globalThis.process.env &&
+      globalThis.process.env.NODE_ENV
+    ) {
+      return globalThis.process.env.NODE_ENV === 'development';
+    }
+
+    // Default to production for safety
+    return false;
+  }
+
+  log(...args) {
+    if (this.isDevelopment) {
+      this.originalConsole.log(...args);
+      if (window.CommentatorLogger) {
+        window.CommentatorLogger.log(args.join(' '), 'info', 'CONSOLE');
+      }
+    }
+  }
+
+  warn(...args) {
+    if (this.isDevelopment) {
+      this.originalConsole.warn(...args);
+      if (window.CommentatorLogger) {
+        window.CommentatorLogger.log(args.join(' '), 'warning', 'CONSOLE');
+      }
+    }
+  }
+
+  error(...args) {
+    // Always log errors, but with conditional detail
+    if (this.isDevelopment) {
+      this.originalConsole.error(...args);
+      if (window.CommentatorLogger) {
+        window.CommentatorLogger.log(args.join(' '), 'error', 'CONSOLE');
+      }
+    } else {
+      // In production, log errors but with less detail
+      this.originalConsole.error('An error occurred');
+      if (window.CommentatorLogger) {
+        window.CommentatorLogger.log(
+          'Error occurred (details hidden in production)',
+          'error',
+          'SYSTEM'
+        );
+      }
+    }
+  }
+
+  info(...args) {
+    if (this.isDevelopment) {
+      this.originalConsole.info(...args);
+      if (window.CommentatorLogger) {
+        window.CommentatorLogger.log(args.join(' '), 'info', 'CONSOLE');
+      }
+    }
+  }
+
+  debug(...args) {
+    if (this.isDevelopment) {
+      this.originalConsole.debug(...args);
+      if (window.CommentatorLogger) {
+        window.CommentatorLogger.log(args.join(' '), 'debug', 'CONSOLE');
+      }
+    }
+  }
+}
+
+// Create production-safe console wrapper
+window.CommentatorConsole = new ProductionSafeConsole();
+
 // Export for module usage
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = CommentatorLogger;
