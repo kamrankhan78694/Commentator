@@ -566,7 +566,7 @@ function initCommentInterface() {
       console.log('Submitting comment:', { url, comment });
 
       // Submit comment with real API integration
-      submitComment(url, comment, commentsSection, commentText);
+      submitCommentWithParams(url, comment, commentsSection, commentText);
     });
   }
 
@@ -1089,7 +1089,7 @@ function displayComments(comments, commentsSection, isNFT = false) {
  * @param {HTMLElement} commentsSection - The comments display element
  * @param {HTMLElement} commentTextarea - The comment input element
  */
-async function submitComment(url, comment, commentsSection, commentTextarea) {
+async function submitCommentWithParams(url, comment, commentsSection, commentTextarea) {
   console.log('📝 submitComment called with:', {
     url,
     comment: comment.substring(0, 50) + '...',
@@ -2157,4 +2157,251 @@ function displayLocalComment(comment, commentsSection) {
       }, 3000);
     }
   }, 100);
+}
+
+/**
+ * Attach a URL for commenting
+ * Called from the onclick handler in index.html
+ */
+function attachUrl() {
+  const urlInput = document.getElementById('url-input');
+  const urlInputSection = document.getElementById('url-input-section');
+  const currentUrlSection = document.getElementById('current-url-section');
+  const currentUrlDisplay = document.getElementById('current-url-display');
+  const commentFormContainer = document.getElementById('comment-form-container');
+  const commentsContainer = document.getElementById('comments-container');
+  
+  if (!urlInput) {
+    console.error('URL input element not found');
+    return;
+  }
+  
+  const url = urlInput.value.trim();
+  
+  // Validate URL
+  if (!url) {
+    showNotification('Please enter a URL', 'error');
+    urlInput.focus();
+    return;
+  }
+  
+  if (!isValidUrl(url)) {
+    showNotification('Please enter a valid URL (e.g., https://example.com)', 'error');
+    urlInput.focus();
+    return;
+  }
+  
+  // Store current URL
+  window.currentAttachedUrl = url;
+  
+  // Update UI
+  if (currentUrlDisplay) {
+    currentUrlDisplay.textContent = url;
+  }
+  
+  if (urlInputSection) {
+    urlInputSection.style.display = 'none';
+  }
+  
+  if (currentUrlSection) {
+    currentUrlSection.style.display = 'block';
+  }
+  
+  if (commentFormContainer) {
+    commentFormContainer.style.display = 'block';
+  }
+  
+  // Load comments for the URL
+  loadCommentsForUrl(url, commentsContainer);
+  
+  // Log the action
+  if (window.CommentatorLogger) {
+    window.CommentatorLogger.action(`URL attached: ${url}`, 'info', 'USER_INTERACTION');
+  }
+  
+  showNotification(`URL attached: ${url}`, 'success');
+}
+
+/**
+ * Detach the current URL
+ * Called from the onclick handler in index.html
+ */
+function detachUrl() {
+  const urlInputSection = document.getElementById('url-input-section');
+  const currentUrlSection = document.getElementById('current-url-section');
+  const commentFormContainer = document.getElementById('comment-form-container');
+  const commentsContainer = document.getElementById('comments-container');
+  const urlInput = document.getElementById('url-input');
+  
+  // Clear current URL
+  window.currentAttachedUrl = null;
+  
+  // Reset UI
+  if (urlInputSection) {
+    urlInputSection.style.display = 'block';
+  }
+  
+  if (currentUrlSection) {
+    currentUrlSection.style.display = 'none';
+  }
+  
+  if (commentFormContainer) {
+    commentFormContainer.style.display = 'none';
+  }
+  
+  if (urlInput) {
+    urlInput.value = '';
+  }
+  
+  // Clear comments display
+  if (commentsContainer) {
+    commentsContainer.innerHTML = `
+      <div class="empty-state" id="empty-state">
+        <i data-feather="message-circle" class="empty-icon"></i>
+        <h3>No comments yet</h3>
+        <p>Attach a website URL to view and add comments</p>
+      </div>
+    `;
+    
+    // Re-initialize feather icons if available
+    if (typeof feather !== 'undefined') {
+      feather.replace();
+    }
+  }
+  
+  // Log the action
+  if (window.CommentatorLogger) {
+    window.CommentatorLogger.action('URL detached', 'info', 'USER_INTERACTION');
+  }
+  
+  showNotification('URL detached', 'info');
+}
+
+/**
+ * Submit comment wrapper for HTML onclick handler
+ * Gathers the necessary parameters and calls the main submitComment function
+ */
+function submitComment() {
+  const commentText = document.getElementById('comment-text');
+  const commentsContainer = document.getElementById('comments-container');
+  
+  if (!commentText || !commentsContainer) {
+    console.error('Required elements not found for comment submission');
+    return;
+  }
+  
+  const comment = commentText.value.trim();
+  const url = window.currentAttachedUrl;
+  
+  if (!url) {
+    showNotification('Please attach a URL first', 'error');
+    return;
+  }
+  
+  if (!comment) {
+    showNotification('Please enter a comment', 'error');
+    commentText.focus();
+    return;
+  }
+  
+  // Call the main submitComment function with proper parameters
+  submitCommentWithParams(url, comment, commentsContainer, commentText);
+}
+
+/**
+ * Authentication Modal Functions
+ * These functions handle the authentication modal interactions
+ */
+
+/**
+ * Open authentication modal
+ * @param {string} mode - 'signin' or 'signup'
+ */
+function openAuthModal(mode = 'signin') {
+  const modal = document.getElementById('auth-modal');
+  if (!modal) {
+    console.error('Authentication modal not found');
+    return;
+  }
+  
+  modal.style.display = 'block';
+  switchAuthTab(mode);
+  
+  // Log the action
+  if (window.CommentatorLogger) {
+    window.CommentatorLogger.action(`Authentication modal opened: ${mode}`, 'info', 'USER_INTERACTION');
+  }
+}
+
+/**
+ * Close authentication modal
+ */
+function closeAuthModal() {
+  const modal = document.getElementById('auth-modal');
+  if (!modal) {
+    console.error('Authentication modal not found');
+    return;
+  }
+  
+  modal.style.display = 'none';
+  
+  // Log the action
+  if (window.CommentatorLogger) {
+    window.CommentatorLogger.action('Authentication modal closed', 'info', 'USER_INTERACTION');
+  }
+}
+
+/**
+ * Switch between signin and signup tabs
+ * @param {string} tab - 'signin' or 'signup'
+ */
+function switchAuthTab(tab) {
+  // Remove active class from all tabs and forms
+  const tabs = document.querySelectorAll('.auth-tab');
+  const forms = document.querySelectorAll('.auth-form');
+  
+  tabs.forEach(t => t.classList.remove('active'));
+  forms.forEach(f => f.classList.remove('active'));
+  
+  // Add active class to selected tab and form
+  const selectedTab = document.querySelector(`.auth-tab[onclick*="${tab}"]`);
+  const selectedForm = document.getElementById(`${tab}-form`);
+  
+  if (selectedTab) selectedTab.classList.add('active');
+  if (selectedForm) selectedForm.classList.add('active');
+  
+  // Log the action
+  if (window.CommentatorLogger) {
+    window.CommentatorLogger.action(`Authentication tab switched: ${tab}`, 'info', 'USER_INTERACTION');
+  }
+}
+
+/**
+ * Sign in anonymously (placeholder function)
+ */
+function signInAnonymously() {
+  if (window.FirebaseService && window.FirebaseService.signInAnonymously) {
+    window.FirebaseService.signInAnonymously();
+  } else {
+    // Local mode fallback
+    showNotification('Signed in anonymously (Local mode)', 'success');
+    if (window.CommentatorLogger) {
+      window.CommentatorLogger.action('Anonymous sign-in (local mode)', 'info', 'USER_INTERACTION');
+    }
+  }
+}
+
+/**
+ * Sign in with Google (placeholder function)
+ */
+function signInWithGoogle() {
+  if (window.FirebaseService && window.FirebaseService.signInWithGoogle) {
+    window.FirebaseService.signInWithGoogle();
+  } else {
+    // Local mode fallback
+    showNotification('Google sign-in not available in local mode', 'info');
+    if (window.CommentatorLogger) {
+      window.CommentatorLogger.action('Google sign-in attempted (local mode)', 'info', 'USER_INTERACTION');
+    }
+  }
 }
