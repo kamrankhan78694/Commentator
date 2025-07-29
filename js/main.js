@@ -101,6 +101,7 @@ async function initFirebaseAuth() {
 
     // Check if Firebase service is available with timeout
     let firebaseCheckCount = 0;
+    // Limit to 5 attempts to prevent an infinite loop while allowing reasonable retries
     const maxFirebaseChecks = 5;
 
     while (
