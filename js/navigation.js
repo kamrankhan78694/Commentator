@@ -92,8 +92,6 @@ export function initNavigationHighlight() {
 
     sections.forEach((section) => {
       const sectionTop = section.offsetTop;
-      // sectionHeight calculated but not used in this context
-      section.clientHeight;
       if (scrollY >= sectionTop - 200) {
         current = section.getAttribute('id');
       }
