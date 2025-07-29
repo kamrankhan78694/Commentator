@@ -61,13 +61,13 @@ window.SecurityMiddleware = (function () {
     csp.setAttribute('http-equiv', 'Content-Security-Policy');
     csp.setAttribute(
       'content',
-      'default-src \'self\' https:; ' +
-        'script-src \'self\' \'unsafe-inline\' https://www.gstatic.com https://cdn.jsdelivr.net; ' +
-        'style-src \'self\' \'unsafe-inline\' https://fonts.googleapis.com; ' +
-        'img-src \'self\' data: https:; ' +
-        'connect-src \'self\' https: wss:; ' +
-        'font-src \'self\' https://fonts.gstatic.com; ' +
-        'frame-ancestors \'none\';'
+      "default-src 'self' https:; " +
+        "script-src 'self' 'unsafe-inline' https://www.gstatic.com https://cdn.jsdelivr.net; " +
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
+        "img-src 'self' data: https:; " +
+        "connect-src 'self' https: wss:; " +
+        "font-src 'self' https://fonts.gstatic.com; " +
+        "frame-ancestors 'none';"
     );
     head.appendChild(csp);
 
