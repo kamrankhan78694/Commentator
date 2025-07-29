@@ -15,6 +15,16 @@ import {
   scrollToNewComment,
 } from './comment-display.js';
 
+// Helper function to escape HTML special characters
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 /**
  * Initialize the comment interface functionality
  */
@@ -167,7 +177,7 @@ export async function loadCommentsForUrl(url, commentsSection) {
   }
 
   // Show loading state
-  commentsSection.innerHTML = createLoadingState(url);
+  commentsSection.innerHTML = createLoadingState(escapeHtml(url));
 
   try {
     // Check if Firebase service is available
