@@ -13,6 +13,24 @@
  */
 
 /**
+ * Utility function to escape HTML special characters
+ * @param {string} str - The string to escape
+ * @returns {string} - The escaped string
+ */
+function escapeHtml(str) {
+  return str.replace(/[&<>"']/g, (char) => {
+    const escapeMap = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;',
+    };
+    return escapeMap[char] || char;
+  });
+}
+
+/**
  * Get the base URL for the site (handles GitHub Pages deployment and subdirectories)
  */
 function getBaseUrl() {
@@ -915,9 +933,10 @@ async function loadCommentsForUrl(url, commentsSection) {
   }
 
   // Show loading state
+  const escapedUrl = escapeHtml(url);
   commentsSection.innerHTML = `
         <div class="loading">
-            <p>🔄 Loading comments for ${url}...</p>
+            <p>🔄 Loading comments for ${escapedUrl}...</p>
         </div>
     `;
 
@@ -990,9 +1009,10 @@ async function loadCommentsForUrl(url, commentsSection) {
         error
       );
     }
+    const escapedErrorMessage = escapeHtml(error.message);
     commentsSection.innerHTML = `
             <div class="error-state">
-                <p>❌ Failed to load comments: ${error.message}</p>
+                <p>❌ Failed to load comments: ${escapedErrorMessage}</p>
                 <button id="retry-button" class="btn btn-secondary">
                     Retry
                 </button>
