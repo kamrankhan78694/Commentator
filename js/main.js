@@ -77,7 +77,12 @@ async function loadHeaderAndFooter() {
         initKeyboardNavigation();
       }
     } else {
-      console.warn('Failed to load header:', headerResponse.status);
+      // Use production-safe console
+      if (window.CommentatorConsole) {
+        window.CommentatorConsole.warn('Failed to load header:', headerResponse.status);
+      } else {
+        console.warn('Failed to load header:', headerResponse.status);
+      }
       if (window.CommentatorLogger) {
         window.CommentatorLogger.error(
           `Failed to load header: ${headerResponse.status}`,
@@ -116,7 +121,12 @@ async function loadHeaderAndFooter() {
         }
       }
     } else {
-      console.warn('Failed to load footer:', footerResponse.status);
+      // Use production-safe console
+      if (window.CommentatorConsole) {
+        window.CommentatorConsole.warn('Failed to load footer:', footerResponse.status);
+      } else {
+        console.warn('Failed to load footer:', footerResponse.status);
+      }
       if (window.CommentatorLogger) {
         window.CommentatorLogger.error(
           `Failed to load footer: ${footerResponse.status}`,
@@ -133,7 +143,12 @@ async function loadHeaderAndFooter() {
       validateAccessibility();
     }, 1000);
   } catch (error) {
-    console.error('Error loading header/footer components:', error);
+    // Use production-safe console
+    if (window.CommentatorConsole) {
+      window.CommentatorConsole.error('Error loading header/footer components:', error);
+    } else {
+      console.error('Error loading header/footer components:', error);
+    }
     if (window.CommentatorLogger) {
       window.CommentatorLogger.error(
         'Error loading header/footer components',
@@ -226,7 +241,12 @@ function configureNavigation() {
 
 // Wait for DOM to be fully loaded before initializing
 document.addEventListener('DOMContentLoaded', async () => {
-  console.log('🗨️ Commentator interface initialized');
+  // Use production-safe console
+  if (window.CommentatorConsole) {
+    window.CommentatorConsole.log('🗨️ Commentator interface initialized');
+  } else {
+    console.log('🗨️ Commentator interface initialized');
+  }
 
   // Log application initialization
   if (window.CommentatorLogger) {
@@ -237,17 +257,37 @@ document.addEventListener('DOMContentLoaded', async () => {
       'INIT'
     );
   } // Wait for environment configuration to be ready
-  console.log('Waiting for environment configuration...');
+  if (window.CommentatorConsole) {
+    window.CommentatorConsole.log('Waiting for environment configuration...');
+  } else {
+    console.log('Waiting for environment configuration...');
+  }
   await waitForEnvironmentConfig();
-  console.log('Environment configuration ready');
+  if (window.CommentatorConsole) {
+    window.CommentatorConsole.log('Environment configuration ready');
+  } else {
+    console.log('Environment configuration ready');
+  }
 
   // Wait for Firebase services to be available
-  console.log('Waiting for Firebase service...');
+  if (window.CommentatorConsole) {
+    window.CommentatorConsole.log('Waiting for Firebase service...');
+  } else {
+    console.log('Waiting for Firebase service...');
+  }
   await waitForFirebaseService();
-  console.log('Firebase service ready');
+  if (window.CommentatorConsole) {
+    window.CommentatorConsole.log('Firebase service ready');
+  } else {
+    console.log('Firebase service ready');
+  }
 
   // Initialize Firebase authentication first
-  console.log('Initializing Firebase authentication...');
+  if (window.CommentatorConsole) {
+    window.CommentatorConsole.log('Initializing Firebase authentication...');
+  } else {
+    console.log('Initializing Firebase authentication...');
+  }
   await initFirebaseAuth();
   console.log('Firebase authentication complete');
 
