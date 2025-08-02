@@ -69,12 +69,24 @@ async function runAllTests() {
     .readdirSync(testDir)
     .filter((file) => file.endsWith('-tests.js') && file !== 'runner.js');
 
+  // Also look for test files in subdirectories
+  const seoTestDir = path.join(__dirname, '..', 'seo', 'test');
+  if (fs.existsSync(seoTestDir)) {
+    const seoTestFiles = fs
+      .readdirSync(seoTestDir)
+      .filter((file) => file.endsWith('-tests.js'))
+      .map((file) => path.join(seoTestDir, file));
+    testFiles.push(...seoTestFiles);
+  }
+
   for (const testFile of testFiles) {
-    console.log(`\n📁 Running ${testFile}...`);
+    const fileName = path.basename(testFile);
+    console.log(`\n📁 Running ${fileName}...`);
     try {
-      await import(path.join(testDir, testFile));
+      const fullPath = path.isAbsolute(testFile) ? testFile : path.join(testDir, testFile);
+      await import(fullPath);
     } catch (error) {
-      console.error(`❌ Failed to load ${testFile}:`, error.message);
+      console.error(`❌ Failed to load ${fileName}:`, error.message);
       process.exit(1);
     }
   }
