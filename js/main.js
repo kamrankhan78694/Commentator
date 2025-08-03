@@ -403,6 +403,46 @@ async function initializeApp() {
     initWeb3();
     initWeb3Styles();
 
+    // Initialize SEO Schema
+    console.log('Initializing SEO Schema...');
+    if (typeof window.initializeSEOSchema === 'function') {
+      const schemaManager = window.initializeSEOSchema();
+      
+      // Add page-specific schema based on current page
+      const currentPath = window.location.pathname;
+      if (currentPath.includes('/docs/')) {
+        if (currentPath.includes('faq')) {
+          schemaManager.addPageSchema('faq', {
+            questions: window.SEO_SCHEMA_CONFIG?.faqQuestions || []
+          });
+        } else if (currentPath.includes('api')) {
+          schemaManager.addPageSchema('documentation', {
+            "@type": "APIReference",
+            "programmingLanguage": "JavaScript"
+          });
+        } else {
+          schemaManager.addPageSchema('documentation', {
+            "headline": document.title,
+            "description": document.querySelector('meta[name="description"]')?.content
+          });
+        }
+        
+        // Add breadcrumb schema for documentation pages
+        const breadcrumbs = window.SEO_SCHEMA_CONFIG?.breadcrumbs?.[currentPath] || 
+                          window.SEO_SCHEMA_CONFIG?.breadcrumbs?.['docs/'];
+        if (breadcrumbs) {
+          const breadcrumbSchema = schemaManager.generateBreadcrumbSchema(breadcrumbs);
+          schemaManager.addPageSchema('breadcrumb', breadcrumbSchema);
+        }
+      }
+      
+      // Inject all schemas
+      schemaManager.injectSchemas();
+      console.log('✅ SEO Schema initialized and injected');
+    } else {
+      console.warn('⚠️ SEO Schema module not available');
+    }
+
     // Run accessibility validation in development
     setTimeout(() => {
       validateAccessibility();

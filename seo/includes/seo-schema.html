@@ -1,0 +1,63 @@
+<!-- SEO Schema Configuration for Jekyll Pages -->
+<script src="{{ '/seo/js/seo-schema-config.js' | relative_url }}"></script>
+<script src="{{ '/seo/js/seo-schema.js' | relative_url }}"></script>
+
+<!-- Page-specific schema initialization -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    if (typeof window.initializeSEOSchema === 'function') {
+      const schemaManager = window.initializeSEOSchema();
+      
+      // Determine page type and add appropriate schema
+      const pageType = '{{ page.schema_type | default: "documentation" }}';
+      const currentPath = window.location.pathname;
+      
+      {% if page.schema_type == 'faq' %}
+        // FAQ Page Schema
+        schemaManager.addPageSchema('faq', {
+          questions: window.SEO_SCHEMA_CONFIG?.faqQuestions || []
+        });
+      {% elsif page.schema_type == 'api' %}
+        // API Documentation Schema
+        schemaManager.addPageSchema('documentation', {
+          "@type": "APIReference",
+          "programmingLanguage": "JavaScript",
+          "headline": "{{ page.title | escape }}",
+          "description": "{{ page.description | default: site.description | escape }}"
+        });
+      {% elsif page.layout == 'default' and page.section == 'documentation' %}
+        // Technical Documentation Schema
+        schemaManager.addPageSchema('documentation', {
+          "headline": "{{ page.title | escape }}",
+          "description": "{{ page.description | default: site.description | escape }}",
+          "datePublished": "{{ page.date | default: site.time | date_to_xmlschema }}",
+          "dateModified": "{{ page.modified_date | default: page.date | default: site.time | date_to_xmlschema }}"
+        });
+      {% else %}
+        // Generic Article Schema
+        schemaManager.addPageSchema('article', {
+          "headline": "{{ page.title | escape }}",
+          "description": "{{ page.description | default: site.description | escape }}",
+          "datePublished": "{{ page.date | default: site.time | date_to_xmlschema }}",
+          "dateModified": "{{ page.modified_date | default: page.date | default: site.time | date_to_xmlschema }}"
+        });
+      {% endif %}
+      
+      // Add breadcrumb schema for documentation pages
+      {% if page.section == 'documentation' or page.url contains '/docs/' %}
+        const breadcrumbs = [
+          { name: "Home", url: "{{ '/' | relative_url }}" },
+          { name: "Documentation", url: "{{ '/docs/' | relative_url }}" }
+          {% if page.title and page.url != '/docs/' and page.url != '/docs/index.html' %},
+          { name: "{{ page.title | escape }}", url: "{{ page.url | relative_url }}" }
+          {% endif %}
+        ];
+        const breadcrumbSchema = schemaManager.generateBreadcrumbSchema(breadcrumbs);
+        schemaManager.addPageSchema('breadcrumb', breadcrumbSchema);
+      {% endif %}
+      
+      // Inject all schemas
+      schemaManager.injectSchemas();
+    }
+  });
+</script>
