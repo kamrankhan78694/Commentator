@@ -60,21 +60,37 @@ Transform Commentator into a **disruptive, scalable technology** that becomes th
 ### Phase 1: MVP Foundation (Months 1-3)
 **Goal**: Establish core commenting functionality and browser extension
 
+> 📊 **Current Status**: See [CURRENT_STATUS.md](CURRENT_STATUS.md) for a detailed assessment of what is built today.
+> 🚀 **Next Steps**: See [NEXT_PHASE_PLAN.md](NEXT_PHASE_PLAN.md) for the actionable plan to complete Phase 1 and begin Phase 2.
+
 #### Milestones:
-- [ ] **M1.1**: Browser Extension Development
+- [x] **M1.1a**: Web Application Core (Completed)
+  - Firebase Realtime Database integration with real-time sync
+  - Anonymous, email/password, and Google authentication
+  - URL-based comment storage and retrieval with hash-based organization
+  - Responsive web UI with mobile-first design
+  - Security middleware (CSRF, input validation, content sanitization)
+  - Debug logging panel, error handling, environment-aware configuration
+  - CI/CD pipeline with linting, testing, and security scanning
+
+- [ ] **M1.1b**: Browser Extension Development (Not Started)
   - Chrome/Firefox extension with basic commenting UI
-  - URL-based comment storage and retrieval
-  - Basic user authentication system
+  - Content script injection for any website
+  - Extension store submissions
   
-- [ ] **M1.2**: Core Comment System
-  - Comment creation, editing, deletion
-  - Reply threading and nested comments
-  - Basic moderation (flag/report system)
+- [ ] **M1.2**: Comment System Enhancements (Partially Complete)
+  - [x] Comment creation and display
+  - [x] Vote data model
+  - [ ] Reply threading and nested comments
+  - [ ] Comment editing and deletion (UI)
+  - [ ] Basic moderation (flag/report system)
   
-- [ ] **M1.3**: Data Infrastructure
-  - Local storage backend with sync capabilities
-  - Comment export/import functionality
-  - Basic analytics and usage tracking
+- [ ] **M1.3**: Production Infrastructure (Partially Complete)
+  - [x] Firebase backend with real-time sync
+  - [x] CI/CD pipeline structure (deployment commands disabled)
+  - [ ] Automated staging and production deployment
+  - [ ] Post-deployment health checks and rollback
+  - [ ] Meaningful test coverage (currently structural tests only)
 
 #### Success Metrics:
 - 1,000+ extension downloads
@@ -207,6 +223,10 @@ Transform Commentator into a **disruptive, scalable technology** that becomes th
 
 ## 🎯 Next Steps
 
+> 📋 For detailed current status and next phase planning, see:
+> - [CURRENT_STATUS.md](CURRENT_STATUS.md) — Honest assessment of what's built today
+> - [NEXT_PHASE_PLAN.md](NEXT_PHASE_PLAN.md) — Sprint-by-sprint plan to production-ready MVP
+
 ### Immediate Actions (Next 30 Days)
 1. **Set up GitHub Project Board** with milestones and task tracking
 2. **Create developer contribution guidelines** and issue templates
@@ -230,4 +250,4 @@ Transform Commentator into a **disruptive, scalable technology** that becomes th
 
 ---
 
-*This roadmap is a living document that will evolve based on community feedback, market conditions, and technological developments. Last updated: December 2024*
+*This roadmap is a living document that will evolve based on community feedback, market conditions, and technological developments. Last updated: February 2026*
