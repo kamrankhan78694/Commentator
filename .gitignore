@@ -175,23 +175,22 @@ firebase-test.html
 logger-test.html
 
 # Status Reports and Validation (informational/historical - low priority)
+# Note: archive/reports/ files are tracked (used by tests)
 *_REPORT.md
 *_SUMMARY.md
 *_COMPLETE.md
-*_CHECKLIST.md
 *_ASSESSMENT.md
 *_AUDIT_REPORT.md
 VALIDATION_RESULTS.md
-EMERGENCY_RESPONSE_GUIDE.md
 FINAL_STATUS_REPORT.md
 BUTTON_FIX_COMPLETE_REPORT.md
 COMMENT_SUBMISSION_FIX_SUMMARY.md
 DEPLOYMENT_COMPLETE.md
 ENVIRONMENT_SETUP_SUMMARY.md
-PRODUCTION_DEPLOYMENT_CHECKLIST.md
 PRODUCTION_READINESS_ASSESSMENT.md
 SECURITY_AUDIT_REPORT.md
 DEBUG_LOGGER.md
+!archive/reports/*.md
 
 # Backup and Alternative Versions (historical - low priority)
 index-*.html
@@ -208,7 +207,7 @@ test-*.sh
 organize-files.sh
 
 # Archive directory (organized temporary files)
-archive/
+# archive/  -- un-ignored: contains test fixtures and operational docs
 
 # ==============================================
 # AI AGENT GUIDANCE (EMBEDDED COMMENTS)

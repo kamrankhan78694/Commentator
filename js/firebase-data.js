@@ -416,10 +416,13 @@ async function editComment(url, commentId, newContent) {
     }
 
     // Enforce 15-minute edit window
-    const createdAt = existing.timestamp || existing.createdAt || 0;
+    const createdAt = existing.timestamp || existing.createdAt;
+    if (!createdAt || typeof createdAt !== 'number') {
+      throw new Error('Cannot determine comment creation time');
+    }
     const now = Date.now();
     const fifteenMinutes = 15 * 60 * 1000;
-    if (typeof createdAt === 'number' && (now - createdAt) > fifteenMinutes) {
+    if ((now - createdAt) > fifteenMinutes) {
       throw new Error('Edit window has expired (15 minutes)');
     }
 

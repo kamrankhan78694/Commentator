@@ -44,6 +44,11 @@ This document provides an honest, detailed assessment of the Commentator project
 | Timestamp formatting | `js/comment-display.js` | ✅ Working |
 | Vote counting (data model) | `js/firebase-data.js` | ✅ Working |
 | Comment input validation | `js/forms.js`, `js/security.js` | ✅ Working |
+| Threaded/nested replies (max 3 levels) | `js/comment-display.js`, `js/comments.js` | ✅ Working |
+| Reply UI (inline reply form) | `js/comments.js` | ✅ Working |
+| Comment editing (author-only, 15 min window) | `js/firebase-data.js`, `js/comments.js` | ✅ Working |
+| Comment soft-delete (author-only) | `js/firebase-data.js`, `js/comments.js` | ✅ Working |
+| Comment flagging/reporting | `js/firebase-data.js`, `js/comments.js` | ✅ Working |
 
 ### 3. Security
 
@@ -155,9 +160,7 @@ This document provides an honest, detailed assessment of the Commentator project
 | Feature | Planned In | Current State |
 |---------|-----------|---------------|
 | Browser extension (Chrome/Firefox) | Phase 1 | Not started |
-| Reply threading / nested comments | Phase 1 | Not started (flat comments only) |
-| Comment editing and deletion (UI) | Phase 1 | Data model supports it; no UI |
-| Flagging / reporting system | Phase 1 | Not started |
+| Admin moderation interface | Phase 1 | Not started (flagging/reporting available) |
 | MetaMask wallet authentication (real) | Phase 2 | Placeholder contract address |
 | ENS domain resolution | Phase 2 | Not started |
 | Cryptographic comment signing | Phase 2 | Not started |
@@ -206,9 +209,9 @@ This document provides an honest, detailed assessment of the Commentator project
 | Metric | Current Value | Phase 1 Target |
 |--------|--------------|----------------|
 | JavaScript modules | 25 files | — |
-| Test assertions | 24+ (structural) | Comprehensive coverage |
+| Test assertions | 28 unit + 7 E2E (all passing) | Comprehensive coverage |
 | CI/CD workflows | 4 configured | Fully operational |
-| Documentation files | 9+ markdown docs | — |
+| Documentation files | 11+ markdown docs | — |
 | Active deployments | None (manual only) | Automated staging + prod |
 | Users | Development testing only | 1,000 active |
 | Comments | Demo/test data | 10,000 |
@@ -226,10 +229,9 @@ The Commentator project has a **solid foundation** for a commenting platform:
 
 The primary gaps preventing a production-ready MVP are:
 1. **No automated deployment** — deployment pipeline commands are commented out
-2. **No reply threading** — comments are flat, no nested replies
-3. **Minimal test coverage** — only structural tests, no functional tests
-4. **No moderation system** — no flagging, reporting, or admin interface
-5. **No browser extension** — the primary distribution vehicle is unbuilt
+2. **Minimal test coverage** — only structural tests, no functional tests
+3. **No admin moderation interface** — flagging works but no admin view to review flagged comments
+4. **No browser extension** — the primary distribution vehicle is unbuilt
 
 ---
 

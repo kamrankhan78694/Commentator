@@ -34,14 +34,15 @@ function buildCommentTree(comments, maxDepth = 3) {
   });
 
   // Trim depth beyond maxDepth (flatten deeply nested replies)
+  // Note: operates on the already-copied tree nodes, safe to mutate
   function trimDepth(nodes, depth) {
-    nodes.forEach((node) => {
+    for (let i = 0; i < nodes.length; i++) {
       if (depth >= maxDepth) {
-        node.replies = [];
+        nodes[i] = { ...nodes[i], replies: [] };
       } else {
-        trimDepth(node.replies, depth + 1);
+        trimDepth(nodes[i].replies, depth + 1);
       }
-    });
+    }
   }
   trimDepth(roots, 1);
 

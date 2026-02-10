@@ -51,7 +51,7 @@
           ".validate": "newData.isNumber() || newData.val() == null"
         },
         "flags": {
-          ".validate": true
+          ".validate": "newData.hasChildren()"
         },
         "flagCount": {
           ".validate": "newData.isNumber()"

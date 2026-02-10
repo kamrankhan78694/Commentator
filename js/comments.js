@@ -15,6 +15,9 @@ import {
   scrollToNewComment,
 } from './comment-display.js';
 
+// Track which elements have had comment action listeners attached
+const elementsWithActions = new WeakSet();
+
 // Helper function to escape HTML special characters
 function escapeHtml(str) {
   return String(str)
@@ -109,7 +112,6 @@ function handleReplyAction(commentId, url, commentsSection) {
 
       const commentData = {
         author: 'Anonymous',
-        text: replyText,
         content: replyText,
         votes: 0,
         timestamp: new Date().toISOString(),
@@ -464,10 +466,10 @@ export async function loadCommentsForUrl(url, commentsSection) {
     displayComments(formattedComments, commentsSection);
 
     // Set up comment action buttons (reply, edit, delete, flag) via event delegation
-    // Only set up once per load (real-time updates reuse the same listener)
-    if (!commentsSection._actionsSetup) {
+    // Only set up once per element
+    if (!elementsWithActions.has(commentsSection)) {
       setupCommentActions(commentsSection, url);
-      commentsSection._actionsSetup = true;
+      elementsWithActions.add(commentsSection);
     }
 
     // Show success message
