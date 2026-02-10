@@ -4,15 +4,18 @@
       "$urlHash": {
         ".read": true,
         ".write": "auth != null",
-        ".validate": "newData.hasChildren(['text', 'author', 'timestamp'])",
+        ".validate": "newData.hasChildren(['text', 'author', 'timestamp']) || newData.hasChildren(['content', 'author', 'timestamp'])",
         "text": {
+          ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 5000"
+        },
+        "content": {
           ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 5000"
         },
         "author": {
           ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 100"
         },
         "timestamp": {
-          ".validate": "newData.isNumber()"
+          ".validate": "newData.isNumber() || newData.isString()"
         },
         "votes": {
           ".validate": "newData.isNumber()"
@@ -25,6 +28,42 @@
         },
         "isNFT": {
           ".validate": "newData.isBoolean()"
+        },
+        "parentId": {
+          ".validate": "newData.isString()"
+        },
+        "userId": {
+          ".validate": "newData.isString()"
+        },
+        "url": {
+          ".validate": "newData.isString()"
+        },
+        "status": {
+          ".validate": "newData.isString() && (newData.val() === 'published' || newData.val() === 'deleted' || newData.val() === 'flagged')"
+        },
+        "isEdited": {
+          ".validate": "newData.isBoolean()"
+        },
+        "editedAt": {
+          ".validate": "newData.isNumber() || newData.val() == null"
+        },
+        "deletedAt": {
+          ".validate": "newData.isNumber() || newData.val() == null"
+        },
+        "flags": {
+          ".validate": true
+        },
+        "flagCount": {
+          ".validate": "newData.isNumber()"
+        },
+        "email": {
+          ".validate": "newData.isString()"
+        },
+        "website": {
+          ".validate": "newData.isString()"
+        },
+        "createdAt": {
+          ".validate": "newData.isNumber()"
         }
       }
     },
@@ -54,21 +93,36 @@
       "$sessionId": {
         ".read": "auth != null",
         ".write": "auth != null",
-        ".validate": "newData.hasChildren(['userId', 'createdAt'])",
+        ".validate": "newData.hasChildren(['userId', 'createdAt']) || newData.hasChildren(['userId', 'startTime'])",
         "userId": {
           ".validate": "newData.isString() && auth.uid == newData.val()"
         },
         "createdAt": {
           ".validate": "newData.isNumber()"
         },
+        "startTime": {
+          ".validate": "newData.isNumber() || newData.val() == null"
+        },
         "lastActivity": {
-          ".validate": "newData.isNumber()"
+          ".validate": "newData.isNumber() || newData.val() == null"
+        },
+        "endTime": {
+          ".validate": "newData.isNumber() || newData.val() == null"
         },
         "userAgent": {
           ".validate": "newData.isString()"
         },
         "ipAddress": {
           ".validate": "newData.isString()"
+        },
+        "status": {
+          ".validate": "newData.isString()"
+        },
+        "referrer": {
+          ".validate": "newData.isString()"
+        },
+        "timestamp": {
+          ".validate": "newData.isNumber()"
         }
       }
     }
