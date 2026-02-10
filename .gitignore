@@ -208,6 +208,8 @@ organize-files.sh
 
 # Archive directory (organized temporary files)
 # archive/  -- un-ignored: contains test fixtures and operational docs
+!archive/
+!archive/**
 
 # ==============================================
 # AI AGENT GUIDANCE (EMBEDDED COMMENTS)
