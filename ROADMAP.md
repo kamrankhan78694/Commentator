@@ -57,24 +57,36 @@ Transform Commentator into a **disruptive, scalable technology** that becomes th
 
 ## 🛠️ Development Phases & Roadmap
 
-### Phase 1: MVP Foundation (Months 1-3)
+### Phase 1: MVP Foundation (Months 1-3) ✅ COMPLETED
 **Goal**: Establish core commenting functionality and browser extension
 
 #### Milestones:
-- [ ] **M1.1**: Browser Extension Development
+- [x] **M1.1**: Browser Extension Development
   - Chrome/Firefox extension with basic commenting UI
   - URL-based comment storage and retrieval
   - Basic user authentication system
   
-- [ ] **M1.2**: Core Comment System
+- [x] **M1.2**: Core Comment System
   - Comment creation, editing, deletion
   - Reply threading and nested comments
   - Basic moderation (flag/report system)
   
-- [ ] **M1.3**: Data Infrastructure
-  - Local storage backend with sync capabilities
-  - Comment export/import functionality
-  - Basic analytics and usage tracking
+- [x] **M1.3**: Data Infrastructure
+  - Firebase Realtime Database backend with sync capabilities
+  - Multi-environment configuration (dev, staging, production)
+  - Session management and usage tracking
+
+#### Completed Deliverables:
+- ✅ Firebase Realtime Database integration with real-time synchronization
+- ✅ Anonymous and authenticated user support
+- ✅ Modular JavaScript architecture (15+ JS modules)
+- ✅ Comprehensive error handling and logging system
+- ✅ CI/CD pipeline with GitHub Actions
+- ✅ Security middleware and XSS protection
+- ✅ Full test infrastructure (unit, integration, security, E2E)
+- ✅ Multi-environment deployment (dev/staging/production)
+- ✅ Documentation portal with API reference, developer guide, and security docs
+- ✅ Performance monitoring infrastructure
 
 #### Success Metrics:
 - 1,000+ extension downloads
@@ -82,24 +94,93 @@ Transform Commentator into a **disruptive, scalable technology** that becomes th
 - 5,000+ comments posted
 - <2 second comment load times
 
-### Phase 2: Decentralization Foundation (Months 4-8)
+### Phase 2: Decentralization Foundation (Months 4-8) 🔄 NEXT PHASE
 **Goal**: Implement Web3 infrastructure and decentralized identity
+**Status**: Planning Complete — Ready for Implementation
 
 #### Milestones:
-- [ ] **M2.1**: Web3 Identity Integration
-  - MetaMask wallet connection
+- [ ] **M2.1**: Web3 Identity Integration (Month 4-5)
+  - MetaMask wallet connection — *foundation exists in `js/web3.js`*
   - ENS domain resolution for usernames
   - Cryptographic comment signing
+  - Multi-wallet support (WalletConnect, Coinbase Wallet)
   
-- [ ] **M2.2**: Decentralized Storage
-  - IPFS integration for comment storage
-  - web3.storage API implementation
+- [ ] **M2.2**: Decentralized Storage (Month 5-6)
+  - IPFS integration for comment storage — *foundation exists in `js/ipfs.js`*
+  - web3.storage API implementation — *w3up-client dependency already added*
   - Comment content addressing and retrieval
+  - Hybrid storage strategy (Firebase metadata + IPFS content)
   
-- [ ] **M2.3**: Community Governance
+- [ ] **M2.3**: Community Governance (Month 7-8)
   - Upvote/downvote system with token weights
   - Community moderation mechanisms
   - Reputation scoring system
+
+#### Phase 2 Action Plan:
+
+##### 🔹 Sprint 1 (Month 4, Weeks 1-2): Web3 Wallet Authentication
+**Priority**: Critical — Enables all subsequent decentralization work
+- [ ] Complete MetaMask wallet connect flow in `js/web3.js`
+- [ ] Implement signature-based authentication alongside Firebase auth
+- [ ] Add wallet address display and account switching support
+- [ ] Create fallback flow for users without wallets (keep Firebase auth)
+- [ ] Write integration tests for wallet connection scenarios
+
+##### 🔹 Sprint 2 (Month 4, Weeks 3-4): ENS & Identity
+**Priority**: High — User identity layer for decentralized comments
+- [ ] Integrate ENS name resolution using `ethers.js` (already in dependencies)
+- [ ] Display ENS names as comment author identifiers
+- [ ] Support ENS avatar resolution for user profiles
+- [ ] Add identity verification badge for wallet-authenticated users
+
+##### 🔹 Sprint 3 (Month 5, Weeks 1-2): IPFS Comment Storage
+**Priority**: Critical — Core decentralization requirement
+- [ ] Implement comment upload to IPFS via `@web3-storage/w3up-client`
+- [ ] Store IPFS CIDs in Firebase for quick retrieval (hybrid approach)
+- [ ] Build content addressing for comment lookup by CID
+- [ ] Add IPFS pinning management for comment persistence
+
+##### 🔹 Sprint 4 (Month 5, Weeks 3-4): Hybrid Storage & Retrieval
+**Priority**: High — Performance + decentralization balance
+- [ ] Implement dual-write strategy: Firebase (fast) + IPFS (permanent)
+- [ ] Build IPFS content retrieval with Firebase fallback
+- [ ] Add comment migration tool for existing Firebase-only comments
+- [ ] Optimize retrieval latency with caching layer
+
+##### 🔹 Sprint 5 (Month 6, Weeks 1-2): Cryptographic Signing
+**Priority**: High — Content integrity and authenticity
+- [ ] Implement comment signing with user's Ethereum wallet
+- [ ] Add signature verification on comment display
+- [ ] Store signature metadata alongside comment data
+- [ ] Build verification UI indicator for signed comments
+
+##### 🔹 Sprint 6 (Month 6, Weeks 3-4): Multi-Wallet Support
+**Priority**: Medium — Broader user accessibility
+- [ ] Add WalletConnect integration for mobile wallet users
+- [ ] Support Coinbase Wallet connection
+- [ ] Implement wallet abstraction layer for future wallet support
+- [ ] Test cross-wallet comment signing compatibility
+
+##### 🔹 Sprint 7 (Month 7): Voting & Reputation System
+**Priority**: Medium — Community engagement foundation
+- [ ] Implement upvote/downvote system with on-chain recording
+- [ ] Design reputation scoring algorithm based on contributions
+- [ ] Build reputation display in user profiles and comments
+- [ ] Add weighted voting based on reputation level
+
+##### 🔹 Sprint 8 (Month 8): Community Moderation
+**Priority**: Medium — Governance preparation
+- [ ] Implement community flag/report with multi-reviewer workflow
+- [ ] Build moderation dashboard for high-reputation users
+- [ ] Design DAO governance token specification
+- [ ] Create proposal and voting mechanism for moderation decisions
+
+#### Technical Prerequisites (Address Before Phase 2):
+1. **Code Modularization**: Split `js/main.js` (2,160 lines) into focused modules — *identified in audit (Issue #65)*
+2. **Conditional Logging**: Replace 167 console statements with environment-aware logging — *identified in audit*
+3. **Dependency Updates**: Monitor and resolve 10 moderate Firebase vulnerabilities — *identified in audit*
+4. **Database Schema Design**: Complete database requirements analysis — *Issue #69*
+5. **UI Stabilization**: Fix broken buttons and navigation — *Issue #59*
 
 #### Success Metrics:
 - 10,000+ wallet connections
@@ -208,18 +289,18 @@ Transform Commentator into a **disruptive, scalable technology** that becomes th
 ## 🎯 Next Steps
 
 ### Immediate Actions (Next 30 Days)
-1. **Set up GitHub Project Board** with milestones and task tracking
-2. **Create developer contribution guidelines** and issue templates
-3. **Design technical architecture** for Phase 1 MVP
-4. **Establish community channels** (Discord, Twitter, Newsletter)
-5. **Begin browser extension development** with core team
+1. **Resolve Phase 1 technical debt** — modularize `main.js`, implement conditional logging (Issue #65)
+2. **Complete database requirements analysis** — finalize schema design for Web3 data models (Issue #69)
+3. **Stabilize UI** — fix broken buttons and navigation issues (Issue #59)
+4. **Set up Web3 development environment** — configure local Ethereum testnet and IPFS node
+5. **Begin MetaMask integration** — complete wallet connect flow in `js/web3.js` (Sprint 1)
 
 ### Medium-term Goals (Next 90 Days)
-1. **Launch MVP browser extension** with basic commenting
-2. **Build initial user base** through targeted outreach
-3. **Collect user feedback** and iterate on core features
-4. **Prepare Web3 integration** research and planning
-5. **Establish partnerships** with Web3 infrastructure providers
+1. **Complete Web3 identity integration** — MetaMask, ENS resolution, signature-based auth
+2. **Launch IPFS comment storage** — hybrid Firebase + IPFS with content addressing
+3. **Implement cryptographic comment signing** — wallet-based authenticity verification
+4. **Enhance production test suite** — expand coverage for Web3 and decentralization features (Issue #61)
+5. **Prepare multi-wallet support** — WalletConnect and Coinbase Wallet integration
 
 ### Long-term Vision (12+ Months)
 1. **Become the standard** for decentralized web commentary
@@ -230,4 +311,4 @@ Transform Commentator into a **disruptive, scalable technology** that becomes th
 
 ---
 
-*This roadmap is a living document that will evolve based on community feedback, market conditions, and technological developments. Last updated: December 2024*
+*This roadmap is a living document that will evolve based on community feedback, market conditions, and technological developments. Last updated: February 2026*
