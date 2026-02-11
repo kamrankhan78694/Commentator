@@ -22,6 +22,9 @@ import {
   saveComment,
   loadComments,
   subscribeToComments,
+  editComment,
+  deleteComment,
+  flagComment,
   saveUserData,
   loadUserData,
   createSession,
@@ -48,6 +51,9 @@ window.FirebaseService = (function () {
     saveComment,
     loadComments,
     subscribeToComments,
+    editComment,
+    deleteComment,
+    flagComment,
 
     // Users
     saveUserData,

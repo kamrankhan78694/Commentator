@@ -1,8 +1,8 @@
 /**
  * Comments Module
  *
- * Handles comment interface functionality, comment loading, and submission
- * for the Commentator application.
+ * Handles comment interface functionality, comment loading, submission,
+ * and moderation actions (reply, edit, delete, flag) for the Commentator application.
  *
  * @module Comments
  */
@@ -15,6 +15,9 @@ import {
   scrollToNewComment,
 } from './comment-display.js';
 
+// Track which elements have had comment action listeners attached
+const elementsWithActions = new WeakSet();
+
 // Helper function to escape HTML special characters
 function escapeHtml(str) {
   return String(str)
@@ -23,6 +26,257 @@ function escapeHtml(str) {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
+}
+
+/**
+ * Set up event delegation for comment action buttons (reply, edit, delete, flag)
+ * @param {HTMLElement} commentsSection - The comments container element
+ * @param {string} currentUrl - The current URL for comment operations
+ */
+function setupCommentActions(commentsSection, currentUrl) {
+  // Use event delegation on the comments section
+  commentsSection.addEventListener('click', (e) => {
+    const target = e.target.closest('.btn-action');
+    if (!target) return;
+
+    const commentId = target.dataset.commentId;
+    if (!commentId) return;
+
+    if (target.classList.contains('btn-reply')) {
+      handleReplyAction(commentId, currentUrl, commentsSection);
+    } else if (target.classList.contains('btn-edit')) {
+      handleEditAction(commentId, currentUrl, commentsSection);
+    } else if (target.classList.contains('btn-delete')) {
+      handleDeleteAction(commentId, currentUrl, commentsSection);
+    } else if (target.classList.contains('btn-flag')) {
+      handleFlagAction(commentId, currentUrl);
+    }
+  });
+}
+
+/**
+ * Handle reply button click — show inline reply form
+ */
+function handleReplyAction(commentId, url, commentsSection) {
+  const container = document.getElementById(`reply-form-${commentId}`);
+  if (!container) return;
+
+  // Toggle — if already visible, hide it
+  if (container.style.display !== 'none' && container.innerHTML.trim()) {
+    container.style.display = 'none';
+    container.innerHTML = '';
+    return;
+  }
+
+  container.style.display = 'block';
+  container.innerHTML = `
+    <div class="inline-reply-form">
+      <textarea id="reply-text-${commentId}" placeholder="Write a reply..." maxlength="5000"></textarea>
+      <div class="inline-reply-actions">
+        <button class="btn-cancel-reply" id="cancel-reply-${commentId}">Cancel</button>
+        <button class="btn-submit-reply" id="submit-reply-${commentId}">Reply</button>
+      </div>
+    </div>
+  `;
+
+  // Focus textarea
+  const textarea = document.getElementById(`reply-text-${commentId}`);
+  if (textarea) textarea.focus();
+
+  // Cancel button
+  document.getElementById(`cancel-reply-${commentId}`).addEventListener('click', () => {
+    container.style.display = 'none';
+    container.innerHTML = '';
+  });
+
+  // Submit button
+  document.getElementById(`submit-reply-${commentId}`).addEventListener('click', async () => {
+    const replyText = textarea.value.trim();
+    if (!replyText) {
+      if (window.showNotification) window.showNotification('Please enter a reply', 'error');
+      return;
+    }
+
+    const submitBtn = document.getElementById(`submit-reply-${commentId}`);
+    submitBtn.textContent = 'Submitting...';
+    submitBtn.disabled = true;
+
+    try {
+      if (typeof window.FirebaseService === 'undefined') {
+        throw new Error('Firebase service is not available');
+      }
+
+      if (!window.FirebaseService.isUserAuthenticated()) {
+        await window.FirebaseService.initAuth();
+      }
+
+      const commentData = {
+        author: 'Anonymous',
+        content: replyText,
+        votes: 0,
+        timestamp: new Date().toISOString(),
+        parentId: commentId,
+      };
+
+      await window.FirebaseService.saveComment(url, commentData);
+
+      container.style.display = 'none';
+      container.innerHTML = '';
+
+      if (window.showNotification) window.showNotification('Reply posted! 🎉', 'success');
+      await loadCommentsForUrl(url, commentsSection);
+    } catch (error) {
+      console.error('❌ Reply failed:', error);
+      if (window.showNotification) window.showNotification(`Failed to post reply: ${error.message}`, 'error');
+      submitBtn.textContent = 'Reply';
+      submitBtn.disabled = false;
+    }
+  });
+}
+
+/**
+ * Handle edit button click — replace comment text with editable textarea
+ */
+function handleEditAction(commentId, url, commentsSection) {
+  const commentEl = commentsSection.querySelector(`[data-comment-id="${commentId}"]`);
+  if (!commentEl) return;
+
+  const textEl = commentEl.querySelector('.comment-text');
+  if (!textEl) return;
+
+  const currentText = textEl.textContent.trim();
+
+  // Replace with edit form
+  textEl.innerHTML = `
+    <textarea class="edit-textarea" id="edit-text-${commentId}" maxlength="5000">${escapeHtml(currentText)}</textarea>
+    <div class="inline-reply-actions" style="margin-top:8px;">
+      <button class="btn-cancel-reply" id="cancel-edit-${commentId}">Cancel</button>
+      <button class="btn-submit-reply" id="save-edit-${commentId}">Save</button>
+    </div>
+  `;
+
+  const editTextarea = document.getElementById(`edit-text-${commentId}`);
+  if (editTextarea) editTextarea.focus();
+
+  // Cancel
+  document.getElementById(`cancel-edit-${commentId}`).addEventListener('click', () => {
+    textEl.textContent = currentText;
+  });
+
+  // Save
+  document.getElementById(`save-edit-${commentId}`).addEventListener('click', async () => {
+    const newText = editTextarea.value.trim();
+    if (!newText) {
+      if (window.showNotification) window.showNotification('Comment cannot be empty', 'error');
+      return;
+    }
+
+    try {
+      const result = await window.FirebaseService.editComment(url, commentId, newText);
+      if (result.success) {
+        if (window.showNotification) window.showNotification('Comment updated ✅', 'success');
+        await loadCommentsForUrl(url, commentsSection);
+      } else {
+        if (window.showNotification) window.showNotification(result.message, 'error');
+        textEl.textContent = currentText;
+      }
+    } catch (error) {
+      console.error('❌ Edit failed:', error);
+      if (window.showNotification) window.showNotification(`Failed to edit: ${error.message}`, 'error');
+      textEl.textContent = currentText;
+    }
+  });
+}
+
+/**
+ * Handle delete button click — confirm and soft-delete
+ */
+function handleDeleteAction(commentId, url, commentsSection) {
+  if (!confirm('Are you sure you want to delete this comment? This cannot be undone.')) {
+    return;
+  }
+
+  (async () => {
+    try {
+      const result = await window.FirebaseService.deleteComment(url, commentId);
+      if (result.success) {
+        if (window.showNotification) window.showNotification('Comment deleted 🗑️', 'success');
+        await loadCommentsForUrl(url, commentsSection);
+      } else {
+        if (window.showNotification) window.showNotification(result.message, 'error');
+      }
+    } catch (error) {
+      console.error('❌ Delete failed:', error);
+      if (window.showNotification) window.showNotification(`Failed to delete: ${error.message}`, 'error');
+    }
+  })();
+}
+
+/**
+ * Handle flag button click — show flag modal with reason selector
+ */
+function handleFlagAction(commentId, url) {
+  // Create modal overlay
+  const overlay = document.createElement('div');
+  overlay.className = 'flag-modal-overlay';
+  overlay.innerHTML = `
+    <div class="flag-modal">
+      <h3>🚩 Report Comment</h3>
+      <select id="flag-reason-select">
+        <option value="">Select a reason...</option>
+        <option value="spam">Spam</option>
+        <option value="harassment">Harassment</option>
+        <option value="misinformation">Misinformation</option>
+        <option value="inappropriate">Inappropriate content</option>
+        <option value="other">Other</option>
+      </select>
+      <textarea id="flag-details" placeholder="Additional details (optional)..." rows="3"></textarea>
+      <div class="flag-modal-actions">
+        <button class="btn-cancel-reply" id="flag-cancel">Cancel</button>
+        <button class="btn-submit-reply" id="flag-submit" style="background:#dd6b20;">Submit Report</button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  // Cancel
+  document.getElementById('flag-cancel').addEventListener('click', () => {
+    overlay.remove();
+  });
+
+  // Close on overlay click
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) overlay.remove();
+  });
+
+  // Submit
+  document.getElementById('flag-submit').addEventListener('click', async () => {
+    const reasonSelect = document.getElementById('flag-reason-select');
+    const details = document.getElementById('flag-details').value.trim();
+    const reason = reasonSelect.value;
+
+    if (!reason) {
+      if (window.showNotification) window.showNotification('Please select a reason', 'error');
+      return;
+    }
+
+    const fullReason = details ? `${reason}: ${details}` : reason;
+
+    try {
+      const result = await window.FirebaseService.flagComment(url, commentId, fullReason);
+      overlay.remove();
+      if (result.success) {
+        if (window.showNotification) window.showNotification('Comment reported. Thank you! 🙏', 'success');
+      } else {
+        if (window.showNotification) window.showNotification(result.message, 'error');
+      }
+    } catch (error) {
+      console.error('❌ Flag failed:', error);
+      overlay.remove();
+      if (window.showNotification) window.showNotification(`Failed to report: ${error.message}`, 'error');
+    }
+  });
 }
 
 /**
@@ -210,6 +464,13 @@ export async function loadCommentsForUrl(url, commentsSection) {
     }));
 
     displayComments(formattedComments, commentsSection);
+
+    // Set up comment action buttons (reply, edit, delete, flag) via event delegation
+    // Only set up once per element
+    if (!elementsWithActions.has(commentsSection)) {
+      setupCommentActions(commentsSection, url);
+      elementsWithActions.add(commentsSection);
+    }
 
     // Show success message
     if (formattedComments.length > 0) {
