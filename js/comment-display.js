@@ -72,10 +72,13 @@ function renderComment(comment, isNFT, depth, currentUserId) {
   }
 
   const isOwner = currentUserId && comment.userId === currentUserId;
-  const editedBadge = comment.isEdited ? '<span class="edited-badge">(edited)</span>' : '';
-  const flaggedBadge = (comment.flagCount && comment.flagCount >= 3)
-    ? '<span class="flagged-badge">⚠️ Under Review</span>'
+  const editedBadge = comment.isEdited
+    ? '<span class="edited-badge">(edited)</span>'
     : '';
+  const flaggedBadge =
+    comment.flagCount && comment.flagCount >= 3
+      ? '<span class="flagged-badge">⚠️ Under Review</span>'
+      : '';
 
   if (comment.isNFT || isNFT) {
     const shortAddress =
@@ -88,7 +91,11 @@ function renderComment(comment, isNFT, depth, currentUserId) {
         <div class="comment-header">
           <span class="comment-author">👤 ${shortAddress}</span>
           <span class="comment-timestamp">${comment.timestamp}</span>
-          <span class="comment-votes">👍 ${comment.votes}</span>
+          <span class="comment-votes">
+            <button class="btn-action btn-vote btn-upvote" data-comment-id="${comment.id}" title="Upvote">👍</button>
+            <span class="vote-count">${comment.votes || 0}</span>
+            <button class="btn-action btn-vote btn-downvote" data-comment-id="${comment.id}" title="Downvote">👎</button>
+          </span>
           <span class="nft-badge">🖼️ NFT #${comment.nftId || comment.id}</span>
           ${editedBadge}
           ${flaggedBadge}
@@ -116,7 +123,11 @@ function renderComment(comment, isNFT, depth, currentUserId) {
         <div class="comment-header">
           <span class="comment-author">👤 ${comment.author}</span>
           <span class="comment-timestamp">${comment.timestamp}</span>
-          <span class="comment-votes">👍 ${comment.votes}</span>
+          <span class="comment-votes">
+            <button class="btn-action btn-vote btn-upvote" data-comment-id="${comment.id}" title="Upvote">👍</button>
+            <span class="vote-count">${comment.votes || 0}</span>
+            <button class="btn-action btn-vote btn-downvote" data-comment-id="${comment.id}" title="Downvote">👎</button>
+          </span>
           ${editedBadge}
           ${flaggedBadge}
         </div>
@@ -169,7 +180,11 @@ export function displayComments(comments, commentsSection, isNFT = false) {
 
   // Get current user ID for showing edit/delete buttons
   let currentUserId = null;
-  if (typeof window !== 'undefined' && window.FirebaseService && window.FirebaseService.getCurrentUser) {
+  if (
+    typeof window !== 'undefined' &&
+    window.FirebaseService &&
+    window.FirebaseService.getCurrentUser
+  ) {
     const user = window.FirebaseService.getCurrentUser();
     if (user) currentUserId = user.uid;
   }

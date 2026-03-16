@@ -50,8 +50,55 @@ function setupCommentActions(commentsSection, currentUrl) {
       handleDeleteAction(commentId, currentUrl, commentsSection);
     } else if (target.classList.contains('btn-flag')) {
       handleFlagAction(commentId, currentUrl);
+    } else if (target.classList.contains('btn-upvote')) {
+      handleVoteAction(commentId, currentUrl, 'upvote');
+    } else if (target.classList.contains('btn-downvote')) {
+      handleVoteAction(commentId, currentUrl, 'downvote');
     }
   });
+}
+
+/**
+ * Handle vote button click (upvote or downvote)
+ * @param {string} commentId - The comment ID
+ * @param {string} url - The current URL
+ * @param {string} voteType - 'upvote' or 'downvote'
+ */
+async function handleVoteAction(commentId, url, voteType) {
+  try {
+    if (
+      window.FirebaseService &&
+      typeof window.FirebaseService.voteComment === 'function'
+    ) {
+      await window.FirebaseService.voteComment(url, commentId, voteType);
+    } else {
+      // Fall back to updating the DOM locally
+      const btn = document.querySelector(
+        `.btn-${voteType}[data-comment-id="${commentId}"]`
+      );
+      if (btn) {
+        const voteCountEl =
+          btn.closest('.comment-votes')?.querySelector('.vote-count');
+        if (voteCountEl) {
+          let count = parseInt(voteCountEl.textContent, 10) || 0;
+          count += voteType === 'upvote' ? 1 : -1;
+          voteCountEl.textContent = count;
+        }
+      }
+    }
+
+    if (window.showNotification) {
+      window.showNotification(
+        voteType === 'upvote' ? 'Upvoted! 👍' : 'Downvoted! 👎',
+        'success'
+      );
+    }
+  } catch (error) {
+    console.error('Vote error:', error);
+    if (window.showNotification) {
+      window.showNotification('Failed to register vote.', 'error');
+    }
+  }
 }
 
 /**
@@ -84,61 +131,73 @@ function handleReplyAction(commentId, url, commentsSection) {
   if (textarea) textarea.focus();
 
   // Cancel button
-  document.getElementById(`cancel-reply-${commentId}`).addEventListener('click', () => {
-    container.style.display = 'none';
-    container.innerHTML = '';
-  });
-
-  // Submit button
-  document.getElementById(`submit-reply-${commentId}`).addEventListener('click', async () => {
-    const replyText = textarea.value.trim();
-    if (!replyText) {
-      if (window.showNotification) window.showNotification('Please enter a reply', 'error');
-      return;
-    }
-
-    const submitBtn = document.getElementById(`submit-reply-${commentId}`);
-    submitBtn.textContent = 'Submitting...';
-    submitBtn.disabled = true;
-
-    try {
-      if (typeof window.FirebaseService === 'undefined') {
-        throw new Error('Firebase service is not available');
-      }
-
-      if (!window.FirebaseService.isUserAuthenticated()) {
-        await window.FirebaseService.initAuth();
-      }
-
-      const commentData = {
-        author: 'Anonymous',
-        content: replyText,
-        votes: 0,
-        timestamp: new Date().toISOString(),
-        parentId: commentId,
-      };
-
-      await window.FirebaseService.saveComment(url, commentData);
-
+  document
+    .getElementById(`cancel-reply-${commentId}`)
+    .addEventListener('click', () => {
       container.style.display = 'none';
       container.innerHTML = '';
+    });
 
-      if (window.showNotification) window.showNotification('Reply posted! 🎉', 'success');
-      await loadCommentsForUrl(url, commentsSection);
-    } catch (error) {
-      console.error('❌ Reply failed:', error);
-      if (window.showNotification) window.showNotification(`Failed to post reply: ${error.message}`, 'error');
-      submitBtn.textContent = 'Reply';
-      submitBtn.disabled = false;
-    }
-  });
+  // Submit button
+  document
+    .getElementById(`submit-reply-${commentId}`)
+    .addEventListener('click', async () => {
+      const replyText = textarea.value.trim();
+      if (!replyText) {
+        if (window.showNotification)
+          window.showNotification('Please enter a reply', 'error');
+        return;
+      }
+
+      const submitBtn = document.getElementById(`submit-reply-${commentId}`);
+      submitBtn.textContent = 'Submitting...';
+      submitBtn.disabled = true;
+
+      try {
+        if (typeof window.FirebaseService === 'undefined') {
+          throw new Error('Firebase service is not available');
+        }
+
+        if (!window.FirebaseService.isUserAuthenticated()) {
+          await window.FirebaseService.initAuth();
+        }
+
+        const commentData = {
+          author: 'Anonymous',
+          content: replyText,
+          votes: 0,
+          timestamp: new Date().toISOString(),
+          parentId: commentId,
+        };
+
+        await window.FirebaseService.saveComment(url, commentData);
+
+        container.style.display = 'none';
+        container.innerHTML = '';
+
+        if (window.showNotification)
+          window.showNotification('Reply posted! 🎉', 'success');
+        await loadCommentsForUrl(url, commentsSection);
+      } catch (error) {
+        console.error('❌ Reply failed:', error);
+        if (window.showNotification)
+          window.showNotification(
+            `Failed to post reply: ${error.message}`,
+            'error'
+          );
+        submitBtn.textContent = 'Reply';
+        submitBtn.disabled = false;
+      }
+    });
 }
 
 /**
  * Handle edit button click — replace comment text with editable textarea
  */
 function handleEditAction(commentId, url, commentsSection) {
-  const commentEl = commentsSection.querySelector(`[data-comment-id="${commentId}"]`);
+  const commentEl = commentsSection.querySelector(
+    `[data-comment-id="${commentId}"]`
+  );
   if (!commentEl) return;
 
   const textEl = commentEl.querySelector('.comment-text');
@@ -159,40 +218,56 @@ function handleEditAction(commentId, url, commentsSection) {
   if (editTextarea) editTextarea.focus();
 
   // Cancel
-  document.getElementById(`cancel-edit-${commentId}`).addEventListener('click', () => {
-    textEl.textContent = currentText;
-  });
+  document
+    .getElementById(`cancel-edit-${commentId}`)
+    .addEventListener('click', () => {
+      textEl.textContent = currentText;
+    });
 
   // Save
-  document.getElementById(`save-edit-${commentId}`).addEventListener('click', async () => {
-    const newText = editTextarea.value.trim();
-    if (!newText) {
-      if (window.showNotification) window.showNotification('Comment cannot be empty', 'error');
-      return;
-    }
+  document
+    .getElementById(`save-edit-${commentId}`)
+    .addEventListener('click', async () => {
+      const newText = editTextarea.value.trim();
+      if (!newText) {
+        if (window.showNotification)
+          window.showNotification('Comment cannot be empty', 'error');
+        return;
+      }
 
-    try {
-      const result = await window.FirebaseService.editComment(url, commentId, newText);
-      if (result.success) {
-        if (window.showNotification) window.showNotification('Comment updated ✅', 'success');
-        await loadCommentsForUrl(url, commentsSection);
-      } else {
-        if (window.showNotification) window.showNotification(result.message, 'error');
+      try {
+        const result = await window.FirebaseService.editComment(
+          url,
+          commentId,
+          newText
+        );
+        if (result.success) {
+          if (window.showNotification)
+            window.showNotification('Comment updated ✅', 'success');
+          await loadCommentsForUrl(url, commentsSection);
+        } else {
+          if (window.showNotification)
+            window.showNotification(result.message, 'error');
+          textEl.textContent = currentText;
+        }
+      } catch (error) {
+        console.error('❌ Edit failed:', error);
+        if (window.showNotification)
+          window.showNotification(`Failed to edit: ${error.message}`, 'error');
         textEl.textContent = currentText;
       }
-    } catch (error) {
-      console.error('❌ Edit failed:', error);
-      if (window.showNotification) window.showNotification(`Failed to edit: ${error.message}`, 'error');
-      textEl.textContent = currentText;
-    }
-  });
+    });
 }
 
 /**
  * Handle delete button click — confirm and soft-delete
  */
 function handleDeleteAction(commentId, url, commentsSection) {
-  if (!confirm('Are you sure you want to delete this comment? This cannot be undone.')) {
+  if (
+    !confirm(
+      'Are you sure you want to delete this comment? This cannot be undone.'
+    )
+  ) {
     return;
   }
 
@@ -200,14 +275,17 @@ function handleDeleteAction(commentId, url, commentsSection) {
     try {
       const result = await window.FirebaseService.deleteComment(url, commentId);
       if (result.success) {
-        if (window.showNotification) window.showNotification('Comment deleted 🗑️', 'success');
+        if (window.showNotification)
+          window.showNotification('Comment deleted 🗑️', 'success');
         await loadCommentsForUrl(url, commentsSection);
       } else {
-        if (window.showNotification) window.showNotification(result.message, 'error');
+        if (window.showNotification)
+          window.showNotification(result.message, 'error');
       }
     } catch (error) {
       console.error('❌ Delete failed:', error);
-      if (window.showNotification) window.showNotification(`Failed to delete: ${error.message}`, 'error');
+      if (window.showNotification)
+        window.showNotification(`Failed to delete: ${error.message}`, 'error');
     }
   })();
 }
@@ -257,24 +335,32 @@ function handleFlagAction(commentId, url) {
     const reason = reasonSelect.value;
 
     if (!reason) {
-      if (window.showNotification) window.showNotification('Please select a reason', 'error');
+      if (window.showNotification)
+        window.showNotification('Please select a reason', 'error');
       return;
     }
 
     const fullReason = details ? `${reason}: ${details}` : reason;
 
     try {
-      const result = await window.FirebaseService.flagComment(url, commentId, fullReason);
+      const result = await window.FirebaseService.flagComment(
+        url,
+        commentId,
+        fullReason
+      );
       overlay.remove();
       if (result.success) {
-        if (window.showNotification) window.showNotification('Comment reported. Thank you! 🙏', 'success');
+        if (window.showNotification)
+          window.showNotification('Comment reported. Thank you! 🙏', 'success');
       } else {
-        if (window.showNotification) window.showNotification(result.message, 'error');
+        if (window.showNotification)
+          window.showNotification(result.message, 'error');
       }
     } catch (error) {
       console.error('❌ Flag failed:', error);
       overlay.remove();
-      if (window.showNotification) window.showNotification(`Failed to report: ${error.message}`, 'error');
+      if (window.showNotification)
+        window.showNotification(`Failed to report: ${error.message}`, 'error');
     }
   });
 }
@@ -624,10 +710,34 @@ export async function submitComment(
       throw new Error('Comment is too long (maximum 5000 characters)');
     }
 
+    // Security validation
+    let sanitizedComment = comment;
+    if (typeof window.SecurityUtils !== 'undefined') {
+      // Check rate limiting
+      if (!window.SecurityUtils.checkRateLimit('comment_submit', 5, 60000)) {
+        throw new Error('You are posting too quickly. Please wait a moment before submitting another comment.');
+      }
+
+      // Validate comment content
+      const validation = window.SecurityUtils.validateComment(sanitizedComment);
+      if (!validation.valid) {
+        throw new Error(validation.errors.join('. '));
+      }
+
+      // Check for spam
+      const spamCheck = window.SecurityUtils.detectSpam(sanitizedComment);
+      if (spamCheck.isSpam) {
+        throw new Error('Your comment was flagged as potential spam: ' + spamCheck.reasons.join(', '));
+      }
+
+      // Sanitize the comment text
+      sanitizedComment = window.SecurityUtils.sanitizeText(sanitizedComment);
+    }
+
     console.log('📊 Preparing comment data...');
     const commentData = {
       author: 'Anonymous', // In a real app, this would be the logged-in user
-      text: comment.trim(),
+      text: sanitizedComment.trim(),
       votes: 0,
       timestamp: new Date().toISOString(),
     };
