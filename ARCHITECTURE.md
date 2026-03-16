@@ -149,21 +149,27 @@ interface ArweaveStorage {
 
 ### Data Flow Architecture
 
-```
-Comment Creation Flow:
-1. User submits comment via UI
-2. Comment signed with user's private key
-3. Comment stored on IPFS with content hash
-4. Hash stored on Arweave for permanence
-5. Metadata cached in traditional DB
-6. UI updated with new comment
+#### Comment Creation Flow
 
-Comment Retrieval Flow:
-1. User visits website
-2. Query cache for recent comments
-3. Fallback to IPFS for full comment data
-4. Background sync with Arweave
-5. Render comments in UI
+```mermaid
+flowchart TD
+    A[User submits comment via UI] --> B[Comment signed with user's private key]
+    B --> C[Comment stored on IPFS with content hash]
+    C --> D[Hash stored on Arweave for permanence]
+    D --> E[Metadata cached in traditional DB]
+    E --> F[UI updated with new comment]
+```
+
+#### Comment Retrieval Flow
+
+```mermaid
+flowchart TD
+    A[User visits website] --> B[Query cache for recent comments]
+    B --> C{Cache hit?}
+    C -- Yes --> F[Render comments in UI]
+    C -- No --> D[Fallback to IPFS for full comment data]
+    D --> E[Background sync with Arweave]
+    E --> F
 ```
 
 ### Database Schema
