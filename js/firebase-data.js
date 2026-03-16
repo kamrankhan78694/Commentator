@@ -30,15 +30,15 @@ import { getCurrentUser } from './firebase-auth.js';
 function generateUrlHash(url) {
   // Create a hash from the URL for Firebase storage
   const cleanUrl = url.replace(/^https?:\/\//, '').replace(/\/$/, '');
-  
+
   // Simple hash function to convert URL to Firebase-safe key
   let hash = 0;
   for (let i = 0; i < cleanUrl.length; i++) {
     const char = cleanUrl.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
+    hash = (hash << 5) - hash + char;
     hash = hash & hash; // Convert to 32bit integer
   }
-  
+
   return Math.abs(hash).toString(36);
 }
 
@@ -62,10 +62,10 @@ async function saveComment(url, commentData) {
 
     // Generate URL hash for Firebase storage
     const urlHash = generateUrlHash(url);
-    
+
     // Reference to comments for this URL
     const commentsRef = ref(database, `comments/${urlHash}`);
-    
+
     // Prepare comment object
     const comment = {
       content: commentData.content,
@@ -86,20 +86,19 @@ async function saveComment(url, commentData) {
     await set(newCommentRef, comment);
 
     console.log('✅ Comment saved successfully:', newCommentRef.key);
-    
+
     return {
       success: true,
       commentId: newCommentRef.key,
       message: 'Comment saved successfully',
-      comment: { ...comment, id: newCommentRef.key }
+      comment: { ...comment, id: newCommentRef.key },
     };
-    
   } catch (error) {
     console.error('❌ Failed to save comment:', error);
     return {
       success: false,
       error: error.message,
-      message: 'Failed to save comment'
+      message: 'Failed to save comment',
     };
   }
 }
@@ -113,11 +112,11 @@ async function loadComments(url) {
   try {
     const urlHash = generateUrlHash(url);
     const commentsRef = ref(database, `comments/${urlHash}`);
-    
+
     const snapshot = await get(commentsRef);
     if (snapshot.exists()) {
       const commentsData = snapshot.val();
-      
+
       // Convert Firebase object to array with IDs
       const comments = Object.keys(commentsData).map((key) => ({
         id: key,
@@ -127,13 +126,15 @@ async function loadComments(url) {
       // Sort comments by timestamp (newest first)
       comments.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
-      console.log(`✅ Loaded ${comments.length} comments for URL hash: ${urlHash}`);
-      
+      console.log(
+        `✅ Loaded ${comments.length} comments for URL hash: ${urlHash}`
+      );
+
       return {
         success: true,
         comments: comments,
         count: comments.length,
-        message: `Loaded ${comments.length} comments`
+        message: `Loaded ${comments.length} comments`,
       };
     } else {
       console.log(`ℹ️ No comments found for URL hash: ${urlHash}`);
@@ -141,7 +142,7 @@ async function loadComments(url) {
         success: true,
         comments: [],
         count: 0,
-        message: 'No comments found'
+        message: 'No comments found',
       };
     }
   } catch (error) {
@@ -149,7 +150,7 @@ async function loadComments(url) {
     return {
       success: false,
       error: error.message,
-      message: 'Failed to load comments'
+      message: 'Failed to load comments',
     };
   }
 }
@@ -163,40 +164,44 @@ async function loadComments(url) {
 function subscribeToComments(url, callback) {
   const urlHash = generateUrlHash(url);
   const commentsRef = ref(database, `comments/${urlHash}`);
-  
-  const unsubscribe = onValue(commentsRef, (snapshot) => {
-    if (snapshot.exists()) {
-      const commentsData = snapshot.val();
-      const comments = Object.keys(commentsData).map((key) => ({
-        id: key,
-        ...commentsData[key],
-      }));
-      
-      // Sort comments by timestamp
-      comments.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-      
+
+  const unsubscribe = onValue(
+    commentsRef,
+    (snapshot) => {
+      if (snapshot.exists()) {
+        const commentsData = snapshot.val();
+        const comments = Object.keys(commentsData).map((key) => ({
+          id: key,
+          ...commentsData[key],
+        }));
+
+        // Sort comments by timestamp
+        comments.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+        callback({
+          success: true,
+          comments: comments,
+          count: comments.length,
+        });
+      } else {
+        callback({
+          success: true,
+          comments: [],
+          count: 0,
+        });
+      }
+    },
+    (error) => {
+      console.error('❌ Comments subscription error:', error);
       callback({
-        success: true,
-        comments: comments,
-        count: comments.length
-      });
-    } else {
-      callback({
-        success: true,
+        success: false,
+        error: error.message,
         comments: [],
-        count: 0
+        count: 0,
       });
     }
-  }, (error) => {
-    console.error('❌ Comments subscription error:', error);
-    callback({
-      success: false,
-      error: error.message,
-      comments: [],
-      count: 0
-    });
-  });
-  
+  );
+
   return unsubscribe;
 }
 
@@ -220,19 +225,19 @@ async function saveUserData(userData) {
     };
 
     await set(userRef, userDataWithTimestamp);
-    
+
     console.log('✅ User data saved successfully');
     return {
       success: true,
       message: 'User data saved successfully',
-      userData: userDataWithTimestamp
+      userData: userDataWithTimestamp,
     };
   } catch (error) {
     console.error('❌ Failed to save user data:', error);
     return {
       success: false,
       error: error.message,
-      message: 'Failed to save user data'
+      message: 'Failed to save user data',
     };
   }
 }
@@ -246,28 +251,28 @@ async function loadUserData(userId = null) {
   try {
     const user = getCurrentUser();
     const targetUserId = userId || user?.uid;
-    
+
     if (!targetUserId) {
       throw new Error('No user ID provided and no authenticated user');
     }
 
     const userRef = ref(database, `users/${targetUserId}`);
     const snapshot = await get(userRef);
-    
+
     if (snapshot.exists()) {
       const userData = snapshot.val();
       console.log('✅ User data loaded successfully');
       return {
         success: true,
         userData: userData,
-        message: 'User data loaded successfully'
+        message: 'User data loaded successfully',
       };
     } else {
       console.log('ℹ️ No user data found');
       return {
         success: true,
         userData: null,
-        message: 'No user data found'
+        message: 'No user data found',
       };
     }
   } catch (error) {
@@ -275,7 +280,7 @@ async function loadUserData(userId = null) {
     return {
       success: false,
       error: error.message,
-      message: 'Failed to load user data'
+      message: 'Failed to load user data',
     };
   }
 }
@@ -302,20 +307,20 @@ async function createSession(sessionData = {}) {
     };
 
     await set(sessionRef, session);
-    
+
     console.log('✅ Session created successfully');
     return {
       success: true,
       sessionId: user.uid,
       session: session,
-      message: 'Session created successfully'
+      message: 'Session created successfully',
     };
   } catch (error) {
     console.error('❌ Failed to create session:', error);
     return {
       success: false,
       error: error.message,
-      message: 'Failed to create session'
+      message: 'Failed to create session',
     };
   }
 }
@@ -329,17 +334,17 @@ async function updateSessionActivity(sessionId) {
   try {
     const sessionRef = ref(database, `sessions/${sessionId}/lastActivity`);
     await set(sessionRef, serverTimestamp());
-    
+
     return {
       success: true,
-      message: 'Session activity updated'
+      message: 'Session activity updated',
     };
   } catch (error) {
     console.error('❌ Failed to update session activity:', error);
     return {
       success: false,
       error: error.message,
-      message: 'Failed to update session activity'
+      message: 'Failed to update session activity',
     };
   }
 }
@@ -364,18 +369,18 @@ async function closeSession(sessionId) {
       const currentSession = snapshot.val();
       await set(sessionRef, { ...currentSession, ...updateData });
     }
-    
+
     console.log('✅ Session closed successfully');
     return {
       success: true,
-      message: 'Session closed successfully'
+      message: 'Session closed successfully',
     };
   } catch (error) {
     console.error('❌ Failed to close session:', error);
     return {
       success: false,
       error: error.message,
-      message: 'Failed to close session'
+      message: 'Failed to close session',
     };
   }
 }
@@ -422,7 +427,7 @@ async function editComment(url, commentId, newContent) {
     }
     const now = Date.now();
     const fifteenMinutes = 15 * 60 * 1000;
-    if ((now - createdAt) > fifteenMinutes) {
+    if (now - createdAt > fifteenMinutes) {
       throw new Error('Edit window has expired (15 minutes)');
     }
 
@@ -437,7 +442,11 @@ async function editComment(url, commentId, newContent) {
     return { success: true, commentId, message: 'Comment edited successfully' };
   } catch (error) {
     console.error('❌ Failed to edit comment:', error);
-    return { success: false, error: error.message, message: 'Failed to edit comment' };
+    return {
+      success: false,
+      error: error.message,
+      message: 'Failed to edit comment',
+    };
   }
 }
 
@@ -475,10 +484,18 @@ async function deleteComment(url, commentId) {
     });
 
     console.log('✅ Comment soft-deleted successfully:', commentId);
-    return { success: true, commentId, message: 'Comment deleted successfully' };
+    return {
+      success: true,
+      commentId,
+      message: 'Comment deleted successfully',
+    };
   } catch (error) {
     console.error('❌ Failed to delete comment:', error);
-    return { success: false, error: error.message, message: 'Failed to delete comment' };
+    return {
+      success: false,
+      error: error.message,
+      message: 'Failed to delete comment',
+    };
   }
 }
 
@@ -510,9 +527,9 @@ async function flagComment(url, commentId, reason) {
 
     const existing = snapshot.val();
     const flags = existing.flags || [];
-    
+
     // Prevent duplicate flags from same user
-    if (flags.some(f => f.userId === user.uid)) {
+    if (flags.some((f) => f.userId === user.uid)) {
       throw new Error('You have already flagged this comment');
     }
 
@@ -533,7 +550,11 @@ async function flagComment(url, commentId, reason) {
     return { success: true, commentId, message: 'Comment flagged for review' };
   } catch (error) {
     console.error('❌ Failed to flag comment:', error);
-    return { success: false, error: error.message, message: 'Failed to flag comment' };
+    return {
+      success: false,
+      error: error.message,
+      message: 'Failed to flag comment',
+    };
   }
 }
 

@@ -239,30 +239,30 @@ export function initKeyboardNavigation() {
       const currentIndex = links.indexOf(this);
 
       switch (e.key) {
-        case 'ArrowLeft':
-        case 'ArrowUp': {
-          e.preventDefault();
-          const prevIndex =
+      case 'ArrowLeft':
+      case 'ArrowUp': {
+        e.preventDefault();
+        const prevIndex =
             currentIndex > 0 ? currentIndex - 1 : links.length - 1;
-          links[prevIndex].focus();
-          break;
-        }
-        case 'ArrowRight':
-        case 'ArrowDown': {
-          e.preventDefault();
-          const nextIndex =
+        links[prevIndex].focus();
+        break;
+      }
+      case 'ArrowRight':
+      case 'ArrowDown': {
+        e.preventDefault();
+        const nextIndex =
             currentIndex < links.length - 1 ? currentIndex + 1 : 0;
-          links[nextIndex].focus();
-          break;
-        }
-        case 'Home':
-          e.preventDefault();
-          links[0].focus();
-          break;
-        case 'End':
-          e.preventDefault();
-          links[links.length - 1].focus();
-          break;
+        links[nextIndex].focus();
+        break;
+      }
+      case 'Home':
+        e.preventDefault();
+        links[0].focus();
+        break;
+      case 'End':
+        e.preventDefault();
+        links[links.length - 1].focus();
+        break;
       }
     });
   });

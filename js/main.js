@@ -439,10 +439,7 @@ async function signInWithGoogle() {
  */
 async function signInAnonymously() {
   try {
-    if (
-      !window.FirebaseService ||
-      !window.FirebaseService.signInAnonymously
-    ) {
+    if (!window.FirebaseService || !window.FirebaseService.signInAnonymously) {
       showNotification('Anonymous sign-in is not available.', 'error');
       return;
     }
@@ -550,7 +547,10 @@ async function initializeApp() {
           return;
         }
         try {
-          if (window.FirebaseService && window.FirebaseService.signInWithEmail) {
+          if (
+            window.FirebaseService &&
+            window.FirebaseService.signInWithEmail
+          ) {
             await window.FirebaseService.signInWithEmail(email, password);
             closeAuthModal();
             showNotification('Signed in successfully!', 'success');
@@ -575,7 +575,10 @@ async function initializeApp() {
           return;
         }
         try {
-          if (window.FirebaseService && window.FirebaseService.signUpWithEmail) {
+          if (
+            window.FirebaseService &&
+            window.FirebaseService.signUpWithEmail
+          ) {
             await window.FirebaseService.signUpWithEmail(email, password, name);
             closeAuthModal();
             showNotification('Account created successfully!', 'success');

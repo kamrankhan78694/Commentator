@@ -1,6 +1,6 @@
 /**
  * Logger UI Styles
- * 
+ *
  * CSS styles for the Commentator debug logger panel.
  * Separated to maintain 500-line file limit.
  */

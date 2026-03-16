@@ -77,8 +77,9 @@ async function handleVoteAction(commentId, url, voteType) {
         `.btn-${voteType}[data-comment-id="${commentId}"]`
       );
       if (btn) {
-        const voteCountEl =
-          btn.closest('.comment-votes')?.querySelector('.vote-count');
+        const voteCountEl = btn
+          .closest('.comment-votes')
+          ?.querySelector('.vote-count');
         if (voteCountEl) {
           let count = parseInt(voteCountEl.textContent, 10) || 0;
           count += voteType === 'upvote' ? 1 : -1;
@@ -715,7 +716,9 @@ export async function submitComment(
     if (typeof window.SecurityUtils !== 'undefined') {
       // Check rate limiting
       if (!window.SecurityUtils.checkRateLimit('comment_submit', 5, 60000)) {
-        throw new Error('You are posting too quickly. Please wait a moment before submitting another comment.');
+        throw new Error(
+          'You are posting too quickly. Please wait a moment before submitting another comment.'
+        );
       }
 
       // Validate comment content
@@ -727,7 +730,10 @@ export async function submitComment(
       // Check for spam
       const spamCheck = window.SecurityUtils.detectSpam(sanitizedComment);
       if (spamCheck.isSpam) {
-        throw new Error('Your comment was flagged as potential spam: ' + spamCheck.reasons.join(', '));
+        throw new Error(
+          'Your comment was flagged as potential spam: ' +
+            spamCheck.reasons.join(', ')
+        );
       }
 
       // Sanitize the comment text

@@ -145,7 +145,10 @@ export class LoggerUI {
    */
   toggleMinimize() {
     this.logger.panelState.minimized = !this.logger.panelState.minimized;
-    this.panelElement.classList.toggle('minimized', this.logger.panelState.minimized);
+    this.panelElement.classList.toggle(
+      'minimized',
+      this.logger.panelState.minimized
+    );
     this.logger.savePanelState();
   }
 

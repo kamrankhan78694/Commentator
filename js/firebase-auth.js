@@ -42,7 +42,7 @@ async function initAuth() {
         resolve(user);
       } else {
         console.log('🔐 No authenticated user, signing in anonymously...');
-        
+
         // Sign in anonymously if no user is present
         signInAnonymously(auth)
           .then((result) => {
@@ -106,19 +106,19 @@ async function signInWithEmail(email, password) {
     const result = await signInWithEmailAndPassword(auth, email, password);
     currentUser = result.user;
     isAuthenticated = true;
-    
+
     console.log('✅ Email sign-in successful:', result.user.uid);
     return {
       success: true,
       user: result.user,
-      message: 'Successfully signed in with email and password'
+      message: 'Successfully signed in with email and password',
     };
   } catch (error) {
     console.error('❌ Email sign-in failed:', error);
     return {
       success: false,
       error: error.code,
-      message: error.message
+      message: error.message,
     };
   }
 }
@@ -135,25 +135,25 @@ async function createAccount(email, password, displayName) {
     const result = await createUserWithEmailAndPassword(auth, email, password);
     currentUser = result.user;
     isAuthenticated = true;
-    
+
     // Update profile with display name if provided
     if (displayName) {
       await updateProfile(result.user, { displayName });
       console.log('✅ User profile updated with display name:', displayName);
     }
-    
+
     console.log('✅ Account created successfully:', result.user.uid);
     return {
       success: true,
       user: result.user,
-      message: 'Account created successfully'
+      message: 'Account created successfully',
     };
   } catch (error) {
     console.error('❌ Account creation failed:', error);
     return {
       success: false,
       error: error.code,
-      message: error.message
+      message: error.message,
     };
   }
 }
@@ -168,19 +168,19 @@ async function signInWithGoogle() {
     const result = await signInWithPopup(auth, provider);
     currentUser = result.user;
     isAuthenticated = true;
-    
+
     console.log('✅ Google sign-in successful:', result.user.uid);
     return {
       success: true,
       user: result.user,
-      message: 'Successfully signed in with Google'
+      message: 'Successfully signed in with Google',
     };
   } catch (error) {
     console.error('❌ Google sign-in failed:', error);
     return {
       success: false,
       error: error.code,
-      message: error.message
+      message: error.message,
     };
   }
 }
@@ -195,23 +195,23 @@ async function signOutUser() {
     const previousUser = currentUser;
     currentUser = null;
     isAuthenticated = false;
-    
+
     console.log('✅ User signed out successfully');
-    
+
     // Re-initialize anonymous authentication
     await initAuth();
-    
+
     return {
       success: true,
       previousUser: previousUser,
-      message: 'Successfully signed out'
+      message: 'Successfully signed out',
     };
   } catch (error) {
     console.error('❌ Sign out failed:', error);
     return {
       success: false,
       error: error.code,
-      message: error.message
+      message: error.message,
     };
   }
 }
@@ -222,7 +222,7 @@ async function signOutUser() {
  */
 function getUserProfile() {
   if (!currentUser) return null;
-  
+
   return {
     uid: currentUser.uid,
     email: currentUser.email,

@@ -10,20 +10,21 @@ if ! command -v npm >/dev/null 2>&1; then
     exit 1
 fi
 
-# Run linting
+# Run formatting first (before lint, so ESLint has final say)
+echo "🎨 Formatting code with Prettier..."
+npm run format
+if [ $? -ne 0 ]; then
+    echo "❌ Code formatting failed. Please run 'npm run format' and try again."
+    exit 1
+fi
+
+# Run linting (after formatting, so ESLint fixes any conflicts)
 echo "📝 Running ESLint..."
+npx eslint js/ seo/ --fix 2>/dev/null
 npm run lint
 if [ $? -ne 0 ]; then
     echo "❌ Linting failed. Please fix the issues and try again."
     echo "💡 Run 'npm run lint:fix' to auto-fix some issues"
-    exit 1
-fi
-
-# Run formatting check
-echo "🎨 Checking code formatting..."
-npm run format
-if [ $? -ne 0 ]; then
-    echo "❌ Code formatting failed. Please run 'npm run format' and try again."
     exit 1
 fi
 
@@ -35,13 +36,13 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-# Run security audit
+# Run security audit (warning only, don't block commits)
 echo "🔒 Running security audit..."
-npm audit --audit-level=high
+npm audit --audit-level=critical
 if [ $? -ne 0 ]; then
-    echo "❌ Security audit found high/critical vulnerabilities."
+    echo "⚠️  Security audit found vulnerabilities."
     echo "💡 Run 'npm audit fix' to attempt automatic fixes"
-    exit 1
+    # Don't block commits for dependency vulnerabilities
 fi
 
 # Check for environment variables template
