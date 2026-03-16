@@ -20,9 +20,9 @@ window.SecurityUtils = (function () {
     /on\w+\s*=/gi,
   ];
 
-  // SQL Injection patterns
+  // SQL Injection patterns - match suspicious SQL keyword sequences
   const SQL_INJECTION_PATTERNS = [
-    /('|(\\')|(;)|(\\;)|(\/\*)|(\\*)|(\/\*)|(\*\/)|(\bselect\b)|(\binsert\b)|(\bupdate\b)|(\bdelete\b)|(\bdrop\b)|(\bcreate\b)|(\balter\b)|(\bexec\b)|(\bunion\b)|(\bjoin\b))/gi,
+    /(\bselect\b\s+\bfrom\b)|(\binsert\b\s+\binto\b)|(\bupdate\b\s+\bset\b)|(\bdelete\b\s+\bfrom\b)|(\bdrop\b\s+\btable\b)|(\bcreate\b\s+\btable\b)|(\balter\b\s+\btable\b)|(\bexec\b\s*\()|(\bunion\b\s+\bselect\b)|(\bor\b\s+1\s*=\s*1)|(';\s*--)/gi,
   ];
 
   // Profanity and spam patterns
