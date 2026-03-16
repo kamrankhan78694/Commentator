@@ -98,10 +98,10 @@ interface Comment {
   - Firebase Realtime Database setup
   - Optimized data structure with URL hashing
   - Multi-environment configuration
-- [x] **Caching Layer**
-  - Redis implementation
-  - Cache invalidation strategy
-  - Performance optimization
+- [ ] **Caching Layer (Planned)**
+  - Design for Redis-based caching layer
+  - Define cache invalidation strategy
+  - Identify performance optimization opportunities
 - [x] **Backup & Recovery**
   - Automated daily backups
   - Disaster recovery procedures
