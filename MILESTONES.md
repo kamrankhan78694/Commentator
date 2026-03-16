@@ -10,21 +10,22 @@ This document tracks specific milestones, deliverables, and success metrics for 
 ### Milestone 1.1: Browser Extension Development
 **Target Date**: Month 1
 **Owner**: Frontend Team
-**Status**: ✅ Complete
+**Status**: ⏳ Planned
 
-#### Deliverables:
-- [x] **Chrome Extension MVP** 
+#### Deliverables (planned):
+- [ ] **Chrome Extension MVP** 
   - Manifest V3 compliant
   - Basic popup interface
   - Content script injection
   - Local storage integration
-- [x] **Firefox Extension Port**
+- [ ] **Firefox Extension Port**
   - WebExtensions API compatibility
   - Cross-browser testing suite
-- [x] **Extension Store Listings**
+- [ ] **Extension Store Listings**
   - Chrome Web Store submission
   - Firefox Add-ons submission
   - User documentation and screenshots
+  - Implementation and store assets will be tracked in the dedicated browser-extension repository once created.
 
 #### Success Metrics:
 - **Downloads**: 1,000+ in first month
