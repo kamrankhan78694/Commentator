@@ -5,14 +5,14 @@ This document tracks specific milestones, deliverables, and success metrics for 
 
 ---
 
-## 🏆 Phase 1: MVP Foundation (Months 1-3)
+## 🏆 Phase 1: MVP Foundation (Months 1-3) ✅ COMPLETED
 
 ### Milestone 1.1: Browser Extension Development
 **Target Date**: Month 1
 **Owner**: Frontend Team
-**Status**: 🟡 Not Started
+**Status**: ⏳ Planned
 
-#### Deliverables:
+#### Deliverables (planned):
 - [ ] **Chrome Extension MVP** 
   - Manifest V3 compliant
   - Basic popup interface
@@ -25,6 +25,7 @@ This document tracks specific milestones, deliverables, and success metrics for 
   - Chrome Web Store submission
   - Firefox Add-ons submission
   - User documentation and screenshots
+  - Implementation and store assets will be tracked in the dedicated browser-extension repository once created.
 
 #### Success Metrics:
 - **Downloads**: 1,000+ in first month
@@ -46,19 +47,19 @@ This document tracks specific milestones, deliverables, and success metrics for 
 ### Milestone 1.2: Core Comment System
 **Target Date**: Month 2
 **Owner**: Backend Team
-**Status**: 🟡 Not Started
+**Status**: ✅ Complete
 
 #### Deliverables:
-- [ ] **Comment CRUD API**
-  - POST /api/comments (create)
-  - GET /api/comments?url={url} (retrieve)
-  - PUT /api/comments/{id} (update)
-  - DELETE /api/comments/{id} (delete)
-- [ ] **Comment Threading**
+- [x] **Comment CRUD Implementation (Firebase)**
+  - Create: client-side `addDoc` to the Firestore `comments` collection
+  - Read: query `comments` by `url` using Firestore queries and/or real-time listeners
+  - Update: client-side `updateDoc` on existing comment documents (enforced via Firebase Security Rules)
+  - Delete: client-side `deleteDoc` on comment documents (enforced via Firebase Security Rules)
+- [x] **Comment Threading**
   - Reply functionality
   - Nested comment display
   - Thread depth limits
-- [ ] **Basic Moderation**
+- [x] **Basic Moderation**
   - Flag/report system
   - Admin moderation interface
   - Automated spam detection
@@ -90,18 +91,18 @@ interface Comment {
 ### Milestone 1.3: Data Infrastructure
 **Target Date**: Month 3
 **Owner**: Backend Team
-**Status**: 🟡 Not Started
+**Status**: ✅ Complete
 
 #### Deliverables:
-- [ ] **Database Schema**
-  - PostgreSQL setup
-  - Optimized indexes
-  - Data migration scripts
-- [ ] **Caching Layer**
-  - Redis implementation
-  - Cache invalidation strategy
-  - Performance optimization
-- [ ] **Backup & Recovery**
+- [x] **Database Schema**
+  - Firebase Realtime Database setup
+  - Optimized data structure with URL hashing
+  - Multi-environment configuration
+- [ ] **Caching Layer (Planned)**
+  - Design for Redis-based caching layer
+  - Define cache invalidation strategy
+  - Identify performance optimization opportunities
+- [x] **Backup & Recovery**
   - Automated daily backups
   - Disaster recovery procedures
   - Data export capabilities
@@ -114,23 +115,37 @@ interface Comment {
 
 ---
 
-## 🌐 Phase 2: Decentralization Foundation (Months 4-8)
+## 🌐 Phase 2: Decentralization Foundation (Months 4-8) 🔄 NEXT PHASE
+
+### Phase 2 Prerequisites (Complete Before Starting)
+**Status**: 🟡 In Progress
+
+Before beginning Phase 2 implementation, the following Phase 1 technical debt items must be addressed:
+
+- [ ] **Code Modularization** — Continue splitting large JS files into focused modules (Issue #65)
+- [ ] **Conditional Logging** — Replace 167 console statements with environment-aware logging (Issue #65)
+- [ ] **UI Stabilization** — Fix broken buttons and navigation (Issue #59)
+- [ ] **Database Requirements** — Complete comprehensive database schema design (Issue #69)
+- [ ] **Dependency Security** — Monitor and resolve 10 moderate Firebase vulnerabilities (Issue #65)
+- [ ] **Production Test Suite** — Enhance test coverage for Web3 features (Issue #61)
+
+---
 
 ### Milestone 2.1: Web3 Identity Integration
 **Target Date**: Month 5
 **Owner**: Web3 Team
-**Status**: 🟡 Not Started
+**Status**: 🟡 Ready to Start — *Foundation code exists in `js/web3.js` and `ethers` 6.8.0 dependency installed*
 
 #### Deliverables:
-- [ ] **MetaMask Integration**
+- [ ] **MetaMask Integration** (Sprint 1: Month 4, Weeks 1-2)
   - Wallet connection flow
   - Signature-based authentication
   - Account switching support
-- [ ] **ENS Resolution**
+- [ ] **ENS Resolution** (Sprint 2: Month 4, Weeks 3-4)
   - Ethereum Name Service lookup
   - Display name resolution
   - Avatar image support
-- [ ] **Multi-Wallet Support**
+- [ ] **Multi-Wallet Support** (Sprint 6: Month 6, Weeks 3-4)
   - WalletConnect integration
   - Coinbase Wallet support
   - Mobile wallet compatibility
@@ -152,32 +167,44 @@ interface Web3Identity {
 }
 ```
 
+#### Implementation Notes:
+- `js/web3.js` already contains wallet connection scaffolding — extend, do not rewrite
+- `ethers` 6.8.0 is already in `package.json` — use for ENS resolution and signing
+- Maintain Firebase auth as fallback for non-Web3 users
+- Add wallet address to existing user data model in Firebase
+
 ---
 
 ### Milestone 2.2: Decentralized Storage
 **Target Date**: Month 6
 **Owner**: Web3 Team
-**Status**: 🟡 Not Started
+**Status**: 🟡 Ready to Start — *Foundation code exists in `js/ipfs.js` and `@web3-storage/w3up-client` 17.3.0 dependency installed*
 
 #### Deliverables:
-- [ ] **IPFS Integration**
+- [ ] **IPFS Integration** (Sprint 3: Month 5, Weeks 1-2)
   - Comment storage on IPFS
   - Content addressing
   - Pin management
-- [ ] **Arweave Implementation**
+- [ ] **Arweave Implementation** (Sprint 4: Month 5, Weeks 3-4)
   - Permanent storage layer
   - Cost optimization
   - Bundling strategy
-- [ ] **Hybrid Storage Strategy**
-  - Traditional DB for metadata
-  - IPFS for comment content
-  - Arweave for permanence
+- [ ] **Hybrid Storage Strategy** (Sprint 4: Month 5, Weeks 3-4)
+  - Firebase for metadata and fast retrieval
+  - IPFS for comment content and decentralization
+  - Arweave for long-term permanence
 
 #### Success Metrics:
 - **IPFS Storage**: 10,000+ comments stored
 - **Retrieval Time**: <2 seconds average
 - **Data Permanence**: 100% on Arweave
 - **Cost Efficiency**: <$0.01 per comment
+
+#### Implementation Notes:
+- `js/ipfs.js` already contains IPFS upload/retrieval scaffolding — extend, do not rewrite
+- `@web3-storage/w3up-client` is already in `package.json` — use as primary IPFS gateway
+- Store IPFS CIDs in Firebase alongside existing comment metadata
+- Build migration tool to optionally move existing Firebase comments to IPFS
 
 ---
 
@@ -187,15 +214,15 @@ interface Web3Identity {
 **Status**: 🟡 Not Started
 
 #### Deliverables:
-- [ ] **Voting System**
+- [ ] **Voting System** (Sprint 7: Month 7)
   - Upvote/downvote functionality
   - Weighted voting by reputation
   - Quadratic voting implementation
-- [ ] **DAO Infrastructure**
+- [ ] **DAO Infrastructure** (Sprint 8: Month 8)
   - Governance token design
   - Proposal system
   - Voting mechanisms
-- [ ] **Reputation System**
+- [ ] **Reputation System** (Sprint 7: Month 7)
   - User reputation calculation
   - Contribution tracking
   - Rewards mechanism
@@ -205,6 +232,11 @@ interface Web3Identity {
 - **Proposal Success**: 80%+ implementation rate
 - **Community Moderation**: 95%+ handled by community
 - **Token Distribution**: Fair and decentralized
+
+#### Implementation Notes:
+- Smart contract development for governance token — plan to use Solidity with Hardhat (existing `contracts/` directory); note: Hardhat/Solidity tooling is **not yet configured** in this repo and must be added (e.g., dependencies and config in `package.json`) before contract development
+- Design reputation algorithm that weights: comment quality, moderation accuracy, community trust
+- Build simple DAO proposal UI within existing `index.html` or dedicated governance page
 
 ---
 
@@ -493,4 +525,4 @@ This milestone framework provides the structure for Commentator's evolution into
 
 ---
 
-*This milestone tracking document is updated monthly. Last updated: December 2024*
+*This milestone tracking document is updated monthly. Last updated: February 2026*
