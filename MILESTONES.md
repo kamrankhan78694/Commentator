@@ -50,11 +50,11 @@ This document tracks specific milestones, deliverables, and success metrics for 
 **Status**: ✅ Complete
 
 #### Deliverables:
-- [x] **Comment CRUD API**
-  - POST /api/comments (create)
-  - GET /api/comments?url={url} (retrieve)
-  - PUT /api/comments/{id} (update)
-  - DELETE /api/comments/{id} (delete)
+- [x] **Comment CRUD Implementation (Firebase)**
+  - Create: client-side `addDoc` to the Firestore `comments` collection
+  - Read: query `comments` by `url` using Firestore queries and/or real-time listeners
+  - Update: client-side `updateDoc` on existing comment documents (enforced via Firebase Security Rules)
+  - Delete: client-side `deleteDoc` on comment documents (enforced via Firebase Security Rules)
 - [x] **Comment Threading**
   - Reply functionality
   - Nested comment display
