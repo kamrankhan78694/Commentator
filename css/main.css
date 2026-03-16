@@ -2072,3 +2072,42 @@ a:hover {
     box-shadow: 0 2px 8px rgba(255, 165, 0, 0.2);
     border-left-color: #ff8c00;
 }
+
+/* Vote Buttons */
+.btn-vote {
+    background: transparent;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    cursor: pointer;
+    padding: 2px 6px;
+    font-size: 0.85em;
+    line-height: 1;
+    transition: all 0.2s ease;
+    vertical-align: middle;
+}
+
+.btn-vote:hover {
+    background: #edf2f7;
+    border-color: #cbd5e0;
+}
+
+.btn-upvote:hover {
+    background: #c6f6d5;
+    border-color: #68d391;
+}
+
+.btn-downvote:hover {
+    background: #fed7d7;
+    border-color: #fc8181;
+}
+
+.vote-count {
+    display: inline-block;
+    min-width: 1.2em;
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.9em;
+    vertical-align: middle;
+    margin: 0 2px;
+}
+}

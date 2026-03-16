@@ -34,7 +34,7 @@ export function initNewsletterForm() {
     // In a real implementation, this would send the email to a backend service
     // For now, we'll just show a success message
     showNotification(
-      "Thank you for subscribing! We'll keep you updated on important project news.",
+      'Thank you for subscribing! We\'ll keep you updated on important project news.',
       'success'
     );
     emailInput.value = '';
@@ -65,18 +65,18 @@ export function showNotification(message, type = 'success') {
   // Set colors based on type
   let backgroundColor, textColor;
   switch (type) {
-    case 'error':
-      backgroundColor = '#e53e3e';
-      textColor = 'white';
-      break;
-    case 'info':
-      backgroundColor = '#3182ce';
-      textColor = 'white';
-      break;
-    case 'success':
-    default:
-      backgroundColor = '#38a169';
-      textColor = 'white';
+  case 'error':
+    backgroundColor = '#e53e3e';
+    textColor = 'white';
+    break;
+  case 'info':
+    backgroundColor = '#3182ce';
+    textColor = 'white';
+    break;
+  case 'success':
+  default:
+    backgroundColor = '#38a169';
+    textColor = 'white';
   }
 
   notification.style.cssText = `

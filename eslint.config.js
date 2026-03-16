@@ -3,6 +3,13 @@ import js from '@eslint/js';
 export default [
   js.configs.recommended,
   {
+    ignores: [
+      'js/main-backup.js',
+      'js/main-original.js',
+      'js/firebase-service-original-backup.js'
+    ]
+  },
+  {
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',
@@ -11,6 +18,8 @@ export default [
         document: 'readonly',
         navigator: 'readonly',
         console: 'readonly',
+        confirm: 'readonly',
+        alert: 'readonly',
         firebase: 'readonly',
         FirebaseService: 'readonly',
         CommentatorLogger: 'readonly',
@@ -36,7 +45,10 @@ export default [
         feather: 'readonly',
         ethers: 'readonly',
         scrollY: 'readonly',
-        module: 'readonly'
+        module: 'readonly',
+        global: 'readonly',
+        process: 'readonly',
+        self: 'readonly'
       }
     },
     rules: {

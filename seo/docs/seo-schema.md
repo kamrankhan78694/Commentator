@@ -8,7 +8,7 @@ The Commentator project includes a comprehensive SEO schema system that automati
 
 - **Universal Schema**: Automatically injected on all pages
   - Organization schema
-  - WebSite schema  
+  - WebSite schema
   - WebApplication schema
 - **Page-Specific Schema**: Contextual schema based on page type
   - Article schema for blog posts
@@ -44,16 +44,16 @@ Add schema type to your Jekyll page front matter:
 
 ```yaml
 ---
-title: "API Documentation"
-schema_type: "api"
-description: "Complete API reference for developers"
+title: 'API Documentation'
+schema_type: 'api'
+description: 'Complete API reference for developers'
 ---
 ```
 
 #### Supported Schema Types
 
 - `documentation` - Technical articles and guides
-- `api` - API documentation and references  
+- `api` - API documentation and references
 - `faq` - Frequently asked questions
 - `article` - General articles and blog posts
 
@@ -63,12 +63,12 @@ Add custom schema data in front matter:
 
 ```yaml
 ---
-title: "Getting Started Guide"
-schema_type: "documentation"
+title: 'Getting Started Guide'
+schema_type: 'documentation'
 schema_data:
-  difficulty: "Beginner"
-  timeRequired: "PT30M"
-  audience: "Developers"
+  difficulty: 'Beginner'
+  timeRequired: 'PT30M'
+  audience: 'Developers'
 ---
 ```
 
@@ -84,7 +84,7 @@ const schemaManager = initializeSEOSchema();
 schemaManager.addPageSchema('article', {
   headline: 'My Article Title',
   description: 'Article description',
-  author: 'Author Name'
+  author: 'Author Name',
 });
 
 // Inject all schemas
@@ -98,21 +98,21 @@ schemaManager.injectSchemas();
 schemaManager.addPageSchema('faq', {
   questions: [
     {
-      "@type": "Question",
-      "name": "How do I get started?",
-      "acceptedAnswer": {
-        "@type": "Answer", 
-        "text": "Follow our getting started guide..."
-      }
-    }
-  ]
+      '@type': 'Question',
+      name: 'How do I get started?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Follow our getting started guide...',
+      },
+    },
+  ],
 });
 
 // Add breadcrumb schema
 const breadcrumbs = [
-  { name: "Home", url: "/" },
-  { name: "Docs", url: "/docs/" },
-  { name: "FAQ", url: "/docs/faq.html" }
+  { name: 'Home', url: '/' },
+  { name: 'Docs', url: '/docs/' },
+  { name: 'FAQ', url: '/docs/faq.html' },
 ];
 const breadcrumbSchema = schemaManager.generateBreadcrumbSchema(breadcrumbs);
 schemaManager.addPageSchema('breadcrumb', breadcrumbSchema);
@@ -127,23 +127,23 @@ Edit `js/seo-schema-config.js` to customize site-wide settings:
 ```javascript
 const SEO_SCHEMA_CONFIG = {
   site: {
-    name: "Your Site Name",
-    description: "Site description",
-    baseUrl: "https://yoursite.com",
+    name: 'Your Site Name',
+    description: 'Site description',
+    baseUrl: 'https://yoursite.com',
     author: {
-      name: "Author Name"
-    }
+      name: 'Author Name',
+    },
   },
-  
+
   // Configure page type mappings
   pageTypes: {
-    "docs/api.html": {
-      type: "documentation",
+    'docs/api.html': {
+      type: 'documentation',
       defaultSchema: {
-        "@type": "APIReference"
-      }
-    }
-  }
+        '@type': 'APIReference',
+      },
+    },
+  },
 };
 ```
 
@@ -155,19 +155,19 @@ Update `_config.yml` for Jekyll-specific settings:
 # SEO settings
 seo:
   type: WebSite
-  name: "Site Name"
+  name: 'Site Name'
   links:
-    - "https://yoursite.com"
-    - "https://github.com/yourrepo"
+    - 'https://yoursite.com'
+    - 'https://github.com/yourrepo'
 
 # Default front matter for schema
 defaults:
   - scope:
-      path: "docs"
+      path: 'docs'
     values:
-      layout: "default"
-      section: "documentation"
-      schema_type: "documentation"
+      layout: 'default'
+      section: 'documentation'
+      schema_type: 'documentation'
 ```
 
 ## Schema Types Reference
@@ -198,7 +198,7 @@ For blog posts and articles:
 ```json
 {
   "@context": "https://schema.org",
-  "@type": "Article", 
+  "@type": "Article",
   "headline": "Article Title",
   "description": "Article description",
   "datePublished": "2024-01-01T00:00:00Z",
@@ -283,7 +283,7 @@ window.seoSchemaManager.getAllSchemas();
 ### Content Guidelines
 
 1. **Be Accurate**: Ensure schema matches actual page content
-2. **Stay Current**: Update dates and information regularly  
+2. **Stay Current**: Update dates and information regularly
 3. **Be Specific**: Use the most specific schema type available
 4. **Validate Often**: Test schema changes before deployment
 
@@ -335,6 +335,7 @@ console.log(schemaManager.getAllSchemas());
 ### Adding New Schema Types
 
 1. **Update Configuration**:
+
    ```javascript
    // In seo-schema-config.js
    pageTypes: {
@@ -348,6 +349,7 @@ console.log(schemaManager.getAllSchemas());
    ```
 
 2. **Add Schema Logic**:
+
    ```javascript
    // In seo-schema.js addPageSchema method
    case 'event':
@@ -388,7 +390,7 @@ class CustomSchemaManager extends SEOSchemaManager {
 If migrating from manual schema implementation:
 
 1. **Audit Existing**: Document current schema usage
-2. **Remove Manual**: Delete hardcoded JSON-LD scripts  
+2. **Remove Manual**: Delete hardcoded JSON-LD scripts
 3. **Configure**: Set up schema configuration
 4. **Test**: Validate schema output matches previous implementation
 5. **Deploy**: Gradual rollout with monitoring
@@ -423,4 +425,4 @@ To contribute improvements to the SEO schema system:
 
 ---
 
-*This documentation is part of the Commentator project. For general project information, see the main README.*
+_This documentation is part of the Commentator project. For general project information, see the main README._

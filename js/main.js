@@ -319,6 +319,138 @@ function setupGlobalAPI() {
 
   // Utility functions
   window.updateUserStatus = updateUserStatus;
+
+  // URL attachment functions
+  window.attachUrl = attachUrl;
+  window.detachUrl = detachUrl;
+
+  // Auth modal functions
+  window.openAuthModal = openAuthModal;
+  window.closeAuthModal = closeAuthModal;
+  window.switchAuthTab = switchAuthTab;
+  window.signInWithGoogle = signInWithGoogle;
+  window.signInAnonymously = signInAnonymously;
+}
+
+/**
+ * Attach a URL to the comment system
+ */
+function attachUrl() {
+  const urlInput = document.getElementById('url-input');
+  if (!urlInput) return;
+
+  const url = urlInput.value.trim();
+  if (!url || !isValidUrl(url)) {
+    showNotification('Please enter a valid URL.', 'error');
+    return;
+  }
+
+  window.currentCommentUrl = url;
+
+  const inputSection = document.getElementById('url-input-section');
+  const currentSection = document.getElementById('current-url-section');
+  const urlDisplay = document.getElementById('current-url-display');
+  const formContainer = document.getElementById('comment-form-container');
+
+  if (inputSection) inputSection.style.display = 'none';
+  if (currentSection) currentSection.style.display = 'flex';
+  if (urlDisplay) urlDisplay.textContent = url;
+  if (formContainer) formContainer.style.display = 'block';
+
+  loadCommentsForUrl(url, document.getElementById('comments-container'));
+  showNotification('URL attached successfully!', 'success');
+}
+
+/**
+ * Detach the current URL from the comment system
+ */
+function detachUrl() {
+  window.currentCommentUrl = null;
+
+  const inputSection = document.getElementById('url-input-section');
+  const currentSection = document.getElementById('current-url-section');
+  const formContainer = document.getElementById('comment-form-container');
+  const commentsContainer = document.getElementById('comments-container');
+
+  if (inputSection) inputSection.style.display = 'block';
+  if (currentSection) currentSection.style.display = 'none';
+  if (formContainer) formContainer.style.display = 'none';
+  if (commentsContainer) commentsContainer.innerHTML = '';
+
+  showNotification('URL detached.', 'info');
+}
+
+/**
+ * Open the authentication modal
+ * @param {string} [tab] - Optional tab to activate ('signin' or 'signup')
+ */
+function openAuthModal(tab) {
+  const modal = document.getElementById('auth-modal');
+  if (modal) modal.classList.add('active');
+  if (tab) switchAuthTab(tab);
+}
+
+/**
+ * Close the authentication modal
+ */
+function closeAuthModal() {
+  const modal = document.getElementById('auth-modal');
+  if (modal) modal.classList.remove('active');
+}
+
+/**
+ * Switch between signin and signup tabs
+ * @param {string} tab - The tab to activate ('signin' or 'signup')
+ */
+function switchAuthTab(tab) {
+  const tabs = document.querySelectorAll('.auth-tab');
+  const signinForm = document.getElementById('signin-form');
+  const signupForm = document.getElementById('signup-form');
+
+  tabs.forEach((t) => {
+    t.classList.toggle('active', t.dataset.tab === tab);
+  });
+
+  if (signinForm) signinForm.classList.toggle('active', tab === 'signin');
+  if (signupForm) signupForm.classList.toggle('active', tab === 'signup');
+}
+
+/**
+ * Sign in with Google via Firebase
+ */
+async function signInWithGoogle() {
+  try {
+    if (!window.FirebaseService || !window.FirebaseService.signInWithGoogle) {
+      showNotification('Google sign-in is not available.', 'error');
+      return;
+    }
+    await window.FirebaseService.signInWithGoogle();
+    closeAuthModal();
+    showNotification('Signed in with Google successfully!', 'success');
+    updateUserStatus('✅ Signed in with Google');
+  } catch (error) {
+    console.error('Google sign-in error:', error);
+    showNotification('Google sign-in failed. Please try again.', 'error');
+  }
+}
+
+/**
+ * Sign in anonymously via Firebase
+ */
+async function signInAnonymously() {
+  try {
+    if (!window.FirebaseService || !window.FirebaseService.signInAnonymously) {
+      showNotification('Anonymous sign-in is not available.', 'error');
+      return;
+    }
+    await window.FirebaseService.signInAnonymously();
+    closeAuthModal();
+    showNotification('Signed in anonymously.', 'success');
+    updateUserStatus('✅ Connected anonymously');
+  } catch (error) {
+    console.error('Anonymous sign-in error:', error);
+    showNotification('Anonymous sign-in failed. Please try again.', 'error');
+  }
 }
 
 /**
@@ -403,39 +535,98 @@ async function initializeApp() {
     initWeb3();
     initWeb3Styles();
 
+    // Set up auth form submit handlers
+    const signinForm = document.getElementById('signin-form');
+    if (signinForm) {
+      signinForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('signin-email')?.value;
+        const password = document.getElementById('signin-password')?.value;
+        if (!email || !password) {
+          showNotification('Please fill in all fields.', 'error');
+          return;
+        }
+        try {
+          if (
+            window.FirebaseService &&
+            window.FirebaseService.signInWithEmail
+          ) {
+            await window.FirebaseService.signInWithEmail(email, password);
+            closeAuthModal();
+            showNotification('Signed in successfully!', 'success');
+            updateUserStatus('✅ Signed in');
+          }
+        } catch (error) {
+          console.error('Sign-in error:', error);
+          showNotification('Sign-in failed: ' + error.message, 'error');
+        }
+      });
+    }
+
+    const signupForm = document.getElementById('signup-form');
+    if (signupForm) {
+      signupForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const name = document.getElementById('signup-name')?.value;
+        const email = document.getElementById('signup-email')?.value;
+        const password = document.getElementById('signup-password')?.value;
+        if (!email || !password || !name) {
+          showNotification('Please fill in all fields.', 'error');
+          return;
+        }
+        try {
+          if (
+            window.FirebaseService &&
+            window.FirebaseService.signUpWithEmail
+          ) {
+            await window.FirebaseService.signUpWithEmail(email, password, name);
+            closeAuthModal();
+            showNotification('Account created successfully!', 'success');
+            updateUserStatus('✅ Signed in');
+          }
+        } catch (error) {
+          console.error('Sign-up error:', error);
+          showNotification('Sign-up failed: ' + error.message, 'error');
+        }
+      });
+    }
+
     // Initialize SEO Schema
     console.log('Initializing SEO Schema...');
     if (typeof window.initializeSEOSchema === 'function') {
       const schemaManager = window.initializeSEOSchema();
-      
+
       // Add page-specific schema based on current page
       const currentPath = window.location.pathname;
       if (currentPath.includes('/docs/')) {
         if (currentPath.includes('faq')) {
           schemaManager.addPageSchema('faq', {
-            questions: window.SEO_SCHEMA_CONFIG?.faqQuestions || []
+            questions: window.SEO_SCHEMA_CONFIG?.faqQuestions || [],
           });
         } else if (currentPath.includes('api')) {
           schemaManager.addPageSchema('documentation', {
-            "@type": "APIReference",
-            "programmingLanguage": "JavaScript"
+            '@type': 'APIReference',
+            programmingLanguage: 'JavaScript',
           });
         } else {
           schemaManager.addPageSchema('documentation', {
-            "headline": document.title,
-            "description": document.querySelector('meta[name="description"]')?.content
+            headline: document.title,
+            description: document.querySelector('meta[name="description"]')
+              ?.content,
           });
         }
-        
+
         // Add breadcrumb schema for documentation pages
-        const breadcrumbs = window.SEO_SCHEMA_CONFIG?.breadcrumbs?.[currentPath] || 
-                          window.SEO_SCHEMA_CONFIG?.breadcrumbs?.['docs/'];
+        const breadcrumbs =
+          window.SEO_SCHEMA_CONFIG?.breadcrumbs?.[currentPath] ||
+          window.SEO_SCHEMA_CONFIG?.breadcrumbs?.['docs/'];
         if (breadcrumbs) {
-          const breadcrumbSchema = schemaManager.generateBreadcrumbSchema(breadcrumbs);
+          const breadcrumbSchema =
+            schemaManager.generateBreadcrumbSchema(breadcrumbs);
           schemaManager.addPageSchema('breadcrumb', breadcrumbSchema);
         }
       }
-      
+
       // Inject all schemas
       schemaManager.injectSchemas();
       console.log('✅ SEO Schema initialized and injected');

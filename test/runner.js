@@ -83,7 +83,9 @@ async function runAllTests() {
     const fileName = path.basename(testFile);
     console.log(`\n📁 Running ${fileName}...`);
     try {
-      const fullPath = path.isAbsolute(testFile) ? testFile : path.join(testDir, testFile);
+      const fullPath = path.isAbsolute(testFile)
+        ? testFile
+        : path.join(testDir, testFile);
       await import(fullPath);
     } catch (error) {
       console.error(`❌ Failed to load ${fileName}:`, error.message);

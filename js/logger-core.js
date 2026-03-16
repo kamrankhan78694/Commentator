@@ -55,7 +55,9 @@ class CommentatorLogger {
     resizeHandle.addEventListener('mousedown', this.startResize.bind(this));
 
     // Control buttons
-    const minimizeBtn = this.ui.panelElement.querySelector('.debug-btn-minimize');
+    const minimizeBtn = this.ui.panelElement.querySelector(
+      '.debug-btn-minimize'
+    );
     const closeBtn = this.ui.panelElement.querySelector('.debug-btn-close');
     const clearBtn = this.ui.panelElement.querySelector('.debug-btn-clear');
     const copyBtn = this.ui.panelElement.querySelector('.debug-btn-copy');
@@ -269,10 +271,10 @@ class CommentatorLogger {
     const timeStr = logEntry.timestamp.toLocaleTimeString();
     const detailsHtml = logEntry.details
       ? `<div class="debug-log-details">${this.ui.escapeHtml(
-          typeof logEntry.details === 'object'
-            ? JSON.stringify(logEntry.details, null, 2)
-            : logEntry.details
-        )}</div>`
+        typeof logEntry.details === 'object'
+          ? JSON.stringify(logEntry.details, null, 2)
+          : logEntry.details
+      )}</div>`
       : '';
 
     logElement.innerHTML = `
@@ -303,7 +305,8 @@ class CommentatorLogger {
 
     // Filter by search term
     if (this.searchTerm) {
-      const searchableText = `${logEntry.message} ${logEntry.category} ${logEntry.level}`.toLowerCase();
+      const searchableText =
+        `${logEntry.message} ${logEntry.category} ${logEntry.level}`.toLowerCase();
       if (!searchableText.includes(this.searchTerm.toLowerCase())) {
         return false;
       }
