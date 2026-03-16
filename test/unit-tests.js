@@ -66,36 +66,35 @@ try {
 }
 
 // Unit Tests
-runner.test('getBaseUrl function exists in main.js', () => {
+runner.test('getBaseUrl function exists in navigation.js', () => {
+  const navigationJsPath = path.join(__dirname, '../js/navigation.js');
+  const navigationJsContent = fs.readFileSync(navigationJsPath, 'utf8');
+
+  runner.assert(
+    navigationJsContent.includes('function getBaseUrl()'),
+    'navigation.js should contain getBaseUrl function'
+  );
+
+  // Also verify main.js imports and re-exports it
   const mainJsPath = path.join(__dirname, '../js/main.js');
   const mainJsContent = fs.readFileSync(mainJsPath, 'utf8');
-
   runner.assert(
-    mainJsContent.includes('function getBaseUrl()'),
-    'main.js should contain getBaseUrl function'
-  );
-
-  // Extract and evaluate the function for testing
-  const getBaseUrlMatch = mainJsContent.match(
-    /function getBaseUrl\(\) \{[\s\S]*?\n\}/
-  );
-  runner.assert(
-    getBaseUrlMatch,
-    'Should be able to extract getBaseUrl function'
+    mainJsContent.includes('getBaseUrl'),
+    'main.js should import getBaseUrl'
   );
 });
 
 runner.test('Firebase configuration supports GitHub Pages deployment', () => {
-  const mainJsPath = path.join(__dirname, '../js/main.js');
-  const mainJsContent = fs.readFileSync(mainJsPath, 'utf8');
+  const navigationJsPath = path.join(__dirname, '../js/navigation.js');
+  const navigationJsContent = fs.readFileSync(navigationJsPath, 'utf8');
 
   // Check for GitHub Pages handling
   runner.assert(
-    mainJsContent.includes('github.io'),
+    navigationJsContent.includes('github.io'),
     'Should handle GitHub Pages URLs'
   );
   runner.assert(
-    mainJsContent.includes('location.hostname'),
+    navigationJsContent.includes('location.hostname'),
     'Should check hostname for deployment'
   );
 });

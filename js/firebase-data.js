@@ -380,12 +380,172 @@ async function closeSession(sessionId) {
   }
 }
 
+/**
+ * Update (edit) an existing comment
+ * @param {string} url - The URL where the comment was made
+ * @param {string} commentId - The ID of the comment to edit
+ * @param {string} newContent - The updated comment text
+ * @returns {Promise<Object>} - Result object with success status
+ */
+async function editComment(url, commentId, newContent) {
+  try {
+    const user = getCurrentUser();
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+
+    if (!newContent || newContent.trim().length === 0) {
+      throw new Error('Comment content cannot be empty');
+    }
+
+    if (newContent.length > 5000) {
+      throw new Error('Comment is too long (maximum 5000 characters)');
+    }
+
+    const urlHash = generateUrlHash(url);
+    const commentRef = ref(database, `comments/${urlHash}/${commentId}`);
+
+    const snapshot = await get(commentRef);
+    if (!snapshot.exists()) {
+      throw new Error('Comment not found');
+    }
+
+    const existing = snapshot.val();
+    if (existing.userId !== user.uid) {
+      throw new Error('You can only edit your own comments');
+    }
+
+    // Enforce 15-minute edit window
+    const createdAt = existing.timestamp || existing.createdAt;
+    if (!createdAt || typeof createdAt !== 'number') {
+      throw new Error('Cannot determine comment creation time');
+    }
+    const now = Date.now();
+    const fifteenMinutes = 15 * 60 * 1000;
+    if ((now - createdAt) > fifteenMinutes) {
+      throw new Error('Edit window has expired (15 minutes)');
+    }
+
+    await set(commentRef, {
+      ...existing,
+      content: newContent.trim(),
+      editedAt: serverTimestamp(),
+      isEdited: true,
+    });
+
+    console.log('✅ Comment edited successfully:', commentId);
+    return { success: true, commentId, message: 'Comment edited successfully' };
+  } catch (error) {
+    console.error('❌ Failed to edit comment:', error);
+    return { success: false, error: error.message, message: 'Failed to edit comment' };
+  }
+}
+
+/**
+ * Soft-delete a comment (author only)
+ * @param {string} url - The URL where the comment was made
+ * @param {string} commentId - The ID of the comment to delete
+ * @returns {Promise<Object>} - Result object with success status
+ */
+async function deleteComment(url, commentId) {
+  try {
+    const user = getCurrentUser();
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+
+    const urlHash = generateUrlHash(url);
+    const commentRef = ref(database, `comments/${urlHash}/${commentId}`);
+
+    const snapshot = await get(commentRef);
+    if (!snapshot.exists()) {
+      throw new Error('Comment not found');
+    }
+
+    const existing = snapshot.val();
+    if (existing.userId !== user.uid) {
+      throw new Error('You can only delete your own comments');
+    }
+
+    await set(commentRef, {
+      ...existing,
+      content: '[deleted]',
+      status: 'deleted',
+      deletedAt: serverTimestamp(),
+    });
+
+    console.log('✅ Comment soft-deleted successfully:', commentId);
+    return { success: true, commentId, message: 'Comment deleted successfully' };
+  } catch (error) {
+    console.error('❌ Failed to delete comment:', error);
+    return { success: false, error: error.message, message: 'Failed to delete comment' };
+  }
+}
+
+/**
+ * Flag/report a comment for moderation
+ * @param {string} url - The URL where the comment was made
+ * @param {string} commentId - The ID of the comment to flag
+ * @param {string} reason - The reason for flagging
+ * @returns {Promise<Object>} - Result object with success status
+ */
+async function flagComment(url, commentId, reason) {
+  try {
+    const user = getCurrentUser();
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+
+    if (!reason || reason.trim().length === 0) {
+      throw new Error('Please provide a reason for flagging');
+    }
+
+    const urlHash = generateUrlHash(url);
+    const commentRef = ref(database, `comments/${urlHash}/${commentId}`);
+
+    const snapshot = await get(commentRef);
+    if (!snapshot.exists()) {
+      throw new Error('Comment not found');
+    }
+
+    const existing = snapshot.val();
+    const flags = existing.flags || [];
+    
+    // Prevent duplicate flags from same user
+    if (flags.some(f => f.userId === user.uid)) {
+      throw new Error('You have already flagged this comment');
+    }
+
+    flags.push({
+      userId: user.uid,
+      reason: reason.trim(),
+      timestamp: Date.now(),
+    });
+
+    await set(commentRef, {
+      ...existing,
+      flags,
+      flagCount: flags.length,
+      status: flags.length >= 3 ? 'flagged' : existing.status,
+    });
+
+    console.log('✅ Comment flagged successfully:', commentId);
+    return { success: true, commentId, message: 'Comment flagged for review' };
+  } catch (error) {
+    console.error('❌ Failed to flag comment:', error);
+    return { success: false, error: error.message, message: 'Failed to flag comment' };
+  }
+}
+
 // Export data operation functions
 export {
   // Comments
   saveComment,
   loadComments,
   subscribeToComments,
+  editComment,
+  deleteComment,
+  flagComment,
 
   // Users
   saveUserData,
