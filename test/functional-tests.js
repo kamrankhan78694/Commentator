@@ -57,10 +57,7 @@ const SecurityUtils = global.window.SecurityUtils;
 runner.test('sanitizeText removes script tags', () => {
   runner.assert(SecurityUtils, 'SecurityUtils should be loaded');
   const result = SecurityUtils.sanitizeText('<script>alert("xss")</script>');
-  runner.assert(
-    !result.includes('<script'),
-    'Should remove script tags'
-  );
+  runner.assert(!result.includes('<script'), 'Should remove script tags');
   runner.assert(
     !result.includes('</script'),
     'Should remove closing script tags'
@@ -69,10 +66,7 @@ runner.test('sanitizeText removes script tags', () => {
 
 runner.test('sanitizeText encodes HTML entities', () => {
   const result = SecurityUtils.sanitizeText('Hello <b>world</b>');
-  runner.assert(
-    !result.includes('<b>'),
-    'Should encode HTML tags'
-  );
+  runner.assert(!result.includes('<b>'), 'Should encode HTML tags');
   runner.assert(
     result.includes('&lt;b&gt;'),
     'Should contain encoded entities'
@@ -80,10 +74,26 @@ runner.test('sanitizeText encodes HTML entities', () => {
 });
 
 runner.test('sanitizeText handles empty and non-string input', () => {
-  runner.assertEqual(SecurityUtils.sanitizeText(''), '', 'Empty string should return empty');
-  runner.assertEqual(SecurityUtils.sanitizeText(null), '', 'Null should return empty');
-  runner.assertEqual(SecurityUtils.sanitizeText(undefined), '', 'Undefined should return empty');
-  runner.assertEqual(SecurityUtils.sanitizeText(123), '', 'Number should return empty');
+  runner.assertEqual(
+    SecurityUtils.sanitizeText(''),
+    '',
+    'Empty string should return empty'
+  );
+  runner.assertEqual(
+    SecurityUtils.sanitizeText(null),
+    '',
+    'Null should return empty'
+  );
+  runner.assertEqual(
+    SecurityUtils.sanitizeText(undefined),
+    '',
+    'Undefined should return empty'
+  );
+  runner.assertEqual(
+    SecurityUtils.sanitizeText(123),
+    '',
+    'Number should return empty'
+  );
 });
 
 runner.test('sanitizeText removes javascript: protocol', () => {
@@ -116,13 +126,17 @@ runner.test('validateComment rejects too-long comments', () => {
 });
 
 runner.test('validateComment accepts valid comments', () => {
-  const result = SecurityUtils.validateComment('This is a valid comment about the website.');
+  const result = SecurityUtils.validateComment(
+    'This is a valid comment about the website.'
+  );
   runner.assert(result.valid, 'Normal comment should be valid');
   runner.assertEqual(result.errors.length, 0, 'Should have no errors');
 });
 
 runner.test('validateComment detects SQL injection attempts', () => {
-  const result = SecurityUtils.validateComment('test\'; DROP TABLE comments; --');
+  const result = SecurityUtils.validateComment(
+    "test'; DROP TABLE comments; --"
+  );
   runner.assert(!result.valid, 'SQL injection attempt should be invalid');
   runner.assert(
     result.errors.some((e) => e.includes('invalid characters')),
@@ -131,7 +145,9 @@ runner.test('validateComment detects SQL injection attempts', () => {
 });
 
 runner.test('validateComment detects XSS patterns', () => {
-  const result = SecurityUtils.validateComment('<script>alert("xss")</script> some text');
+  const result = SecurityUtils.validateComment(
+    '<script>alert("xss")</script> some text'
+  );
   runner.assert(!result.valid, 'Comment with script tag should be invalid');
   runner.assert(
     result.errors.some((e) => e.includes('dangerous')),
@@ -145,7 +161,10 @@ runner.test('validateComment detects XSS patterns', () => {
 
 runner.test('detectSpam detects excessive repetition', () => {
   const result = SecurityUtils.detectSpam('aaaaaaaaaaaaaaa normal text');
-  runner.assert(result.isSpam, 'Excessive repetition should be flagged as spam');
+  runner.assert(
+    result.isSpam,
+    'Excessive repetition should be flagged as spam'
+  );
   runner.assert(
     result.reasons.some((r) => r.includes('repetition')),
     'Should mention repetition'
@@ -160,17 +179,23 @@ runner.test('detectSpam detects too many links', () => {
 });
 
 runner.test('detectSpam detects spam keywords', () => {
-  const result = SecurityUtils.detectSpam('Buy now! Click here for free money!');
+  const result = SecurityUtils.detectSpam(
+    'Buy now! Click here for free money!'
+  );
   runner.assert(result.isSpam, 'Spam keywords should be flagged');
 });
 
 runner.test('detectSpam allows normal content', () => {
-  const result = SecurityUtils.detectSpam('This is a thoughtful comment about the article.');
+  const result = SecurityUtils.detectSpam(
+    'This is a thoughtful comment about the article.'
+  );
   runner.assert(!result.isSpam, 'Normal content should not be flagged as spam');
 });
 
 runner.test('detectSpam detects excessive capitalization', () => {
-  const result = SecurityUtils.detectSpam('THIS IS ALL CAPS COMMENT THAT GOES ON AND ON');
+  const result = SecurityUtils.detectSpam(
+    'THIS IS ALL CAPS COMMENT THAT GOES ON AND ON'
+  );
   runner.assert(result.isSpam, 'Excessive caps should be flagged as spam');
   runner.assert(
     result.reasons.some((r) => r.includes('capitalization')),
@@ -218,10 +243,7 @@ runner.test('Comment module has escapeHtml for XSS prevention', () => {
     content.includes('&amp;'),
     'escapeHtml should encode ampersands'
   );
-  runner.assert(
-    content.includes('&lt;'),
-    'escapeHtml should encode less-than'
-  );
+  runner.assert(content.includes('&lt;'), 'escapeHtml should encode less-than');
   runner.assert(
     content.includes('&gt;'),
     'escapeHtml should encode greater-than'
