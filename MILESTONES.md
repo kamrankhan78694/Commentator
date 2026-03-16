@@ -233,7 +233,7 @@ interface Web3Identity {
 - **Token Distribution**: Fair and decentralized
 
 #### Implementation Notes:
-- Smart contract development for governance token — use Solidity with Hardhat (existing `contracts/` directory)
+- Smart contract development for governance token — plan to use Solidity with Hardhat (existing `contracts/` directory); note: Hardhat/Solidity tooling is **not yet configured** in this repo and must be added (e.g., dependencies and config in `package.json`) before contract development
 - Design reputation algorithm that weights: comment quality, moderation accuracy, community trust
 - Build simple DAO proposal UI within existing `index.html` or dedicated governance page
 
